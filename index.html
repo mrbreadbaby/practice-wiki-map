@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light" style="--cal-top-pad: 188px; --cards-top-pad: 184px; --pipe-top-pad: 184px; --admin-top-pad: 184px;"><head>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -419,13 +420,14 @@
   }
 
   .p-close{
-    position:absolute;
-    top:16px;right:16px;
-    width:44px;height:44px;
+    position:fixed;
+    top:12px;right:12px;
+    width:48px;height:48px;
     border-radius:10px;
-    background:var(--surface-active);
-    border:2px solid var(--border-strong);
-    color:var(--text-heading);cursor:pointer;
+    background:rgba(239,68,68,0.3);
+    border:2px solid rgba(239,68,68,0.5);
+    color:#fff;cursor:pointer;
+    z-index:250;
     display:flex;align-items:center;justify-content:center;
     font-size:22px;font-weight:600;
     transition:all .15s;
@@ -558,495 +560,79 @@
   <h1>Noonan Practice Wiki</h1>
   <span class="sub">Schema v2.1 · April 15, 2026</span>
   <div class="view-toggles">
-    <button class="view-btn" data-view="graph" onclick="switchView('graph')">Graph</button>
+    <button class="view-btn active" data-view="graph" onclick="switchView('graph')">Graph</button>
     <button class="view-btn" data-view="calendar" onclick="switchView('calendar')">Calendar</button>
     <button class="view-btn" data-view="cards" onclick="switchView('cards')">Cards</button>
     <button class="view-btn" data-view="pipeline" onclick="switchView('pipeline')">Pipeline</button>
-    <button class="view-btn active" data-view="admin" onclick="switchView('admin')">Admin</button>
+    <button class="view-btn" data-view="admin" onclick="switchView('admin')">Admin</button>
   </div>
-  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle theme">☀</button>
-  <div id="filter-bar" style="display: none;">
-    <div class="fp" data-type="all" style="--pc:#a5b4fc;--pb:rgba(99,102,241,0.15)">All (47)</div>
-    <div class="fp" data-type="matter" style="--pc:var(--clr-matter);--pb:rgba(96,165,250,0.12)"><span class="dot" style="background:var(--clr-matter)"></span>Matter (25)</div>
-    <div class="fp" data-type="contact" style="--pc:var(--clr-contact);--pb:rgba(192,132,252,0.12)"><span class="dot" style="background:var(--clr-contact)"></span>Contact (12)</div>
-    <div class="fp" data-type="court" style="--pc:var(--clr-court);--pb:rgba(52,211,153,0.12)"><span class="dot" style="background:var(--clr-court)"></span>Court (6)</div>
-    <div class="fp active" data-type="authority" style="--pc:var(--clr-authority);--pb:rgba(251,191,36,0.12)"><span class="dot" style="background:var(--clr-authority)"></span>Authority (3)</div>
-    <div class="fp" data-type="issue" style="--pc:var(--clr-issue);--pb:rgba(251,113,133,0.12)"><span class="dot" style="background:var(--clr-issue)"></span>Issue (1)</div>
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle theme">&#9790;</button>
+  <div id="filter-bar">
+    <div class="fp active" data-type="all" style="--pc:#a5b4fc;--pb:rgba(99,102,241,0.15)">All</div>
+    <div class="fp" data-type="matter" style="--pc:var(--clr-matter);--pb:rgba(96,165,250,0.12)"><span class="dot" style="background:var(--clr-matter)"></span>Matter</div>
+    <div class="fp" data-type="contact" style="--pc:var(--clr-contact);--pb:rgba(192,132,252,0.12)"><span class="dot" style="background:var(--clr-contact)"></span>Contact</div>
+    <div class="fp" data-type="court" style="--pc:var(--clr-court);--pb:rgba(52,211,153,0.12)"><span class="dot" style="background:var(--clr-court)"></span>Court</div>
+    <div class="fp" data-type="authority" style="--pc:var(--clr-authority);--pb:rgba(251,191,36,0.12)"><span class="dot" style="background:var(--clr-authority)"></span>Authority</div>
+    <div class="fp" data-type="issue" style="--pc:var(--clr-issue);--pb:rgba(251,113,133,0.12)"><span class="dot" style="background:var(--clr-issue)"></span>Issue</div>
   </div>
   <div id="search-box">
-    <span class="si">🔍</span>
+    <span class="si">&#128269;</span>
     <input type="text" id="search-input" placeholder="Search... ( / )">
   </div>
-  <div id="hot-pill" class="hot-pill" onclick="toggleBanner()" style="display:none">Action Required <span id="hot-pill-count">12</span></div>
+  <div id="hot-pill" class="hot-pill" onclick="toggleBanner()" style="display:none">Action Required <span id="hot-pill-count"></span></div>
 </div>
 
 <div id="hot-banner">
   <div class="hb-inner">
     <div class="hb-head" onclick="toggleBanner()">
       <span class="hb-title">Action Required</span>
-      <span class="hb-count" id="hot-count">12 items</span>
-      <button class="banner-close-btn" onclick="event.stopPropagation();toggleBanner()">CLOSE ×</button>
+      <span class="hb-count" id="hot-count"></span>
+      <button class="banner-close-btn" onclick="event.stopPropagation();toggleBanner()">CLOSE &times;</button>
     </div>
-    <div class="hb-grid" id="hb-grid"><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Hunter</div>
-    <div class="hc-t">Legal memo 11 DAYS OVERDUE (was due 4/4)</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Blackwell</div>
-    <div class="hc-t">Hobbs motion filing 16+ DAYS OVERDUE</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Rodgers</div>
-    <div class="hc-t">Dismissal motion 18 DAYS OVERDUE. Pitchess ruling 5/26.</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Ruiz Salas</div>
-    <div class="hc-t">Hearing outcome UNKNOWN (4/10)</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Caldwell</div>
-    <div class="hc-t">Hearing 4/14 completed — outcome pending</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Culver v. Noonan</div>
-    <div class="hc-t">Reply brief due ~4/1 (14 days overdue)</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='stan-dept-2'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Stanislaus Dept 2</div>
-    <div class="hc-t">Caldwell hearing 4/14 — outcome pending</div></div><div class="hc today" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">
-    <div class="hc-u">TODAY</div>
-    <div class="hc-l">Mitchell</div>
-    <div class="hc-t">Bar complaint DUE TODAY (4/15)</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">MejiaMejia</div>
-    <div class="hc-t">Jury trial 5/26</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">Navarro</div>
-    <div class="hc-t">Hearing 5/22 Dept 711</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">Weaver</div>
-    <div class="hc-t">PC 1001.36 motion FINALIZED — needs filing + service</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">Rafanello</div>
-    <div class="hc-t">Follow up on Cathy's signed comp plans by 4/21</div></div></div>
+    <div class="hb-grid" id="hb-grid"></div>
   </div>
 </div>
 
-<div id="graph-container" style="display: none;"><svg id="graph-svg" width="1470" height="1056" style="background: rgb(248, 250, 252);"><g id="graph-g" transform="translate(353.8771898077415,8.126507518844505) scale(1.0981204499871011)"><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1136.7445396329897" y1="966.6626093252434" x2="998.3203611848827" y2="983.5667320911758" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1136.7445396329897" y1="966.6626093252434" x2="973.0821475198323" y2="893.1663740804405" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1201.9343729067436" y1="462.23428902711476" x2="1114.88325607051" y2="543.9285809110493" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1201.9343729067436" y1="462.23428902711476" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1201.9343729067436" y1="462.23428902711476" x2="1034.6610525690355" y2="258.67070543462705" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="438.03171162495386" y1="1045.3698962205006" x2="643.2471592341186" y2="856.6320195576703" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1151.6289332743863" y1="714.6963799897314" x2="1139.5384986392646" y2="601.9037392384937" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1151.6289332743863" y1="714.6963799897314" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1151.6289332743863" y1="714.6963799897314" x2="1114.88325607051" y2="543.9285809110493" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1151.6289332743863" y1="714.6963799897314" x2="1024.7933558796615" y2="589.3112723649983" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1151.6289332743863" y1="714.6963799897314" x2="1025.0600203927008" y2="476.72713027030886" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1151.6289332743863" y1="714.6963799897314" x2="949.4065445483092" y2="774.0957192280143" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="1139.5384986392646" y2="601.9037392384937" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="1114.88325607051" y2="543.9285809110493" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="1024.7933558796615" y2="589.3112723649983" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="949.4065445483092" y2="774.0957192280143" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="1151.6289332743863" y2="714.6963799897314" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1096.1592892585393" y1="673.5991618417385" x2="1283.951921267011" y2="739.9669519711803" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="998.3203611848827" y2="983.5667320911758" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="1114.88325607051" y2="543.9285809110493" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="1139.5384986392646" y2="601.9037392384937" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="643.2471592341186" y2="856.6320195576703" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="949.4065445483092" y2="774.0957192280143" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="973.0821475198323" y2="893.1663740804405" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="835.4334202855298" y2="855.1000816351769" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="811.8493843599083" y2="369.64780993530957" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="886.5607758748308" y2="513.4743269463061" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="1025.0600203927008" y2="476.72713027030886" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="1024.7933558796615" y2="589.3112723649983" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="555.1988586403768" y1="621.274604372304" x2="471.4937131114966" y2="508.8579762190797" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="555.1988586403768" y1="621.274604372304" x2="362.5891903684131" y2="634.2814826464548" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="555.1988586403768" y1="621.274604372304" x2="200.44539253266376" y2="593.5858819519615" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="715.6949626835531" y1="613.1369764070172" x2="471.4937131114966" y2="508.8579762190797" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="715.6949626835531" y1="613.1369764070172" x2="886.5607758748308" y2="513.4743269463061" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="715.6949626835531" y1="613.1369764070172" x2="949.4065445483092" y2="774.0957192280143" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1348.6233475859206" y1="632.4905341399789" x2="1139.5384986392646" y2="601.9037392384937" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1348.6233475859206" y1="632.4905341399789" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="853.921307914624" y1="132.3305511671638" x2="1034.6610525690355" y2="258.67070543462705" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="853.921307914624" y1="132.3305511671638" x2="726.3475754821076" y2="-56.351762084604694" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="853.921307914624" y1="132.3305511671638" x2="811.8493843599083" y2="369.64780993530957" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="426.4265252284676" y1="942.4755971783013" x2="643.2471592341186" y2="856.6320195576703" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="-0.9640397440816535" y1="520.6495430102916" x2="200.44539253266376" y2="593.5858819519615" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="-8.043651263358282" y1="628.6132572875697" x2="200.44539253266376" y2="593.5858819519615" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1085.8224404028456" y1="1150.9631490671568" x2="943.1078431542579" y2="1211.0919002868054" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1085.8224404028456" y1="1150.9631490671568" x2="998.3203611848827" y2="983.5667320911758" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1269.2195007582814" y1="361.7764863226319" x2="1114.88325607051" y2="543.9285809110493" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="943.1078431542579" y1="1211.0919002868054" x2="998.3203611848827" y2="983.5667320911758" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="873.4498709533475" y1="1037.3668492518173" x2="973.0821475198323" y2="893.1663740804405" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="873.4498709533475" y1="1037.3668492518173" x2="835.4334202855298" y2="855.1000816351769" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="873.4498709533475" y1="1037.3668492518173" x2="949.4065445483092" y2="774.0957192280143" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="886.5607758748308" y2="513.4743269463061" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="1139.5384986392646" y2="601.9037392384937" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="1114.88325607051" y2="543.9285809110493" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="1034.6610525690355" y2="258.67070543462705" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="1113.5972110004986" y2="228.2583252225233" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="984.2549362639247" y1="354.3880738353819" x2="1025.0600203927008" y2="476.72713027030886" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="984.2549362639247" y1="354.3880738353819" x2="1024.7933558796615" y2="589.3112723649983" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1349.8707053015628" y1="405.01771865458113" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="695.375709329004" y1="132.45230134403587" x2="811.8493843599083" y2="369.64780993530957" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="984.2549362639247" y2="354.3880738353819" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1133.3447565042268" y1="369.4829137353318" x2="1349.8707053015628" y2="405.01771865458113" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="873.4498709533475" y1="1037.3668492518173" x2="943.1078431542579" y2="1211.0919002868054" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1136.7445396329897" y1="966.6626093252434" x2="1085.8224404028456" y2="1150.9631490671568" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1201.9343729067436" y1="462.23428902711476" x2="1269.2195007582814" y2="361.7764863226319" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1201.9343729067436" y1="462.23428902711476" x2="1151.6289332743863" y2="714.6963799897314" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1136.7445396329897" y1="966.6626093252434" x2="1151.6289332743863" y2="714.6963799897314" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="438.03171162495386" y1="1045.3698962205006" x2="426.4265252284676" y2="942.4755971783013" style="opacity: 0.3;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="998.3203611848827" y1="983.5667320911758" x2="973.0821475198323" y2="893.1663740804405" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1114.88325607051" y1="543.9285809110493" x2="1205.7899641349452" y2="598.8957795125051" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1139.5384986392646" y1="601.9037392384937" x2="1024.7933558796615" y2="589.3112723649983" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1025.0600203927008" y1="476.72713027030886" x2="1024.7933558796615" y2="589.3112723649983" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1025.0600203927008" y1="476.72713027030886" x2="1113.5972110004986" y2="228.2583252225233" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1025.0600203927008" y1="476.72713027030886" x2="1034.6610525690355" y2="258.67070543462705" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1113.5972110004986" y1="228.2583252225233" x2="1034.6610525690355" y2="258.67070543462705" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="471.4937131114966" y1="508.8579762190797" x2="300.15779493818" y2="378.2184330020785" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="936.0828415776335" y1="667.345243584723" x2="555.1988586403768" y2="621.274604372304" style="opacity: 0.02;"></line><line class="link" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" x1="1283.951921267011" y1="739.9669519711803" x2="1151.6289332743863" y2="714.6963799897314" style="opacity: 0.02;"></line><g class="node" transform="translate(1136.7445396329897,966.6626093252434)" style="opacity: 1; pointer-events: auto;"><circle r="20" fill="#d97706" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14px">Romero (1996)</text></g><g class="node" transform="translate(1201.9343729067436,462.23428902711476)" style="opacity: 1; pointer-events: auto;"><circle r="21.5" fill="#d97706" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="15.049999999999999px">Pitchess (1974)</text></g><g class="node" transform="translate(438.03171162495386,1045.3698962205006)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#d97706" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">PC 1001.36 Diversion</text></g><g class="node" transform="translate(1151.6289332743863,714.6963799897314)" style="opacity: 0.15; pointer-events: none;"><circle r="24" fill="#e11d48" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Billups Recusal / Side Switch</text></g><g class="node" transform="translate(1096.1592892585393,673.5991618417385)" style="opacity: 0.15; pointer-events: none;"><circle r="24" fill="#7c3aed" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Billups, Darryl</text></g><g class="node" transform="translate(936.0828415776335,667.345243584723)" style="opacity: 0.15; pointer-events: none;"><circle r="24" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="16.799999999999997px">Noonan, John W.</text></g><g class="node" transform="translate(555.1988586403768,621.274604372304)" style="opacity: 0.15; pointer-events: none;"><circle r="20" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14px">Noonan, Christine</text></g><g class="node" transform="translate(715.6949626835531,613.1369764070172)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Fuerch, Stephen</text></g><g class="node" transform="translate(1348.6233475859206,632.4905341399789)" style="opacity: 0.15; pointer-events: none;"><circle r="17" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Alpers, Steven</text></g><g class="node" transform="translate(853.921307914624,132.3305511671638)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Sellers, Wade</text></g><g class="node" transform="translate(1269.2195007582814,361.7764863226319)" style="opacity: 0.15; pointer-events: none;"><circle r="17" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Israels, Valli</text></g><g class="node" transform="translate(1085.8224404028456,1150.9631490671568)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Villalobos, Ruben A.</text></g><g class="node" transform="translate(426.4265252284676,942.4755971783013)" style="opacity: 0.15; pointer-events: none;"><circle r="17" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Pojman, Andrew P.</text></g><g class="node" transform="translate(-0.9640397440816535,520.6495430102916)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#c026d3" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Rafanello, Catherine</text></g><g class="node" transform="translate(-8.043651263358282,628.6132572875697)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">ConvergeOne</text></g><g class="node" transform="translate(1283.951921267011,739.9669519711803)" style="opacity: 0.15; pointer-events: none;"><circle r="17" fill="#7c3aed" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Alameda County DA</text></g><g class="node" transform="translate(1133.3447565042268,369.4829137353318)" style="opacity: 0.15; pointer-events: none;"><circle r="31.200000000000003" fill="#059669" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="31.200000000000003" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="21.84px">Alameda County</text></g><g class="node" transform="translate(984.2549362639247,354.3880738353819)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#059669" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Alameda Dept 711</text></g><g class="node" transform="translate(1349.8707053015628,405.01771865458113)" style="opacity: 0.15; pointer-events: none;"><circle r="17" fill="#059669" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Alameda Dept 11</text></g><g class="node" transform="translate(873.4498709533475,1037.3668492518173)" style="opacity: 0.15; pointer-events: none;"><circle r="26" fill="#059669" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="26" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="18.2px">Stanislaus County</text></g><g class="node" transform="translate(943.1078431542579,1211.0919002868054)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#059669" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Stanislaus Dept 2</text></g><g class="node" transform="translate(695.375709329004,132.45230134403587)" style="opacity: 0.15; pointer-events: none;"><circle r="20.150000000000002" fill="#059669" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20.150000000000002" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14.105px">Sacramento County</text></g><g class="node" transform="translate(1034.6610525690355,258.67070543462705)" style="opacity: 0.15; pointer-events: none;"><circle r="21.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="15.049999999999999px">Acosta</text></g><g class="node" transform="translate(643.2209708712621,-1359.276718077052)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Adler</text></g><g class="node" transform="translate(886.5607758748308,513.4743269463061)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Blackwell</text></g><g class="node" transform="translate(726.3475754821076,-56.351762084604694)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Bratcher</text></g><g class="node" transform="translate(973.0821475198323,893.1663740804405)" style="opacity: 0.15; pointer-events: none;"><circle r="20" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14px">Brown</text></g><g class="node" transform="translate(998.3203611848827,983.5667320911758)" style="opacity: 0.15; pointer-events: none;"><circle r="21.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="15.049999999999999px">Caldwell</text></g><g class="node" transform="translate(471.4937131114966,508.8579762190797)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Culver v. Noonan</text></g><g class="node" transform="translate(300.15779493818,378.2184330020785)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Culver WC</text></g><g class="node" transform="translate(835.4334202855298,855.1000816351769)" style="opacity: 0.15; pointer-events: none;"><circle r="17" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Dillard</text></g><g class="node" transform="translate(811.8493843599083,369.64780993530957)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Hunter</text></g><g class="node" transform="translate(646.5905817525322,2428.7044893661337)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Ikem</text></g><g class="node" transform="translate(-810.1930768449567,-833.5961359418365)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Iyengar</text></g><g class="node" transform="translate(1139.5384986392646,601.9037392384937)" style="opacity: 0.15; pointer-events: none;"><circle r="23" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="23" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.099999999999998px">MejiaMejia</text></g><g class="node" transform="translate(949.4065445483092,774.0957192280143)" style="opacity: 0.15; pointer-events: none;"><circle r="21.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="15.049999999999999px">Mitchell</text></g><g class="node" transform="translate(1025.0600203927008,476.72713027030886)" style="opacity: 0.15; pointer-events: none;"><circle r="23" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="23" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="16.099999999999998px">Navarro</text></g><g class="node" transform="translate(362.5891903684131,634.2814826464548)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Noonan Trust</text></g><g class="node" transform="translate(200.44539253266376,593.5858819519615)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Rafanello</text></g><g class="node" transform="translate(1114.88325607051,543.9285809110493)" style="opacity: 0.15; pointer-events: none;"><circle r="24" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Rodgers</text></g><g class="node" transform="translate(1024.7933558796615,589.3112723649983)" style="opacity: 0.15; pointer-events: none;"><circle r="23" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="23" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="16.099999999999998px">Rodrigues</text></g><g class="node" transform="translate(1113.5972110004986,228.2583252225233)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Rodriguez</text></g><g class="node" transform="translate(1205.7899641349452,598.8957795125051)" style="opacity: 0.15; pointer-events: none;"><circle r="24" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Ruiz Salas</text></g><g class="node" transform="translate(-1186.0518683996168,1330.853384989241)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Schiff</text></g><g class="node" transform="translate(1194.5082330185107,-1429.6907913666557)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Valenzuela</text></g><g class="node" transform="translate(643.2471592341186,856.6320195576703)" style="opacity: 0.15; pointer-events: none;"><circle r="18.5" fill="#2563eb" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Weaver</text></g><g class="node" transform="translate(-1226.0886042999139,-304.03879980925933)" style="opacity: 0.15; pointer-events: none;"><circle r="15.5" fill="#2563eb" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Wolfe</text></g></g></svg></div>
-<div id="cal-view" class=""><div class="cal-inner"><div class="cal-mh">April 2026</div><div class="cal-g"><div class="cal-dh">Sun</div><div class="cal-dh">Mon</div><div class="cal-dh">Tue</div><div class="cal-dh">Wed</div><div class="cal-dh">Thu</div><div class="cal-dh">Fri</div><div class="cal-dh">Sat</div><div class="cal-d empty"></div><div class="cal-d empty"></div><div class="cal-d empty"></div><div class="cal-d"><div class="cal-dn">1</div><div class="cal-ev overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">Culver v. Noonan</div></div><div class="cal-d"><div class="cal-dn">2</div></div><div class="cal-d"><div class="cal-dn">3</div></div><div class="cal-d"><div class="cal-dn">4</div><div class="cal-ev overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))">Hunter</div></div><div class="cal-d"><div class="cal-dn">5</div></div><div class="cal-d"><div class="cal-dn">6</div></div><div class="cal-d"><div class="cal-dn">7</div></div><div class="cal-d"><div class="cal-dn">8</div></div><div class="cal-d"><div class="cal-dn">9</div></div><div class="cal-d"><div class="cal-dn">10</div><div class="cal-ev overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">Ruiz Salas</div></div><div class="cal-d"><div class="cal-dn">11</div></div><div class="cal-d"><div class="cal-dn">12</div></div><div class="cal-d"><div class="cal-dn">13</div></div><div class="cal-d"><div class="cal-dn">14</div><div class="cal-ev overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))">Caldwell</div><div class="cal-ev overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">Rodgers</div></div><div class="cal-d td"><div class="cal-dn">15</div><div class="cal-ev today-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">Mitchell / Billups</div><div class="cal-ev today-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))">Weaver</div></div><div class="cal-d"><div class="cal-dn">16</div></div><div class="cal-d"><div class="cal-dn">17</div></div><div class="cal-d"><div class="cal-dn">18</div></div><div class="cal-d"><div class="cal-dn">19</div></div><div class="cal-d"><div class="cal-dn">20</div></div><div class="cal-d"><div class="cal-dn">21</div><div class="cal-ev upcoming-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))">Rafanello</div></div><div class="cal-d"><div class="cal-dn">22</div></div><div class="cal-d"><div class="cal-dn">23</div></div><div class="cal-d"><div class="cal-dn">24</div></div><div class="cal-d"><div class="cal-dn">25</div></div><div class="cal-d"><div class="cal-dn">26</div></div><div class="cal-d"><div class="cal-dn">27</div><div class="cal-ev upcoming-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">Mitchell</div></div><div class="cal-d"><div class="cal-dn">28</div></div><div class="cal-d"><div class="cal-dn">29</div></div><div class="cal-d"><div class="cal-dn">30</div></div></div><div class="cal-mh">May 2026</div><div class="cal-g"><div class="cal-dh">Sun</div><div class="cal-dh">Mon</div><div class="cal-dh">Tue</div><div class="cal-dh">Wed</div><div class="cal-dh">Thu</div><div class="cal-dh">Fri</div><div class="cal-dh">Sat</div><div class="cal-d empty"></div><div class="cal-d empty"></div><div class="cal-d empty"></div><div class="cal-d empty"></div><div class="cal-d empty"></div><div class="cal-d"><div class="cal-dn">1</div></div><div class="cal-d"><div class="cal-dn">2</div></div><div class="cal-d"><div class="cal-dn">3</div></div><div class="cal-d"><div class="cal-dn">4</div></div><div class="cal-d"><div class="cal-dn">5</div></div><div class="cal-d"><div class="cal-dn">6</div></div><div class="cal-d"><div class="cal-dn">7</div></div><div class="cal-d"><div class="cal-dn">8</div></div><div class="cal-d"><div class="cal-dn">9</div></div><div class="cal-d"><div class="cal-dn">10</div></div><div class="cal-d"><div class="cal-dn">11</div></div><div class="cal-d"><div class="cal-dn">12</div></div><div class="cal-d"><div class="cal-dn">13</div></div><div class="cal-d"><div class="cal-dn">14</div></div><div class="cal-d"><div class="cal-dn">15</div></div><div class="cal-d"><div class="cal-dn">16</div></div><div class="cal-d"><div class="cal-dn">17</div></div><div class="cal-d"><div class="cal-dn">18</div></div><div class="cal-d"><div class="cal-dn">19</div></div><div class="cal-d"><div class="cal-dn">20</div></div><div class="cal-d"><div class="cal-dn">21</div></div><div class="cal-d"><div class="cal-dn">22</div><div class="cal-ev upcoming-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">Navarro</div><div class="cal-ev upcoming-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='rodrigues'))">Rodrigues</div></div><div class="cal-d"><div class="cal-dn">23</div></div><div class="cal-d"><div class="cal-dn">24</div></div><div class="cal-d"><div class="cal-dn">25</div></div><div class="cal-d"><div class="cal-dn">26</div><div class="cal-ev upcoming-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">MejiaMejia</div><div class="cal-ev upcoming-ev" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">Rodgers</div></div><div class="cal-d"><div class="cal-dn">27</div></div><div class="cal-d"><div class="cal-dn">28</div></div><div class="cal-d"><div class="cal-dn">29</div></div><div class="cal-d"><div class="cal-dn">30</div></div><div class="cal-d"><div class="cal-dn">31</div></div></div><div class="tl-sec"><div class="tl-sec-t" style="color:#ef4444">Full Timeline</div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">
-      <div class="tl-dt overdue">Mar 28</div>
-      <div class="tl-c"><div class="tl-l">Rodgers</div><div class="tl-d">Dismissal motion was due</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))">
-      <div class="tl-dt overdue">Mar 29</div>
-      <div class="tl-c"><div class="tl-l">Blackwell</div><div class="tl-d">Hobbs motion filing was due</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">
-      <div class="tl-dt overdue">Apr 1</div>
-      <div class="tl-c"><div class="tl-l">Culver v. Noonan</div><div class="tl-d">Reply brief due</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))">
-      <div class="tl-dt overdue">Apr 4</div>
-      <div class="tl-c"><div class="tl-l">Hunter</div><div class="tl-d">Legal memo was due</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">
-      <div class="tl-dt overdue">Apr 10</div>
-      <div class="tl-c"><div class="tl-l">Ruiz Salas</div><div class="tl-d">Hearing (outcome unknown)</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))">
-      <div class="tl-dt overdue">Apr 14</div>
-      <div class="tl-c"><div class="tl-l">Caldwell</div><div class="tl-d">Romero hearing Dept 2 (completed)</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">
-      <div class="tl-dt overdue">Apr 14</div>
-      <div class="tl-c"><div class="tl-l">Rodgers</div><div class="tl-d">In camera Pitchess (completed)</div></div>
-      <div class="tl-b" style="background:rgba(239,68,68,.15);color:#fca5a5">OVERDUE</div></div><div class="tl-item today-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">
-      <div class="tl-dt today-tl">Apr 15</div>
-      <div class="tl-c"><div class="tl-l">Mitchell / Billups</div><div class="tl-d">State bar complaint due</div></div>
-      <div class="tl-b" style="background:rgba(245,158,11,.15);color:#fcd34d">TODAY</div></div><div class="tl-item today-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))">
-      <div class="tl-dt today-tl">Apr 15</div>
-      <div class="tl-c"><div class="tl-l">Weaver</div><div class="tl-d">PC 1001.36 motion finalized — file + serve</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">TODAY</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))">
-      <div class="tl-dt upcoming-tl">Apr 21</div>
-      <div class="tl-c"><div class="tl-l">Rafanello</div><div class="tl-d">Follow up on signed comp plans</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">
-      <div class="tl-dt upcoming-tl">Apr 27</div>
-      <div class="tl-c"><div class="tl-l">Mitchell</div><div class="tl-d">Indicated sentence hearing</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">
-      <div class="tl-dt upcoming-tl">May 22</div>
-      <div class="tl-c"><div class="tl-l">Navarro</div><div class="tl-d">Hearing 9am Dept 711</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='rodrigues'))">
-      <div class="tl-dt upcoming-tl">May 22</div>
-      <div class="tl-c"><div class="tl-l">Rodrigues</div><div class="tl-d">Hearing 9am Dept 711</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">
-      <div class="tl-dt upcoming-tl">May 26</div>
-      <div class="tl-c"><div class="tl-l">MejiaMejia</div><div class="tl-d">Jury trial</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">
-      <div class="tl-dt upcoming-tl">May 26</div>
-      <div class="tl-c"><div class="tl-l">Rodgers</div><div class="tl-d">Pitchess ruling</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">
-      <div class="tl-dt upcoming-tl">Jun 9</div>
-      <div class="tl-c"><div class="tl-l">Navarro/Rodriguez/Acosta</div><div class="tl-d">Civil claim deadline (jurisdictional)</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div><div class="tl-item upcoming-tl" onclick="showDetail(nodes.find(n=&gt;n.id==='brown'))">
-      <div class="tl-dt upcoming-tl">Jul 14</div>
-      <div class="tl-c"><div class="tl-l">Brown</div><div class="tl-d">Hearing</div></div>
-      <div class="tl-b" style="background:rgba(59,130,246,.15);color:#93c5fd">UPCOMING</div></div></div></div></div>
-<div id="cards-view" class=""><div class="mob-inner"><div class="mob-sec"><div class="mob-sec-t" style="color:#ef4444"><span class="mob-dot" style="background:#ef4444"></span>Urgent (15)</div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))"><div class="mob-c-title">Mitchell</div><div class="mob-c-sum">Bar complaint DUE TODAY (4/15)</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))"><div class="mob-c-title">Hunter</div><div class="mob-c-sum">Legal memo 11 DAYS OVERDUE (was due 4/4)</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))"><div class="mob-c-title">Blackwell</div><div class="mob-c-sum">Hobbs motion filing 16+ DAYS OVERDUE</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))"><div class="mob-c-title">Rodgers</div><div class="mob-c-sum">Dismissal motion 18 DAYS OVERDUE. Pitchess ruling 5/26.</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))"><div class="mob-c-title">Ruiz Salas</div><div class="mob-c-sum">Hearing outcome UNKNOWN (4/10)</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))"><div class="mob-c-title">Caldwell</div><div class="mob-c-sum">Hearing 4/14 completed — outcome pending</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))"><div class="mob-c-title">Culver v. Noonan</div><div class="mob-c-sum">Reply brief due ~4/1 (14 days overdue)</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))"><div class="mob-c-title">MejiaMejia</div><div class="mob-c-sum">Jury trial 5/26</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))"><div class="mob-c-title">Navarro</div><div class="mob-c-sum">Hearing 5/22 Dept 711</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='rodrigues'))"><div class="mob-c-title">Rodrigues</div><div class="mob-c-sum">Hearing 5/22 Dept 711</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='recusal-side-switch'))"><div class="mob-c-title">Billups Recusal / Side Switch</div><div class="mob-c-sum">Bar complaint DUE TODAY (4/15)</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='billups-darryl'))"><div class="mob-c-title">Billups, Darryl</div><div class="mob-c-sum">Bar complaint DUE TODAY (4/15)</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='stan-dept-2'))"><div class="mob-c-title">Stanislaus Dept 2</div><div class="mob-c-sum">Caldwell hearing 4/14 — outcome pending</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))"><div class="mob-c-title">Weaver</div><div class="mob-c-sum">PC 1001.36 motion FINALIZED — needs filing + service</div></div><div class="mob-c ho" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))"><div class="mob-c-title">Rafanello</div><div class="mob-c-sum">Follow up on Cathy's signed comp plans by 4/21</div></div></div><div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:#60a5fa"></span>Matters (25)</div><div class="mob-c" onclick="cardExpandOrDetail(this,'acosta')"><div class="mob-c-title">Acosta <span class="mob-c-badge" style="background:rgba(148,163,184,.15);color:#94a3b8">Closed</span></div><div class="mob-c-sum">WITHDRAWN Feb 6, 2026. Pitchess WON as to Stilwell. File transmitted to new attorney. Civil claim deadline June 9, 2026.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-24-012393</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Post-Conviction</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Closed</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='acosta'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'adler')"><div class="mob-c-title">Adler <span class="mob-c-badge" style="background:rgba(148,163,184,.15);color:#94a3b8">Closed</span></div><div class="mob-c-sum">RESOLVED Nov 17, 2025. Misdemeanor, no jail time. Mental health / police misconduct.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Sentencing</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Closed</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='adler'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'blackwell')"><div class="mob-c-title">Blackwell <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Hobbs motion completed but filing OVERDUE (16+ days). Discovery from Axon/Evidence.com.</div><div class="mob-c-hot overdue">Hobbs motion filing 16+ DAYS OVERDUE</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">25-CR-007675</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='blackwell'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'bratcher')"><div class="mob-c-title">Bratcher <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">PI Wade Sellers investigation. Status needs review.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">TP25002454</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Discovery</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='bratcher'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'brown')"><div class="mob-c-title">Brown <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">DUI with GBI. Tox report MISSING. 995 motion + Romero motion pending. Hearing July 14, 2026.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-25-003661</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">7/14/26 — hearing</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='brown'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'caldwell')"><div class="mob-c-title">Caldwell <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Romero motion heard 4/14/26. Binder delivered. Father appeared. No DA opposition. Outcome pending.</div><div class="mob-c-hot overdue">Hearing 4/14 completed — outcome pending</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-23-010065</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='caldwell'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'culver-labor')"><div class="mob-c-title">Culver v. Noonan <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Labor Board appeal. Opposition to Motion to Dismiss filed 3/11. Reply brief due ~4/1 (14 days overdue).</div><div class="mob-c-hot overdue">Reply brief due ~4/1 (14 days overdue)</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">26CV169360</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'culver-wc')"><div class="mob-c-title">Culver WC <span class="mob-c-badge" style="background:rgba(245,158,11,.15);color:#fcd34d">Pending</span></div><div class="mob-c-sum">Workers comp claim. May be consolidated with Labor Board appeal.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">WC-CM-870160</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Discovery</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Pending</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='culver-wc'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'dillard')"><div class="mob-c-title">Dillard <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">PC 422 criminal threats. 70-year-old veteran, in custody, $650K bail. Military diversion (PC 1001.8). Mar 9 hearing outcome pending.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-25-010297</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='dillard'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'hunter')"><div class="mob-c-title">Hunter <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">PC 266i(b)(2) pimping minor, PC 236.1(c)(1) human trafficking minor. Case analysis OVERDUE (11+ days). Already serving LIFE.</div><div class="mob-c-hot overdue">Legal memo 11 DAYS OVERDUE (was due 4/4)</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-24-XXXXXX [pending]</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Discovery</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='hunter'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'ikem')"><div class="mob-c-title">Ikem <span class="mob-c-badge" style="background:rgba(245,158,11,.15);color:#fcd34d">Pending</span></div><div class="mob-c-sum">Traffic. Application to Vacate Civil Assessment filed Dec 4, 2025. Outcome pending.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">ECH0002496607</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Post-Conviction</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Pending</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='ikem'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'iyengar')"><div class="mob-c-title">Iyengar <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">DUI. 1538.5 suppression motion strategy approved May 2025. Current status needs review.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='iyengar'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'mejiamejia')"><div class="mob-c-title">MejiaMejia <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Recusal DENIED. Writ to First DCA. Jury trial May 26, 2026.</div><div class="mob-c-hot upcoming">Jury trial 5/26</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">22-CR-003198</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">5/26/26 — jury trial</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Trial Prep</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'mitchell')"><div class="mob-c-title">Mitchell <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Multiple DUIs, Watson advisement. In custody 4+ years. Bar complaint against Billups DUE TODAY (4/15). Motion for Indicated Sentence hearing 4/27.</div><div class="mob-c-hot today">Bar complaint DUE TODAY (4/15)</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-22-002886</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">4/27/26 — indicated sentence</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='mitchell'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'navarro')"><div class="mob-c-title">Navarro <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Recusal/dismissal. Reply to AG writ in progress. Hearing May 22, Dept 711. Civil claim deadline June 9.</div><div class="mob-c-hot upcoming">Hearing 5/22 Dept 711</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-24-001345</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">5/22/26 — Dept 711</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='navarro'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'noonan-trust')"><div class="mob-c-title">Noonan Trust <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Civil trust dispute. Mother with dementia, allegedly coerced amendments. New attorney engaged.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Intake</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='noonan-trust'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'rafanello')"><div class="mob-c-title">Rafanello <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Commission dispute ~$50K. Waiting on signed comp plans from Cathy. Follow up by 4/21.</div><div class="mob-c-hot upcoming">Follow up on Cathy's signed comp plans by 4/21</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Intake</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='rafanello'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'rodgers')"><div class="mob-c-title">Rodgers <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Pitchess in camera 4/14. Officer Solis fired for dishonesty. Ruling 5/26. Dismissal motion 18 days overdue.</div><div class="mob-c-hot overdue">Dismissal motion 18 DAYS OVERDUE. Pitchess ruling 5/26.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-2024-001537</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">5/26/26 — Pitchess ruling</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='rodgers'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'rodrigues')"><div class="mob-c-title">Rodrigues <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Billups conflict — "first defendant Billups left." Hearing May 22, Dept 711. Civil claim deadline June 9.</div><div class="mob-c-hot upcoming">Hearing 5/22 Dept 711</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-21-004636</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">5/22/26 — Dept 711</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='rodrigues'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'rodriguez')"><div class="mob-c-title">Rodriguez <span class="mob-c-badge" style="background:rgba(148,163,184,.15);color:#94a3b8">Closed</span></div><div class="mob-c-sum">DISMISSED Dec 5, 2025. Sex sting case. Civil claim deadline June 9, 2026.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-24-010846</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Post-Conviction</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Closed</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='rodriguez'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'ruiz-salas')"><div class="mob-c-title">Ruiz Salas <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">4 motions filed 2/18. Hearing 4/10 — outcome UNKNOWN. Brady letter missing.</div><div class="mob-c-hot overdue">Hearing outcome UNKNOWN (4/10)</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">CR-23-009962</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'schiff')"><div class="mob-c-title">Schiff <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Misdemeanor. Minimal data available.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">24M-07568</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Intake</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='schiff'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'valenzuela')"><div class="mob-c-title">Valenzuela <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Sexual offense. PX held Nov 2025. Offer: 240 with EHMMM, 2yr probation, lifetime registration.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Preliminary Hearing</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='valenzuela'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'weaver')"><div class="mob-c-title">Weaver <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">PC 215(a) carjacking + firearms. Dr. Pojman: FSIQ 72, Mild Intellectual Disability. 1001.36 motion FINALIZED 4/9, needs filing.</div><div class="mob-c-hot upcoming">PC 1001.36 motion FINALIZED — needs filing + service</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">25-CR-005354</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='weaver'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'wolfe')"><div class="mob-c-title">Wolfe <span class="mob-c-badge" style="background:rgba(96,165,250,.15);color:#93c5fd">Open</span></div><div class="mob-c-sum">Continuance filed Dec 2025. Requested continuance to Jan 29, 2026. Status needs review.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">C2214071</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">Pre-trial Motions</span></div><div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">Open</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='wolfe'))">View Full Details</div></div></div></div><div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:#34d399"></span>Courts (6)</div><div class="mob-c" onclick="cardExpandOrDetail(this,'alameda-county')"><div class="mob-c-title">Alameda County</div><div class="mob-c-sum">Primary county for most Noonan criminal matters.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Court · County Level</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='alameda-county'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'alameda-dept-11')"><div class="mob-c-title">Alameda Dept 11</div><div class="mob-c-sum">Ruiz Salas motions. Hearing was 4/10.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Court · Department Level</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='alameda-dept-11'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'alameda-dept-711')"><div class="mob-c-title">Alameda Dept 711</div><div class="mob-c-sum">Recusal/dismissal motions hearing 5/22.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Court · Department Level</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='alameda-dept-711'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'sacramento-county')"><div class="mob-c-title">Sacramento County</div><div class="mob-c-sum">Hunter case. Case number pending confirmation.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Court · County Level</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='sacramento-county'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'stan-county')"><div class="mob-c-title">Stanislaus County</div><div class="mob-c-sum">Modesto, CA. 4 criminal matters.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Court · County Level</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='stan-county'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'stan-dept-2')"><div class="mob-c-title">Stanislaus Dept 2</div><div class="mob-c-sum">Judge Villalobos. Caldwell Romero motion heard 4/14.</div><div class="mob-c-hot overdue">Caldwell hearing 4/14 — outcome pending</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Court · Department Level</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='stan-dept-2'))">View Full Details</div></div></div></div><div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:#c084fc"></span>Contacts (12)</div><div class="mob-c" onclick="cardExpandOrDetail(this,'alameda-da')"><div class="mob-c-title">Alameda County DA</div><div class="mob-c-sum">Prosecuting office on most Alameda County matters. Billups joined as Deputy DA Sept 15, 2025.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Company · Opposing Counsel</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='alameda-da'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'alpers-steven')"><div class="mob-c-title">Alpers, Steven</div><div class="mob-c-sum">Handling writ of prohibition for MejiaMejia recusal. Appeared for Ruiz Salas 4/10.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Appellate Counsel</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='alpers-steven'))">View Full Details</div></div></div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'billups-darryl')"><div class="mob-c-title">Billups, Darryl</div><div class="mob-c-sum">Former defense counsel who joined Alameda DA Sept 15, 2025. Central figure in recusal litigation. Screening gap: no ethical wall until Dec 12, 2025.</div><div class="mob-c-hot today">Bar complaint DUE TODAY (4/15)</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Opposing Counsel (former defense)</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='billups-darryl'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'convergeone')"><div class="mob-c-title">ConvergeOne</div><div class="mob-c-sum">Respondent in Rafanello commission dispute. Applied "blended margin" methodology not in signed comp plan.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Company</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='convergeone'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'fuerch-stephen')"><div class="mob-c-title">Fuerch, Stephen</div><div class="mob-c-sum">Outside counsel / reviewer. Handles Culver appeal. Reviews filing binders.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Outside Counsel</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='fuerch-stephen'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'israels-valli')"><div class="mob-c-title">Israels, Valli</div><div class="mob-c-sum">Judge, Alameda County. Presiding over Rodgers Pitchess in camera review.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Judge</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='israels-valli'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'noonan-christine')"><div class="mob-c-title">Noonan, Christine</div><div class="mob-c-sum">Office manager / paralegal. Named defendant in Culver v. Noonan. Primary case assignment coordinator.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Office Manager</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='noonan-christine'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'noonan-john')"><div class="mob-c-title">Noonan, John W.</div><div class="mob-c-sum">Attorney of record on all Noonan matters. Practice owner.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Attorney of Record</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='noonan-john'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'pojman-andrew')"><div class="mob-c-title">Pojman, Andrew P.</div><div class="mob-c-sum">Evaluating expert for Weaver. FSIQ 72, Mild Intellectual Disability. PC 1001.36 diversion eval.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Expert</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='pojman-andrew'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'rafanello-catherine')"><div class="mob-c-title">Rafanello, Catherine</div><div class="mob-c-sum">Client in Rafanello v. ConvergeOne. Christine's sister. Commission dispute ~$50K.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Client</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='rafanello-catherine'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'sellers-wade')"><div class="mob-c-title">Sellers, Wade</div><div class="mob-c-sum">PI working across multiple matters (Acosta, Bratcher, Hunter).</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Private Investigator</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='sellers-wade'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'villalobos')"><div class="mob-c-title">Villalobos, Ruben A.</div><div class="mob-c-sum">Judge, Stanislaus Dept 2. Presiding over Caldwell Romero motion.</div><div class="mob-c-det"><div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">Contact · Person · Judge</span></div><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='villalobos'))">View Full Details</div></div></div></div><div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:#fbbf24"></span>Authoritys (3)</div><div class="mob-c" onclick="cardExpandOrDetail(this,'pc-1001-36')"><div class="mob-c-title">PC 1001.36 Diversion</div><div class="mob-c-sum">Pre-adjudication diversion for qualifying mental disorders. Post-2022 presumption in defendant's favor (Doron). Successful completion = dismissal.</div><div class="mob-c-det"><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='pc-1001-36'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'pitchess-1974')"><div class="mob-c-title">Pitchess (1974)</div><div class="mob-c-sum">Defense access to officer personnel records. "Plausible factual scenario" standard (Warrick). In camera review procedure.</div><div class="mob-c-det"><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='pitchess-1974'))">View Full Details</div></div></div><div class="mob-c" onclick="cardExpandOrDetail(this,'romero-1996')"><div class="mob-c-title">Romero (1996)</div><div class="mob-c-sum">Trial court discretion to strike prior under PC 1385. Williams three-factor test: (1) present offense, (2) prior offenses, (3) defendant's background/character/prospects.</div><div class="mob-c-det"><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='romero-1996'))">View Full Details</div></div></div></div><div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:#fb7185"></span>Issues (1)</div><div class="mob-c ho" onclick="cardExpandOrDetail(this,'recusal-side-switch')"><div class="mob-c-title">Billups Recusal / Side Switch</div><div class="mob-c-sum">Darryl Billups counsel until Aug 2025, then joined Alameda DA Sept 15, 2025. No ethical wall until Dec 12, 2025. Creates recusal/disqualification issues on MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell.</div><div class="mob-c-hot today">Bar complaint DUE TODAY (4/15)</div><div class="mob-c-det"><div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=&gt;n.id==='recusal-side-switch'))">View Full Details</div></div></div></div></div></div>
-<div id="pipeline-view" class=""><div class="pipe-inner"><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Intake</span><span class="pipe-lane-count">3</span></div><div class="pipe-lane-cards"><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='noonan-trust'))"><div class="pipe-card-name">Noonan Trust</div><span class="pipe-card-badge open">Open</span></div><div class="pipe-card urgent-upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))"><div class="pipe-card-name">Rafanello <span style="color:#ef4444;font-size:11px">●</span></div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot upcoming">Follow up on Cathy's signed comp plans by 4/21</div></div><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='schiff'))"><div class="pipe-card-name">Schiff</div><div class="pipe-card-case">24M-07568</div><span class="pipe-card-badge open">Open</span></div></div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Arraignment</span><span class="pipe-lane-count">0</span></div><div class="pipe-empty">No matters</div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Discovery</span><span class="pipe-lane-count">3</span></div><div class="pipe-lane-cards"><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='bratcher'))"><div class="pipe-card-name">Bratcher</div><div class="pipe-card-case">TP25002454</div><span class="pipe-card-badge open">Open</span></div><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='culver-wc'))"><div class="pipe-card-name">Culver WC</div><div class="pipe-card-case">WC-CM-870160</div><span class="pipe-card-badge pending">Pending</span></div><div class="pipe-card urgent-overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))"><div class="pipe-card-name">Hunter <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">CR-24-XXXXXX [pending]</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot overdue">Legal memo 11 DAYS OVERDUE (was due 4/4)</div></div></div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Preliminary Hearing</span><span class="pipe-lane-count">1</span></div><div class="pipe-lane-cards"><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='valenzuela'))"><div class="pipe-card-name">Valenzuela</div><span class="pipe-card-badge open">Open</span></div></div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Pre-trial Motions</span><span class="pipe-lane-count">13</span></div><div class="pipe-lane-cards"><div class="pipe-card urgent-overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))"><div class="pipe-card-name">Blackwell <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">25-CR-007675</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot overdue">Hobbs motion filing 16+ DAYS OVERDUE</div></div><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='brown'))"><div class="pipe-card-name">Brown</div><div class="pipe-card-case">CR-25-003661</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-date">7/14/26 — hearing</div></div><div class="pipe-card urgent-overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))"><div class="pipe-card-name">Caldwell <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">CR-23-010065</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot overdue">Hearing 4/14 completed — outcome pending</div></div><div class="pipe-card urgent-overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))"><div class="pipe-card-name">Culver v. Noonan <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">26CV169360</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot overdue">Reply brief due ~4/1 (14 days overdue)</div></div><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='dillard'))"><div class="pipe-card-name">Dillard</div><div class="pipe-card-case">CR-25-010297</div><span class="pipe-card-badge open">Open</span></div><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='iyengar'))"><div class="pipe-card-name">Iyengar</div><span class="pipe-card-badge open">Open</span></div><div class="pipe-card urgent-today" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))"><div class="pipe-card-name">Mitchell <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">CR-22-002886</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-date">4/27/26 — indicated sentence</div><div class="pipe-card-hot today">Bar complaint DUE TODAY (4/15)</div></div><div class="pipe-card urgent-upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))"><div class="pipe-card-name">Navarro</div><div class="pipe-card-case">CR-24-001345</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-date">5/22/26 — Dept 711</div><div class="pipe-card-hot upcoming">Hearing 5/22 Dept 711</div></div><div class="pipe-card urgent-overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))"><div class="pipe-card-name">Rodgers <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">CR-2024-001537</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-date">5/26/26 — Pitchess ruling</div><div class="pipe-card-hot overdue">Dismissal motion 18 DAYS OVERDUE. Pitchess ruling 5/26.</div></div><div class="pipe-card urgent-upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='rodrigues'))"><div class="pipe-card-name">Rodrigues</div><div class="pipe-card-case">CR-21-004636</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-date">5/22/26 — Dept 711</div><div class="pipe-card-hot upcoming">Hearing 5/22 Dept 711</div></div><div class="pipe-card urgent-overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))"><div class="pipe-card-name">Ruiz Salas <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">CR-23-009962</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot overdue">Hearing outcome UNKNOWN (4/10)</div></div><div class="pipe-card urgent-upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))"><div class="pipe-card-name">Weaver <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">25-CR-005354</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-hot upcoming">PC 1001.36 motion FINALIZED — needs filing + service</div></div><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='wolfe'))"><div class="pipe-card-name">Wolfe</div><div class="pipe-card-case">C2214071</div><span class="pipe-card-badge open">Open</span></div></div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Trial Prep</span><span class="pipe-lane-count">1</span></div><div class="pipe-lane-cards"><div class="pipe-card urgent-upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))"><div class="pipe-card-name">MejiaMejia <span style="color:#ef4444;font-size:11px">●</span></div><div class="pipe-card-case">22-CR-003198</div><span class="pipe-card-badge open">Open</span><div class="pipe-card-date">5/26/26 — jury trial</div><div class="pipe-card-hot upcoming">Jury trial 5/26</div></div></div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Trial</span><span class="pipe-lane-count">0</span></div><div class="pipe-empty">No matters</div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Sentencing</span><span class="pipe-lane-count">0</span></div><div class="pipe-empty">No matters</div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Post-Conviction</span><span class="pipe-lane-count">1</span></div><div class="pipe-lane-cards"><div class="pipe-card " onclick="showDetail(nodes.find(n=&gt;n.id==='ikem'))"><div class="pipe-card-name">Ikem</div><div class="pipe-card-case">ECH0002496607</div><span class="pipe-card-badge pending">Pending</span></div></div></div><div class="pipe-lane"><div class="pipe-lane-hdr"><span class="pipe-lane-title">Closed/Resolved</span><span class="pipe-lane-count">3</span></div><div class="pipe-lane-cards"><div class="pipe-card  closed-card" onclick="showDetail(nodes.find(n=&gt;n.id==='acosta'))"><div class="pipe-card-name">Acosta</div><div class="pipe-card-case">CR-24-012393</div><span class="pipe-card-badge closed">Closed</span></div><div class="pipe-card  closed-card" onclick="showDetail(nodes.find(n=&gt;n.id==='adler'))"><div class="pipe-card-name">Adler</div><span class="pipe-card-badge closed">Closed</span></div><div class="pipe-card  closed-card" onclick="showDetail(nodes.find(n=&gt;n.id==='rodriguez'))"><div class="pipe-card-name">Rodriguez</div><div class="pipe-card-case">CR-24-010846</div><span class="pipe-card-badge closed">Closed</span></div></div></div></div></div>
-<div id="admin-view" class="active"><div class="admin-inner"><div class="admin-hdr">
-    <span class="admin-title">Admin — Matters (25)</span>
-    <span id="admin-change-badge" class="admin-changes">1 change</span>
-    <button id="admin-save-btn" class="admin-save-btn" onclick="adminSave()" disabled="">Saving...</button>
-  </div><div class="admin-filters">
-    <select class="admin-filter" onchange="adminFilters.status=this.value;buildAdmin()">
-      <option value="all" selected="">All Status</option>
-      <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-    </select>
-    <select class="admin-filter" onchange="adminFilters.stage=this.value;buildAdmin()">
-      <option value="all" selected="">All Stages</option>
-      <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-    </select>
-    <select class="admin-filter" onchange="adminFilters.urgency=this.value;buildAdmin()">
-      <option value="all" selected="">All Urgency</option>
-      <option value="overdue">Overdue</option>
-      <option value="today">Today</option>
-      <option value="upcoming">Upcoming</option>
-      <option value="none">None</option>
-    </select>
-  </div><div class="admin-wrap"><table class="admin-tbl">
-    <thead><tr>
-      <th class=" sorted" onclick="adminSortBy('label')">Matter <span class="sort-arrow">▲</span></th>
-      <th class="" onclick="adminSortBy('case')">Case # <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('status')">Status <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('stage')">Stage <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('urgency')">Urg <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('hearing')">Next Hearing <span class="sort-arrow">⇅</span></th>
-      <th>Notes</th>
-    </tr></thead><tbody><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='acosta'))">Acosta</span></td>
-      <td><span class="admin-case">CR-24-012393</span></td>
-      <td><select class="admin-sel" data-id="acosta" data-field="matter_status" onchange="setAdminEdit('acosta','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed" selected="">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="acosta" data-field="matter_stage" onchange="setAdminEdit('acosta','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction" selected="">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('acosta')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('acosta','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='adler'))">Adler</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="adler" data-field="matter_status" onchange="setAdminEdit('adler','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed" selected="">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="adler" data-field="matter_stage" onchange="setAdminEdit('adler','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing" selected="">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('adler')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('adler','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))">Blackwell</span></td>
-      <td><span class="admin-case">25-CR-007675</span></td>
-      <td><select class="admin-sel" data-id="blackwell" data-field="matter_status" onchange="setAdminEdit('blackwell','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="blackwell" data-field="matter_stage" onchange="setAdminEdit('blackwell','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('blackwell')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('blackwell','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='bratcher'))">Bratcher</span></td>
-      <td><span class="admin-case">TP25002454</span></td>
-      <td><select class="admin-sel" data-id="bratcher" data-field="matter_status" onchange="setAdminEdit('bratcher','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="bratcher" data-field="matter_stage" onchange="setAdminEdit('bratcher','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery" selected="">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('bratcher')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('bratcher','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='brown'))">Brown</span></td>
-      <td><span class="admin-case">CR-25-003661</span></td>
-      <td><select class="admin-sel" data-id="brown" data-field="matter_status" onchange="setAdminEdit('brown','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="brown" data-field="matter_stage" onchange="setAdminEdit('brown','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('brown')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">7/14/26 — hearing</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('brown','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))">Caldwell</span></td>
-      <td><span class="admin-case">CR-23-010065</span></td>
-      <td><select class="admin-sel" data-id="caldwell" data-field="matter_status" onchange="setAdminEdit('caldwell','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="caldwell" data-field="matter_stage" onchange="setAdminEdit('caldwell','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('caldwell')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('caldwell','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">Culver v. Noonan</span></td>
-      <td><span class="admin-case">26CV169360</span></td>
-      <td><select class="admin-sel" data-id="culver-labor" data-field="matter_status" onchange="setAdminEdit('culver-labor','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="culver-labor" data-field="matter_stage" onchange="setAdminEdit('culver-labor','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('culver-labor')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('culver-labor','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-wc'))">Culver WC</span></td>
-      <td><span class="admin-case">WC-CM-870160</span></td>
-      <td><select class="admin-sel changed" data-id="culver-wc" data-field="matter_status" onchange="setAdminEdit('culver-wc','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending" selected="">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="culver-wc" data-field="matter_stage" onchange="setAdminEdit('culver-wc','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery" selected="">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('culver-wc')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note changed" value="" placeholder="Quick note..." onchange="setAdminEdit('culver-wc','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='dillard'))">Dillard</span></td>
-      <td><span class="admin-case">CR-25-010297</span></td>
-      <td><select class="admin-sel" data-id="dillard" data-field="matter_status" onchange="setAdminEdit('dillard','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="dillard" data-field="matter_stage" onchange="setAdminEdit('dillard','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('dillard')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('dillard','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))">Hunter</span></td>
-      <td><span class="admin-case">CR-24-XXXXXX [pending]</span></td>
-      <td><select class="admin-sel" data-id="hunter" data-field="matter_status" onchange="setAdminEdit('hunter','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="hunter" data-field="matter_stage" onchange="setAdminEdit('hunter','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery" selected="">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('hunter')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('hunter','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='ikem'))">Ikem</span></td>
-      <td><span class="admin-case">ECH0002496607</span></td>
-      <td><select class="admin-sel" data-id="ikem" data-field="matter_status" onchange="setAdminEdit('ikem','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending" selected="">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="ikem" data-field="matter_stage" onchange="setAdminEdit('ikem','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction" selected="">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('ikem')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('ikem','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='iyengar'))">Iyengar</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="iyengar" data-field="matter_status" onchange="setAdminEdit('iyengar','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="iyengar" data-field="matter_stage" onchange="setAdminEdit('iyengar','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('iyengar')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('iyengar','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">MejiaMejia</span></td>
-      <td><span class="admin-case">22-CR-003198</span></td>
-      <td><select class="admin-sel" data-id="mejiamejia" data-field="matter_status" onchange="setAdminEdit('mejiamejia','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="mejiamejia" data-field="matter_stage" onchange="setAdminEdit('mejiamejia','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep" selected="">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('mejiamejia')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">5/26/26 — jury trial</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('mejiamejia','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-today">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">Mitchell</span></td>
-      <td><span class="admin-case">CR-22-002886</span></td>
-      <td><select class="admin-sel" data-id="mitchell" data-field="matter_status" onchange="setAdminEdit('mitchell','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="mitchell" data-field="matter_stage" onchange="setAdminEdit('mitchell','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-today" onclick="cycleUrgency('mitchell')" title="Click to cycle urgency"><span style="color:#f59e0b">●</span></div></td>
-      <td><span class="admin-hearing">4/27/26 — indicated sentence</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('mitchell','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">Navarro</span></td>
-      <td><span class="admin-case">CR-24-001345</span></td>
-      <td><select class="admin-sel" data-id="navarro" data-field="matter_status" onchange="setAdminEdit('navarro','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="navarro" data-field="matter_stage" onchange="setAdminEdit('navarro','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('navarro')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">5/22/26 — Dept 711</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('navarro','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='noonan-trust'))">Noonan Trust</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="noonan-trust" data-field="matter_status" onchange="setAdminEdit('noonan-trust','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="noonan-trust" data-field="matter_stage" onchange="setAdminEdit('noonan-trust','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake" selected="">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('noonan-trust')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('noonan-trust','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))">Rafanello</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="rafanello" data-field="matter_status" onchange="setAdminEdit('rafanello','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rafanello" data-field="matter_stage" onchange="setAdminEdit('rafanello','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake" selected="">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('rafanello')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rafanello','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">Rodgers</span></td>
-      <td><span class="admin-case">CR-2024-001537</span></td>
-      <td><select class="admin-sel" data-id="rodgers" data-field="matter_status" onchange="setAdminEdit('rodgers','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rodgers" data-field="matter_stage" onchange="setAdminEdit('rodgers','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('rodgers')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">5/26/26 — Pitchess ruling</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rodgers','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rodrigues'))">Rodrigues</span></td>
-      <td><span class="admin-case">CR-21-004636</span></td>
-      <td><select class="admin-sel" data-id="rodrigues" data-field="matter_status" onchange="setAdminEdit('rodrigues','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rodrigues" data-field="matter_stage" onchange="setAdminEdit('rodrigues','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('rodrigues')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">5/22/26 — Dept 711</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rodrigues','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rodriguez'))">Rodriguez</span></td>
-      <td><span class="admin-case">CR-24-010846</span></td>
-      <td><select class="admin-sel" data-id="rodriguez" data-field="matter_status" onchange="setAdminEdit('rodriguez','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed" selected="">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rodriguez" data-field="matter_stage" onchange="setAdminEdit('rodriguez','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction" selected="">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('rodriguez')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rodriguez','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">Ruiz Salas</span></td>
-      <td><span class="admin-case">CR-23-009962</span></td>
-      <td><select class="admin-sel" data-id="ruiz-salas" data-field="matter_status" onchange="setAdminEdit('ruiz-salas','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="ruiz-salas" data-field="matter_stage" onchange="setAdminEdit('ruiz-salas','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('ruiz-salas')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('ruiz-salas','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='schiff'))">Schiff</span></td>
-      <td><span class="admin-case">24M-07568</span></td>
-      <td><select class="admin-sel" data-id="schiff" data-field="matter_status" onchange="setAdminEdit('schiff','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="schiff" data-field="matter_stage" onchange="setAdminEdit('schiff','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake" selected="">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('schiff')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('schiff','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='valenzuela'))">Valenzuela</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="valenzuela" data-field="matter_status" onchange="setAdminEdit('valenzuela','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="valenzuela" data-field="matter_stage" onchange="setAdminEdit('valenzuela','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing" selected="">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('valenzuela')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('valenzuela','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))">Weaver</span></td>
-      <td><span class="admin-case">25-CR-005354</span></td>
-      <td><select class="admin-sel" data-id="weaver" data-field="matter_status" onchange="setAdminEdit('weaver','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="weaver" data-field="matter_stage" onchange="setAdminEdit('weaver','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('weaver')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('weaver','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='wolfe'))">Wolfe</span></td>
-      <td><span class="admin-case">C2214071</span></td>
-      <td><select class="admin-sel" data-id="wolfe" data-field="matter_status" onchange="setAdminEdit('wolfe','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="wolfe" data-field="matter_stage" onchange="setAdminEdit('wolfe','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('wolfe')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('wolfe','note',this.value);this.classList.add('changed')"></td>
-    </tr></tbody></table></div></div></div>
+<div id="graph-container"><svg id="graph-svg"></svg></div>
+<div id="cal-view"></div>
+<div id="cards-view"></div>
+<div id="pipeline-view"></div>
+<div id="admin-view"></div>
 <div id="admin-toast" class="admin-toast"></div>
 
-<div id="detail-panel" class="">
+<div id="detail-panel">
   <div class="p-hdr">
-    <button class="p-close" onclick="closePanel()" aria-label="Close">×</button>
-    <div id="p-badge" class="p-badge"><span style="background:#c084fc;width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span><span>Contact</span></div>
-    <div id="p-title" class="p-title">Christine Noonan</div>
-    <div id="p-status" class="p-status"><span class="sdot" style="background:#60a5fa"></span>Current</div>
+    <button class="p-close" onclick="closePanel()" aria-label="Close">&times;</button>
+    <div id="p-badge" class="p-badge"></div>
+    <div id="p-title" class="p-title"></div>
+    <div id="p-status" class="p-status"></div>
   </div>
-  <div class="p-body" id="p-body"><div class="p-sec"><div class="p-sec-t">Summary</div><p>Office manager / paralegal. Named defendant in Culver v. Noonan. Primary case assignment coordinator.</p></div><div class="p-sec"><div class="p-sec-t">Subtitle</div><p>Contact · Person · Office Manager</p></div></div>
+  <div class="p-body" id="p-body"></div>
 </div>
 
-<div id="legend" style="display: none;">
+<div id="legend">
   <div class="li"><div class="ld" style="background:var(--clr-matter)"></div>Matter</div>
   <div class="li"><div class="ld" style="background:var(--clr-contact)"></div>Contact</div>
-  <div class="li"><div class="ld" style="background:var(--clr-client)"></div>Client <span class="client-star">★</span></div>
+  <div class="li"><div class="ld" style="background:var(--clr-client)"></div>Client <span class="client-star">&#9733;</span></div>
   <div class="li"><div class="ld" style="background:var(--clr-court)"></div>Court</div>
   <div class="li"><div class="ld" style="background:var(--clr-authority)"></div>Authority</div>
   <div class="li"><div class="ld" style="background:var(--clr-issue)"></div>Issue</div>
-  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="2,2"></circle></svg>Urgent</div>
+  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="2,2"/></svg>Urgent</div>
 </div>
 
-<div id="stats" style="display: none;">
-  <span><span class="sv" id="sn">47</span> nodes</span>
-  <span><span class="sv" id="se">79</span> connections</span>
-  <span><span class="sv" id="sh">15</span> urgent</span>
+<div id="stats">
+  <span><span class="sv" id="sn">0</span> nodes</span>
+  <span><span class="sv" id="se">0</span> connections</span>
+  <span><span class="sv" id="sh">0</span> urgent</span>
 </div>
 
-<div id="zoom-controls" style="display: none;">
+<div id="zoom-controls">
   <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in" title="Zoom in">+</button>
-  <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out" title="Zoom out">−</button>
-  <button class="zoom-btn" onclick="zoomFit()" aria-label="Fit all" title="Fit all nodes"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg></button>
+  <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out" title="Zoom out">&minus;</button>
+  <button class="zoom-btn" onclick="zoomFit()" aria-label="Fit all" title="Fit all nodes"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
 </div>
 
-<div class="node-tooltip" id="tooltip" style="left: 1467px; top: 992px;">Mitchell (matter)</div>
+<div class="node-tooltip" id="tooltip"></div>
 
 <script>
 // ============================================================
@@ -1065,852 +651,175 @@ const TD = {
 const CLIENT_CLR = '#e879f9';
 
 const nodes = [
-  {
-    "id": "romero-1996",
-    "label": "Romero (1996)",
-    "type": "authority",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Romero Motion (PC 1385)",
-      "aliases": "Romero, motion to strike, strike prior, three strikes",
-      "summary": "Trial court discretion to strike prior under PC 1385. Williams three-factor test: (1) present offense, (2) prior offenses, (3) defendant's background/character/prospects.",
-      "keyHoldings": [
-        "Romero (1996) 13 Cal.4th 497 — courts may strike a strike prior",
-        "Williams (1998) — three-factor test",
-        "Carmony (2004) — abuse of discretion standard",
-        "PC 1385(c) post-2022 — great weight to priors over 5 years"
-      ],
-      "mattersUsed": [
-        "Caldwell (CR-23-010065) — hearing 4/14/26",
-        "Brown (CR-25-003661) — motion file-ready"
-      ],
-      "pitfalls": [
-        "Client declaration critical for Factor 3",
-        "Ensure rap sheet/CLETS in record",
-        "If DA surprise opposition — request continuance"
-      ]
-    }
-  },
-  {
-    "id": "pitchess-1974",
-    "label": "Pitchess (1974)",
-    "type": "authority",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Pitchess Motion (Evid. Code 1043-1047)",
-      "aliases": "Pitchess, peace officer personnel records",
-      "summary": "Defense access to officer personnel records. \"Plausible factual scenario\" standard (Warrick). In camera review procedure.",
-      "keyHoldings": [
-        "Pitchess (1974) 11 Cal.3d 531 — foundational case",
-        "Warrick (2005) — plausible factual scenario",
-        "Johnson (2015) — \"relatively relaxed\" standard",
-        "Mooc (2001) — in camera review procedure"
-      ],
-      "mattersUsed": [
-        "Rodgers (CR-2024-001537) — Officer Solis, in camera 4/14",
-        "Ruiz Salas (CR-23-009962) — Officer Gaskin"
-      ],
-      "pitfalls": [
-        "Prepare hearing binder",
-        "Johnson admonition strengthens motion",
-        "Plan dismissal motion as follow-up"
-      ]
-    }
-  },
-  {
-    "id": "pc-1001-36",
-    "label": "PC 1001.36 Diversion",
-    "type": "authority",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Mental Health Diversion (PC 1001.36)",
-      "aliases": "MH diversion, 1001.36, diversion",
-      "summary": "Pre-adjudication diversion for qualifying mental disorders. Post-2022 presumption in defendant's favor (Doron). Successful completion = dismissal.",
-      "keyHoldings": [
-        "PC 1001.36(b) — presumption in favor",
-        "Doron (2023) — changed standard",
-        "Expert eval required",
-        "Probation investigation"
-      ],
-      "mattersUsed": [
-        "Weaver (25-CR-005354) — FSIQ 72 by Pojman"
-      ],
-      "pitfalls": [
-        "Get screening memo early",
-        "Defense-friendly expert recommended",
-        "File before any plea"
-      ]
-    }
-  },
-  {
-    "id": "recusal-side-switch",
-    "label": "Billups Recusal / Side Switch",
-    "type": "issue",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Central Recusal Issue — Billups Defense-to-DA Switch",
-      "summary": "Darryl Billups counsel until Aug 2025, then joined Alameda DA Sept 15, 2025. No ethical wall until Dec 12, 2025. Creates recusal/disqualification issues on MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell.",
-      "affectedMatters": [
-        "MejiaMejia — appeared through Aug, writ filed",
-        "Ruiz Salas — recusal filed 2/18, hearing 4/10",
-        "Rodgers — Billups overlap flagged",
-        "Rodrigues — first defendant Billups left",
-        "Navarro — dismissal motion",
-        "Mitchell — bar complaint due 4/15"
-      ],
-      "timeline": [
-        "Through Aug 2025 — Billups defense counsel",
-        "Sept 15, 2025 — Joined Alameda DA",
-        "Sept–Dec 2025 — No ethical wall (3-month gap)",
-        "Dec 12, 2025 — Ethical wall implemented"
-      ],
-      "relatedAuthorities": [
-        "Romero (1996)",
-        "Pitchess (1974)"
-      ]
-    }
-  },
-  {
-    "id": "billups-darryl",
-    "label": "Billups, Darryl",
-    "type": "contact",
-    "subtype": "person",
-    "role": "opposing-counsel",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Darryl J. Billups",
-      "subtitle": "Contact · Person · Opposing Counsel (former defense)",
-      "summary": "Former defense counsel who joined Alameda DA Sept 15, 2025. Central figure in recusal litigation. Screening gap: no ethical wall until Dec 12, 2025.",
-      "roleHistory": [
-        "Through Aug 2025 — Defense counsel for Noonan clients",
-        "Sept 15, 2025 — Joined Alameda DA",
-        "Sept–Dec 2025 — No ethical wall (3-month gap)",
-        "Dec 12, 2025 — Ethical wall implemented"
-      ],
-      "affectedMatters": [
-        "MejiaMejia — appeared through Aug 2025",
-        "Ruiz Salas — recusal filed 2/18",
-        "Rodrigues — first defendant Billups left",
-        "Mitchell — bar complaint due 4/15",
-        "Rodgers — potential Billups overlap"
-      ]
-    }
-  },
-  {
-    "id": "noonan-john",
-    "label": "Noonan, John W.",
-    "type": "contact",
-    "subtype": "person",
-    "role": "other",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "John W. Noonan",
-      "subtitle": "Contact · Person · Attorney of Record",
-      "summary": "Attorney of record on all Noonan matters. Practice owner."
-    }
-  },
-  {
-    "id": "noonan-christine",
-    "label": "Noonan, Christine",
-    "type": "contact",
-    "subtype": "person",
-    "role": "other",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Christine Noonan",
-      "subtitle": "Contact · Person · Office Manager",
-      "summary": "Office manager / paralegal. Named defendant in Culver v. Noonan. Primary case assignment coordinator."
-    }
-  },
-  {
-    "id": "fuerch-stephen",
-    "label": "Fuerch, Stephen",
-    "type": "contact",
-    "subtype": "person",
-    "role": "other",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Stephen Fuerch",
-      "subtitle": "Contact · Person · Outside Counsel",
-      "summary": "Outside counsel / reviewer. Handles Culver appeal. Reviews filing binders."
-    }
-  },
-  {
-    "id": "alpers-steven",
-    "label": "Alpers, Steven",
-    "type": "contact",
-    "subtype": "person",
-    "role": "other",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Steven Alpers",
-      "subtitle": "Contact · Person · Appellate Counsel",
-      "summary": "Handling writ of prohibition for MejiaMejia recusal. Appeared for Ruiz Salas 4/10."
-    }
-  },
-  {
-    "id": "sellers-wade",
-    "label": "Sellers, Wade",
-    "type": "contact",
-    "subtype": "person",
-    "role": "expert",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Wade Sellers",
-      "subtitle": "Contact · Person · Private Investigator",
-      "summary": "PI working across multiple matters (Acosta, Bratcher, Hunter)."
-    }
-  },
-  {
-    "id": "israels-valli",
-    "label": "Israels, Valli",
-    "type": "contact",
-    "subtype": "person",
-    "role": "judge",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Hon. Valli Israels",
-      "subtitle": "Contact · Person · Judge",
-      "summary": "Judge, Alameda County. Presiding over Rodgers Pitchess in camera review."
-    }
-  },
-  {
-    "id": "villalobos",
-    "label": "Villalobos, Ruben A.",
-    "type": "contact",
-    "subtype": "person",
-    "role": "judge",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Hon. Ruben A. Villalobos",
-      "subtitle": "Contact · Person · Judge",
-      "summary": "Judge, Stanislaus Dept 2. Presiding over Caldwell Romero motion."
-    }
-  },
-  {
-    "id": "pojman-andrew",
-    "label": "Pojman, Andrew P.",
-    "type": "contact",
-    "subtype": "person",
-    "role": "expert",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Andrew P. Pojman, Ph.D.",
-      "subtitle": "Contact · Person · Expert",
-      "summary": "Evaluating expert for Weaver. FSIQ 72, Mild Intellectual Disability. PC 1001.36 diversion eval."
-    }
-  },
-  {
-    "id": "rafanello-catherine",
-    "label": "Rafanello, Catherine",
-    "type": "contact",
-    "subtype": "person",
-    "role": "client",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Catherine Noonan-Rafanello",
-      "subtitle": "Contact · Person · Client",
-      "summary": "Client in Rafanello v. ConvergeOne. Christine's sister. Commission dispute ~$50K."
-    }
-  },
-  {
-    "id": "convergeone",
-    "label": "ConvergeOne",
-    "type": "contact",
-    "subtype": "company",
-    "role": "other",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "ConvergeOne / C1",
-      "subtitle": "Contact · Company",
-      "summary": "Respondent in Rafanello commission dispute. Applied \"blended margin\" methodology not in signed comp plan."
-    }
-  },
-  {
-    "id": "alameda-da",
-    "label": "Alameda County DA",
-    "type": "contact",
-    "subtype": "company",
-    "role": "opposing-counsel",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Alameda County DA's Office",
-      "subtitle": "Contact · Company · Opposing Counsel",
-      "summary": "Prosecuting office on most Alameda County matters. Billups joined as Deputy DA Sept 15, 2025."
-    }
-  },
-  {
-    "id": "alameda-county",
-    "label": "Alameda County",
-    "type": "court",
-    "level": "county",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Alameda County Superior Court",
-      "subtitle": "Court · County Level",
-      "summary": "Primary county for most Noonan criminal matters.",
-      "mattersHere": [
-        "Acosta",
-        "Blackwell",
-        "MejiaMejia",
-        "Navarro",
-        "Rodgers",
-        "Rodrigues",
-        "Rodriguez",
-        "Ruiz Salas"
-      ]
-    }
-  },
-  {
-    "id": "alameda-dept-711",
-    "label": "Alameda Dept 711",
-    "type": "court",
-    "level": "department",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Alameda County — Department 711",
-      "subtitle": "Court · Department Level",
-      "summary": "Recusal/dismissal motions hearing 5/22.",
-      "mattersHere": [
-        "Navarro (CR-24-001345) — 5/22 at 9am",
-        "Rodrigues (CR-21-004636) — 5/22 at 9am"
-      ]
-    }
-  },
-  {
-    "id": "alameda-dept-11",
-    "label": "Alameda Dept 11",
-    "type": "court",
-    "level": "department",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Alameda County — Department 11",
-      "subtitle": "Court · Department Level",
-      "summary": "Ruiz Salas motions. Hearing was 4/10.",
-      "mattersHere": [
-        "Ruiz Salas (CR-23-009962)"
-      ]
-    }
-  },
-  {
-    "id": "stan-county",
-    "label": "Stanislaus County",
-    "type": "court",
-    "level": "county",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Stanislaus County Superior Court",
-      "subtitle": "Court · County Level",
-      "summary": "Modesto, CA. 4 criminal matters.",
-      "mattersHere": [
-        "Caldwell (Dept 2)",
-        "Brown",
-        "Dillard (Dept 4)",
-        "Mitchell"
-      ]
-    }
-  },
-  {
-    "id": "stan-dept-2",
-    "label": "Stanislaus Dept 2",
-    "type": "court",
-    "level": "department",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Stanislaus County — Dept 2",
-      "subtitle": "Court · Department Level",
-      "summary": "Judge Villalobos. Caldwell Romero motion heard 4/14.",
-      "notes": [
-        "PC 977 appearance accepted",
-        "30 min hearing estimate",
-        "Portal: stanportal.stanct.org"
-      ],
-      "mattersHere": [
-        "Caldwell (CR-23-010065) — Romero motion 4/14"
-      ]
-    }
-  },
-  {
-    "id": "sacramento-county",
-    "label": "Sacramento County",
-    "type": "court",
-    "level": "county",
-    "matter_status": "",
-    "matter_stage": "",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Sacramento County Superior Court",
-      "subtitle": "Court · County Level",
-      "summary": "Hunter case. Case number pending confirmation.",
-      "mattersHere": [
-        "Hunter (CR-24-XXXXXX)"
-      ]
-    }
-  },
-  {
-    "id": "acosta",
-    "label": "Acosta",
-    "type": "matter",
-    "matter_status": "Closed",
-    "matter_stage": "Post-Conviction",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Acosta — CR-24-012393",
-      "summary": "WITHDRAWN Feb 6, 2026. Pitchess WON as to Stilwell. File transmitted to new attorney. Civil claim deadline June 9, 2026.",
-      "caseNo": "CR-24-012393"
-    }
-  },
-  {
-    "id": "adler",
-    "label": "Adler",
-    "type": "matter",
-    "matter_status": "Closed",
-    "matter_stage": "Sentencing",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Adler — Misdemeanor",
-      "summary": "RESOLVED Nov 17, 2025. Misdemeanor, no jail time. Mental health / police misconduct."
-    }
-  },
-  {
-    "id": "blackwell",
-    "label": "Blackwell",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Blackwell — 25-CR-007675",
-      "summary": "Hobbs motion completed but filing OVERDUE (16+ days). Discovery from Axon/Evidence.com.",
-      "caseNo": "25-CR-007675"
-    }
-  },
-  {
-    "id": "bratcher",
-    "label": "Bratcher",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Discovery",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Bratcher — TP25002454",
-      "summary": "PI Wade Sellers investigation. Status needs review.",
-      "caseNo": "TP25002454"
-    }
-  },
-  {
-    "id": "brown",
-    "label": "Brown",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Brown — CR-25-003661",
-      "summary": "DUI with GBI. Tox report MISSING. 995 motion + Romero motion pending. Hearing July 14, 2026.",
-      "caseNo": "CR-25-003661",
-      "nextHearing": "7/14/26 — hearing"
-    }
-  },
-  {
-    "id": "caldwell",
-    "label": "Caldwell",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Caldwell — CR-23-010065",
-      "summary": "Romero motion heard 4/14/26. Binder delivered. Father appeared. No DA opposition. Outcome pending.",
-      "caseNo": "CR-23-010065"
-    }
-  },
-  {
-    "id": "culver-labor",
-    "label": "Culver v. Noonan",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Culver v. Noonan — 26CV169360",
-      "summary": "Labor Board appeal. Opposition to Motion to Dismiss filed 3/11. Reply brief due ~4/1 (14 days overdue).",
-      "caseNo": "26CV169360"
-    }
-  },
-  {
-    "id": "culver-wc",
-    "label": "Culver WC",
-    "type": "matter",
-    "matter_status": "Closed",
-    "matter_stage": "Discovery",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "admin_notes": "the contents of this file can be merged with culver v. noonan. the file folder can be moved to a new \"wasteland\" where we put files that need to be deleted, but you don't have permission, so we just store them there and i reivew and delete when needed.",
-    "detail": {
-      "title": "Culver — WC-CM-870160",
-      "summary": "Workers comp claim. May be consolidated with Labor Board appeal.",
-      "caseNo": "WC-CM-870160"
-    }
-  },
-  {
-    "id": "dillard",
-    "label": "Dillard",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Dillard — CR-25-010297",
-      "summary": "PC 422 criminal threats. 70-year-old veteran, in custody, $650K bail. Military diversion (PC 1001.8). Mar 9 hearing outcome pending.",
-      "caseNo": "CR-25-010297"
-    }
-  },
-  {
-    "id": "hunter",
-    "label": "Hunter",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Discovery",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Hunter — CR-24-XXXXXX",
-      "summary": "PC 266i(b)(2) pimping minor, PC 236.1(c)(1) human trafficking minor. Case analysis OVERDUE (11+ days). Already serving LIFE.",
-      "caseNo": "CR-24-XXXXXX [pending]"
-    }
-  },
-  {
-    "id": "ikem",
-    "label": "Ikem",
-    "type": "matter",
-    "matter_status": "Pending",
-    "matter_stage": "Post-Conviction",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Ikem — ECH0002496607",
-      "summary": "Traffic. Application to Vacate Civil Assessment filed Dec 4, 2025. Outcome pending.",
-      "caseNo": "ECH0002496607"
-    }
-  },
-  {
-    "id": "iyengar",
-    "label": "Iyengar",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Iyengar — DUI",
-      "summary": "DUI. 1538.5 suppression motion strategy approved May 2025. Current status needs review."
-    }
-  },
-  {
-    "id": "mejiamejia",
-    "label": "MejiaMejia",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Trial Prep",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "MejiaMejia — 22-CR-003198",
-      "summary": "Recusal DENIED. Writ to First DCA. Jury trial May 26, 2026.",
-      "caseNo": "22-CR-003198",
-      "nextHearing": "5/26/26 — jury trial"
-    }
-  },
-  {
-    "id": "mitchell",
-    "label": "Mitchell",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Mitchell — CR-22-002886",
-      "summary": "Multiple DUIs, Watson advisement. In custody 4+ years. Bar complaint against Billups DUE TODAY (4/15). Motion for Indicated Sentence hearing 4/27.",
-      "caseNo": "CR-22-002886",
-      "nextHearing": "4/27/26 — indicated sentence"
-    }
-  },
-  {
-    "id": "navarro",
-    "label": "Navarro",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Navarro — CR-24-001345",
-      "summary": "Recusal/dismissal. Reply to AG writ in progress. Hearing May 22, Dept 711. Civil claim deadline June 9.",
-      "caseNo": "CR-24-001345",
-      "nextHearing": "5/22/26 — Dept 711"
-    }
-  },
-  {
-    "id": "noonan-trust",
-    "label": "Noonan Trust",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Intake",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Noonan Family Trust",
-      "summary": "Civil trust dispute. Mother with dementia, allegedly coerced amendments. New attorney engaged."
-    }
-  },
-  {
-    "id": "rafanello",
-    "label": "Rafanello",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Intake",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Rafanello v. ConvergeOne",
-      "summary": "Commission dispute ~$50K. Waiting on signed comp plans from Cathy. Follow up by 4/21."
-    }
-  },
-  {
-    "id": "rodgers",
-    "label": "Rodgers",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Rodgers — CR-2024-001537",
-      "summary": "Pitchess in camera 4/14. Officer Solis fired for dishonesty. Ruling 5/26. Dismissal motion 18 days overdue.",
-      "caseNo": "CR-2024-001537",
-      "nextHearing": "5/26/26 — Pitchess ruling"
-    }
-  },
-  {
-    "id": "rodrigues",
-    "label": "Rodrigues",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Rodrigues — CR-21-004636",
-      "summary": "Billups conflict — \"first defendant Billups left.\" Hearing May 22, Dept 711. Civil claim deadline June 9.",
-      "caseNo": "CR-21-004636",
-      "nextHearing": "5/22/26 — Dept 711"
-    }
-  },
-  {
-    "id": "rodriguez",
-    "label": "Rodriguez",
-    "type": "matter",
-    "matter_status": "Closed",
-    "matter_stage": "Post-Conviction",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Rodriguez — CR-24-010846",
-      "summary": "DISMISSED Dec 5, 2025. Sex sting case. Civil claim deadline June 9, 2026.",
-      "caseNo": "CR-24-010846"
-    }
-  },
-  {
-    "id": "ruiz-salas",
-    "label": "Ruiz Salas",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Ruiz Salas — CR-23-009962",
-      "summary": "4 motions filed 2/18. Hearing 4/10 — outcome UNKNOWN. Brady letter missing.",
-      "caseNo": "CR-23-009962"
-    }
-  },
-  {
-    "id": "schiff",
-    "label": "Schiff",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Intake",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Schiff — 24M-07568",
-      "summary": "Misdemeanor. Minimal data available.",
-      "caseNo": "24M-07568"
-    }
-  },
-  {
-    "id": "valenzuela",
-    "label": "Valenzuela",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Preliminary Hearing",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Valenzuela — PX",
-      "summary": "Sexual offense. PX held Nov 2025. Offer: 240 with EHMMM, 2yr probation, lifetime registration."
-    }
-  },
-  {
-    "id": "weaver",
-    "label": "Weaver",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "title": "Weaver — 25-CR-005354",
-      "summary": "PC 215(a) carjacking + firearms. Dr. Pojman: FSIQ 72, Mild Intellectual Disability. 1001.36 motion FINALIZED 4/9, needs filing.",
-      "caseNo": "25-CR-005354"
-    }
-  },
-  {
-    "id": "wolfe",
-    "label": "Wolfe",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Pre-trial Motions",
-    "status": "needs-review",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Wolfe — C2214071",
-      "summary": "Continuance filed Dec 2025. Requested continuance to Jan 29, 2026. Status needs review.",
-      "caseNo": "C2214071"
-    }
-  }
-];;
+  // === Authorities (3 total) ===
+  { id:'romero-1996', label:'Romero (1996)', type:'authority', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Romero Motion (PC 1385)', aliases:'Romero, motion to strike, strike prior, three strikes',
+      summary:'Trial court discretion to strike prior under PC 1385. Williams three-factor test: (1) present offense, (2) prior offenses, (3) defendant\'s background/character/prospects.',
+      keyHoldings:['Romero (1996) 13 Cal.4th 497 — courts may strike a strike prior','Williams (1998) — three-factor test','Carmony (2004) — abuse of discretion standard','PC 1385(c) post-2022 — great weight to priors over 5 years'],
+      mattersUsed:['Caldwell (CR-23-010065) — hearing 4/14/26','Brown (CR-25-003661) — motion file-ready'],
+      pitfalls:['Client declaration critical for Factor 3','Ensure rap sheet/CLETS in record','If DA surprise opposition — request continuance']}},
+  { id:'pitchess-1974', label:'Pitchess (1974)', type:'authority', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Pitchess Motion (Evid. Code 1043-1047)', aliases:'Pitchess, peace officer personnel records',
+      summary:'Defense access to officer personnel records. "Plausible factual scenario" standard (Warrick). In camera review procedure.',
+      keyHoldings:['Pitchess (1974) 11 Cal.3d 531 — foundational case','Warrick (2005) — plausible factual scenario','Johnson (2015) — "relatively relaxed" standard','Mooc (2001) — in camera review procedure'],
+      mattersUsed:['Rodgers (CR-2024-001537) — Officer Solis, in camera 4/14','Ruiz Salas (CR-23-009962) — Officer Gaskin'],
+      pitfalls:['Prepare hearing binder','Johnson admonition strengthens motion','Plan dismissal motion as follow-up']}},
+  { id:'pc-1001-36', label:'PC 1001.36 Diversion', type:'authority', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Mental Health Diversion (PC 1001.36)', aliases:'MH diversion, 1001.36, diversion',
+      summary:'Pre-adjudication diversion for qualifying mental disorders. Post-2022 presumption in defendant\'s favor (Doron). Successful completion = dismissal.',
+      keyHoldings:['PC 1001.36(b) — presumption in favor','Doron (2023) — changed standard','Expert eval required','Probation investigation'],
+      mattersUsed:['Weaver (25-CR-005354) — FSIQ 72 by Pojman'],
+      pitfalls:['Get screening memo early','Defense-friendly expert recommended','File before any plea']}},
+
+  // === Issue (1 total) ===
+  { id:'recusal-side-switch', label:'Billups Recusal / Side Switch', type:'issue', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Central Recusal Issue — Billups Defense-to-DA Switch', summary:'Darryl Billups counsel until Aug 2025, then joined Alameda DA Sept 15, 2025. No ethical wall until Dec 12, 2025. Creates recusal/disqualification issues on MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell.',
+      affectedMatters:['MejiaMejia — appeared through Aug, writ filed','Ruiz Salas — recusal filed 2/18, hearing 4/10','Rodgers — Billups overlap flagged','Rodrigues — first defendant Billups left','Navarro — dismissal motion','Mitchell — bar complaint due 4/15'],
+      timeline:['Through Aug 2025 — Billups defense counsel','Sept 15, 2025 — Joined Alameda DA','Sept–Dec 2025 — No ethical wall (3-month gap)','Dec 12, 2025 — Ethical wall implemented'],
+      relatedAuthorities:['Romero (1996)','Pitchess (1974)']}},
+
+  // === Contacts (12 total) ===
+  { id:'billups-darryl', label:'Billups, Darryl', type:'contact', subtype:'person', role:'opposing-counsel', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Darryl J. Billups', subtitle:'Contact · Person · Opposing Counsel (former defense)',
+      summary:'Former defense counsel who joined Alameda DA Sept 15, 2025. Central figure in recusal litigation. Screening gap: no ethical wall until Dec 12, 2025.',
+      roleHistory:['Through Aug 2025 — Defense counsel for Noonan clients','Sept 15, 2025 — Joined Alameda DA','Sept–Dec 2025 — No ethical wall (3-month gap)','Dec 12, 2025 — Ethical wall implemented'],
+      affectedMatters:['MejiaMejia — appeared through Aug 2025','Ruiz Salas — recusal filed 2/18','Rodrigues — first defendant Billups left','Mitchell — bar complaint due 4/15','Rodgers — potential Billups overlap'] }},
+
+  { id:'noonan-john', label:'Noonan, John W.', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'John W. Noonan', subtitle:'Contact · Person · Attorney of Record', summary:'Attorney of record on all Noonan matters. Practice owner.' }},
+
+  { id:'noonan-christine', label:'Noonan, Christine', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Christine Noonan', subtitle:'Contact · Person · Office Manager', summary:'Office manager / paralegal. Named defendant in Culver v. Noonan. Primary case assignment coordinator.' }},
+
+  { id:'fuerch-stephen', label:'Fuerch, Stephen', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Stephen Fuerch', subtitle:'Contact · Person · Outside Counsel', summary:'Outside counsel / reviewer. Handles Culver appeal. Reviews filing binders.' }},
+
+  { id:'alpers-steven', label:'Alpers, Steven', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Steven Alpers', subtitle:'Contact · Person · Appellate Counsel', summary:'Handling writ of prohibition for MejiaMejia recusal. Appeared for Ruiz Salas 4/10.' }},
+
+  { id:'sellers-wade', label:'Sellers, Wade', type:'contact', subtype:'person', role:'expert', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Wade Sellers', subtitle:'Contact · Person · Private Investigator', summary:'PI working across multiple matters (Acosta, Bratcher, Hunter).' }},
+
+  { id:'israels-valli', label:'Israels, Valli', type:'contact', subtype:'person', role:'judge', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Hon. Valli Israels', subtitle:'Contact · Person · Judge', summary:'Judge, Alameda County. Presiding over Rodgers Pitchess in camera review.' }},
+
+  { id:'villalobos', label:'Villalobos, Ruben A.', type:'contact', subtype:'person', role:'judge', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Hon. Ruben A. Villalobos', subtitle:'Contact · Person · Judge', summary:'Judge, Stanislaus Dept 2. Presiding over Caldwell Romero motion.' }},
+
+  { id:'pojman-andrew', label:'Pojman, Andrew P.', type:'contact', subtype:'person', role:'expert', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Andrew P. Pojman, Ph.D.', subtitle:'Contact · Person · Expert', summary:'Evaluating expert for Weaver. FSIQ 72, Mild Intellectual Disability. PC 1001.36 diversion eval.' }},
+
+  { id:'rafanello-catherine', label:'Rafanello, Catherine', type:'contact', subtype:'person', role:'client', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Catherine Noonan-Rafanello', subtitle:'Contact · Person · Client', summary:'Client in Rafanello v. ConvergeOne. Christine\'s sister. Commission dispute ~$50K.' }},
+
+  { id:'convergeone', label:'ConvergeOne', type:'contact', subtype:'company', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'ConvergeOne / C1', subtitle:'Contact · Company', summary:'Respondent in Rafanello commission dispute. Applied "blended margin" methodology not in signed comp plan.' }},
+
+  { id:'alameda-da', label:'Alameda County DA', type:'contact', subtype:'company', role:'opposing-counsel', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County DA\'s Office', subtitle:'Contact · Company · Opposing Counsel', summary:'Prosecuting office on most Alameda County matters. Billups joined as Deputy DA Sept 15, 2025.' }},
+
+  // === Courts (6 total) ===
+  { id:'alameda-county', label:'Alameda County', type:'court', level:'county', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County Superior Court', subtitle:'Court · County Level', summary:'Primary county for most Noonan criminal matters.',
+      mattersHere:['Acosta','Blackwell','MejiaMejia','Navarro','Rodgers','Rodrigues','Rodriguez','Ruiz Salas'] }},
+
+  { id:'alameda-dept-711', label:'Alameda Dept 711', type:'court', level:'department', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County — Department 711', subtitle:'Court · Department Level', summary:'Recusal/dismissal motions hearing 5/22.',
+      mattersHere:['Navarro (CR-24-001345) — 5/22 at 9am','Rodrigues (CR-21-004636) — 5/22 at 9am'] }},
+
+  { id:'alameda-dept-11', label:'Alameda Dept 11', type:'court', level:'department', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County — Department 11', subtitle:'Court · Department Level', summary:'Ruiz Salas motions. Hearing was 4/10.',
+      mattersHere:['Ruiz Salas (CR-23-009962)'] }},
+
+  { id:'stan-county', label:'Stanislaus County', type:'court', level:'county', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Stanislaus County Superior Court', subtitle:'Court · County Level', summary:'Modesto, CA. 4 criminal matters.',
+      mattersHere:['Caldwell (Dept 2)','Brown','Dillard (Dept 4)','Mitchell'] }},
+
+  { id:'stan-dept-2', label:'Stanislaus Dept 2', type:'court', level:'department', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Stanislaus County — Dept 2', subtitle:'Court · Department Level', summary:'Judge Villalobos. Caldwell Romero motion heard 4/14.',
+      notes:['PC 977 appearance accepted','30 min hearing estimate','Portal: stanportal.stanct.org'],
+      mattersHere:['Caldwell (CR-23-010065) — Romero motion 4/14'] }},
+
+  { id:'sacramento-county', label:'Sacramento County', type:'court', level:'county', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Sacramento County Superior Court', subtitle:'Court · County Level', summary:'Hunter case. Case number pending confirmation.',
+      mattersHere:['Hunter (CR-24-XXXXXX)'] }},
+
+  // === Matters (25 total) ===
+  { id:'acosta', label:'Acosta', type:'matter', matter_status:'Closed', matter_stage:'Post-Conviction', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Acosta — CR-24-012393', summary:'WITHDRAWN Feb 6, 2026. Pitchess WON as to Stilwell. File transmitted to new attorney. Civil claim deadline June 9, 2026.', caseNo:'CR-24-012393' }},
+
+  { id:'adler', label:'Adler', type:'matter', matter_status:'Closed', matter_stage:'Sentencing', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Adler — Misdemeanor', summary:'RESOLVED Nov 17, 2025. Misdemeanor, no jail time. Mental health / police misconduct.' }},
+
+  { id:'blackwell', label:'Blackwell', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Blackwell — 25-CR-007675', summary:'Hobbs motion completed but filing OVERDUE (16+ days). Discovery from Axon/Evidence.com.', caseNo:'25-CR-007675' }},
+
+  { id:'bratcher', label:'Bratcher', type:'matter', matter_status:'Open', matter_stage:'Discovery', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Bratcher — TP25002454', summary:'PI Wade Sellers investigation. Status needs review.', caseNo:'TP25002454' }},
+
+  { id:'brown', label:'Brown', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Brown — CR-25-003661', summary:'DUI with GBI. Tox report MISSING. 995 motion + Romero motion pending. Hearing July 14, 2026.', caseNo:'CR-25-003661', nextHearing:'7/14/26 — hearing' }},
+
+  { id:'caldwell', label:'Caldwell', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Caldwell — CR-23-010065', summary:'Romero motion heard 4/14/26. Binder delivered. Father appeared. No DA opposition. Outcome pending.', caseNo:'CR-23-010065' }},
+
+  { id:'culver-labor', label:'Culver v. Noonan', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Culver v. Noonan — 26CV169360', summary:'Labor Board appeal. Opposition to Motion to Dismiss filed 3/11. Reply brief due ~4/1 (14 days overdue).', caseNo:'26CV169360' }},
+
+  { id:'culver-wc', label:'Culver WC', type:'matter', matter_status:'Pending', matter_stage:'Discovery', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Culver — WC-CM-870160', summary:'Workers comp claim. May be consolidated with Labor Board appeal.', caseNo:'WC-CM-870160' }},
+
+  { id:'dillard', label:'Dillard', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Dillard — CR-25-010297', summary:'PC 422 criminal threats. 70-year-old veteran, in custody, $650K bail. Military diversion (PC 1001.8). Mar 9 hearing outcome pending.', caseNo:'CR-25-010297' }},
+
+  { id:'hunter', label:'Hunter', type:'matter', matter_status:'Open', matter_stage:'Discovery', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Hunter — CR-24-XXXXXX', summary:'PC 266i(b)(2) pimping minor, PC 236.1(c)(1) human trafficking minor. Case analysis OVERDUE (11+ days). Already serving LIFE.', caseNo:'CR-24-XXXXXX [pending]' }},
+
+  { id:'ikem', label:'Ikem', type:'matter', matter_status:'Pending', matter_stage:'Post-Conviction', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Ikem — ECH0002496607', summary:'Traffic. Application to Vacate Civil Assessment filed Dec 4, 2025. Outcome pending.', caseNo:'ECH0002496607' }},
+
+  { id:'iyengar', label:'Iyengar', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Iyengar — DUI', summary:'DUI. 1538.5 suppression motion strategy approved May 2025. Current status needs review.' }},
+
+  { id:'mejiamejia', label:'MejiaMejia', type:'matter', matter_status:'Open', matter_stage:'Trial Prep', status:'current', hasPage:true, hot:true,
+    detail:{ title:'MejiaMejia — 22-CR-003198', summary:'Recusal DENIED. Writ to First DCA. Jury trial May 26, 2026.', caseNo:'22-CR-003198', nextHearing:'5/26/26 — jury trial' }},
+
+  { id:'mitchell', label:'Mitchell', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Mitchell — CR-22-002886', summary:'Multiple DUIs, Watson advisement. In custody 4+ years. Bar complaint against Billups DUE TODAY (4/15). Motion for Indicated Sentence hearing 4/27.', caseNo:'CR-22-002886', nextHearing:'4/27/26 — indicated sentence' }},
+
+  { id:'navarro', label:'Navarro', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Navarro — CR-24-001345', summary:'Recusal/dismissal. Reply to AG writ in progress. Hearing May 22, Dept 711. Civil claim deadline June 9.', caseNo:'CR-24-001345', nextHearing:'5/22/26 — Dept 711' }},
+
+  { id:'noonan-trust', label:'Noonan Trust', type:'matter', matter_status:'Open', matter_stage:'Intake', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Noonan Family Trust', summary:'Civil trust dispute. Mother with dementia, allegedly coerced amendments. New attorney engaged.' }},
+
+  { id:'rafanello', label:'Rafanello', type:'matter', matter_status:'Open', matter_stage:'Intake', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Rafanello v. ConvergeOne', summary:'Commission dispute ~$50K. Waiting on signed comp plans from Cathy. Follow up by 4/21.' }},
+
+  { id:'rodgers', label:'Rodgers', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Rodgers — CR-2024-001537', summary:'Pitchess in camera 4/14. Officer Solis fired for dishonesty. Ruling 5/26. Dismissal motion 18 days overdue.', caseNo:'CR-2024-001537', nextHearing:'5/26/26 — Pitchess ruling' }},
+
+  { id:'rodrigues', label:'Rodrigues', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Rodrigues — CR-21-004636', summary:'Billups conflict — "first defendant Billups left." Hearing May 22, Dept 711. Civil claim deadline June 9.', caseNo:'CR-21-004636', nextHearing:'5/22/26 — Dept 711' }},
+
+  { id:'rodriguez', label:'Rodriguez', type:'matter', matter_status:'Closed', matter_stage:'Post-Conviction', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Rodriguez — CR-24-010846', summary:'DISMISSED Dec 5, 2025. Sex sting case. Civil claim deadline June 9, 2026.', caseNo:'CR-24-010846' }},
+
+  { id:'ruiz-salas', label:'Ruiz Salas', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'needs-review', hasPage:true, hot:true,
+    detail:{ title:'Ruiz Salas — CR-23-009962', summary:'4 motions filed 2/18. Hearing 4/10 — outcome UNKNOWN. Brady letter missing.', caseNo:'CR-23-009962' }},
+
+  { id:'schiff', label:'Schiff', type:'matter', matter_status:'Open', matter_stage:'Intake', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Schiff — 24M-07568', summary:'Misdemeanor. Minimal data available.', caseNo:'24M-07568' }},
+
+  { id:'valenzuela', label:'Valenzuela', type:'matter', matter_status:'Open', matter_stage:'Preliminary Hearing', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Valenzuela — PX', summary:'Sexual offense. PX held Nov 2025. Offer: 240 with EHMMM, 2yr probation, lifetime registration.' }},
+
+  { id:'weaver', label:'Weaver', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Weaver — 25-CR-005354', summary:'PC 215(a) carjacking + firearms. Dr. Pojman: FSIQ 72, Mild Intellectual Disability. 1001.36 motion FINALIZED 4/9, needs filing.', caseNo:'25-CR-005354' }},
+
+  { id:'wolfe', label:'Wolfe', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Wolfe — C2214071', summary:'Continuance filed Dec 2025. Requested continuance to Jan 29, 2026. Status needs review.', caseNo:'C2214071' }}
+];
 
 const links = [
   // Authorities → Matters
@@ -2345,19 +1254,33 @@ function initGraph(){
 
   const node=graphContainer.selectAll('.node').data(nodes_d).enter().append('g')
     .attr('class','node').call(d3.drag()
-      .on('start',(e,d)=>{e.sourceEvent.stopPropagation();d.fx=d.x;d.fy=d.y})
+      .on('start',(e,d)=>{e.sourceEvent.stopPropagation();if(!e.active)simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
       .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
-      .on('end',(e,d)=>{d.fx=null;d.fy=null}))
+      .on('end',(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null}))
     .on('click',e=>{e.stopPropagation();showDetail(e.currentTarget.__data__)})
     .on('mouseover',nodeHover).on('mouseout',nodeUnhover);
 
   node.append('circle').attr('r',d=>nodeRadius(d)).attr('fill',d=>nodeColor(d))
     .attr('stroke',d=>d.hot?'#ef4444':'none').attr('stroke-width',d=>d.hot?2:0);
 
+  // Pulsing rings for hot nodes — two expanding circles
+  node.filter(d=>d.hot).each(function(d){
+    const g=d3.select(this);
+    const urgency=hotItems[d.id]?.urgency||'overdue';
+    const clr=urgency==='overdue'?'#ef4444':urgency==='today'?'#f59e0b':'#3b82f6';
+    const anim=urgency==='overdue'?'pulseOverdue':urgency==='today'?'pulseToday':'pulseUpcoming';
+    g.insert('circle',':first-child').attr('r',0).attr('fill',clr).attr('opacity',0)
+      .style('animation',anim+' 2.5s ease-out infinite');
+    g.insert('circle',':first-child').attr('r',0).attr('fill',clr).attr('opacity',0)
+      .style('animation',anim+' 2.5s ease-out infinite 1.25s');
+  });
+
+  // Spinning dashed ring for hot nodes
   node.append('circle').attr('class','hot-ring').attr('r',d=>nodeRadius(d))
-    .attr('fill','none').attr('stroke','#ef4444').attr('stroke-width',1)
-    .attr('stroke-dasharray','2,2').style('opacity',d=>d.hot?1:0)
-    .style('animation',d=>d.hot?`ringSpin 4s linear infinite`:'none');
+    .attr('fill','none').attr('stroke',d=>{const u=hotItems[d.id]?.urgency;return u==='today'?'#f59e0b':u==='upcoming'?'#3b82f6':'#ef4444'})
+    .attr('stroke-width',1).attr('stroke-dasharray','2,2')
+    .style('opacity',d=>d.hot?1:0)
+    .style('animation',d=>d.hot?'ringSpin 4s linear infinite':'none');
 
   node.append('text').attr('class','node-label').text(d=>d.label).attr('font-size',d=>nodeRadius(d)*0.7+'px');
 
@@ -2817,6 +1740,5 @@ initGraph();
 // Auto-switch to cards on mobile
 if(window.innerWidth<=600){ switchView('cards'); }
 </script>
-
-
-</body></html>
+</body>
+</html>
