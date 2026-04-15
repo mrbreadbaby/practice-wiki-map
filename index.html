@@ -62,6 +62,11 @@
   #search-box input::placeholder{color:#475569}
   #search-box .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#475569;font-size:13px;pointer-events:none}
 
+  .hot-pill{position:relative;margin-left:10px;padding:6px 12px;border-radius:14px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .hot-pill:hover{background:rgba(239,68,68,0.3);border-color:rgba(239,68,68,0.5)}
+  .hot-pill:active{transform:scale(0.98)}
+  #hot-pill-count{margin-left:4px;font-weight:700}
+
   /* ===== HOT BANNER ===== */
   #hot-banner{position:fixed;top:56px;left:0;right:0;background:linear-gradient(180deg,rgba(15,10,5,.97),rgba(10,14,23,.95));backdrop-filter:blur(20px);border-bottom:1px solid rgba(239,68,68,0.15);z-index:95;max-height:220px;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:1}
   #hot-banner.collapsed{max-height:0;opacity:0;pointer-events:none}
@@ -172,12 +177,10 @@
     border-bottom:1px solid rgba(255,255,255,.06);
     position:sticky;top:0;
     background:rgba(15,20,33,.98);backdrop-filter:blur(24px);
-    z-index:2;
-    /* Ensure room for close button */
+    z-index:105;
     padding-right:64px;
   }
 
-  /* MOBILE CLOSE BUTTON FIX */
   .p-close{
     position:absolute;
     top:12px;right:12px;
@@ -190,8 +193,7 @@
     font-size:20px;font-weight:400;
     transition:all .15s;
     -webkit-tap-highlight-color:transparent;
-    z-index:10;
-    /* Never hidden or clipped */
+    z-index:106;
     touch-action:manipulation;
   }
   .p-close:hover,.p-close:active{background:rgba(255,255,255,.15);color:#f8fafc;transform:scale(1.05)}
@@ -221,7 +223,6 @@
   .node-tooltip{position:absolute;padding:8px 12px;background:rgba(15,20,33,.95);border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:12px;color:#e2e8f0;pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:200;backdrop-filter:blur(8px)}
   .node-tooltip.visible{opacity:1}
 
-  /* Client star indicator in legend */
   .client-star{color:var(--clr-client);font-size:12px}
 
   /* ===== RESPONSIVE ===== */
@@ -241,18 +242,18 @@
     #legend{max-width:calc(100vw - 100px)}
     .cal-d{min-height:56px}.cal-dn{font-size:10px}
     .hc{min-width:160px;padding:8px 10px}
-    /* Ensure panel close button always visible on small screens */
     .p-hdr{padding:16px 16px 14px;padding-right:60px}
     .p-close{top:10px;right:10px;width:44px;height:44px}
     .p-title{font-size:16px}
   }
 </style>
 </head>
+
 <body>
 
 <div id="top-bar">
   <h1>Noonan Practice Wiki</h1>
-  <span class="sub">Schema v2.0 &middot; April 14, 2026</span>
+  <span class="sub">Schema v2.1 · April 15, 2026</span>
   <div class="view-toggles">
     <button class="view-btn active" data-view="graph" onclick="switchView('graph')">Graph</button>
     <button class="view-btn" data-view="calendar" onclick="switchView('calendar')">Calendar</button>
@@ -270,6 +271,7 @@
     <span class="si">&#128269;</span>
     <input type="text" id="search-input" placeholder="Search... ( / )">
   </div>
+  <div id="hot-pill" class="hot-pill" onclick="toggleBanner()" style="display:none">Action Required <span id="hot-pill-count"></span></div>
 </div>
 
 <div id="hot-banner">
@@ -317,7 +319,7 @@
 
 <script>
 // ============================================================
-// DATA — Schema v2.0, rebuilt from wiki .md files 2026-04-14
+// DATA — Schema v2.1, April 15, 2026
 // ============================================================
 
 const TC = {
@@ -332,12 +334,12 @@ const TD = {
 const CLIENT_CLR = '#e879f9';
 
 const nodes = [
-  // === Authorities (wiki pages) ===
+  // === Authorities (3 total) ===
   { id:'romero-1996', label:'Romero (1996)', type:'authority', status:'current', hasPage:true, hot:false,
     detail:{ title:'Romero Motion (PC 1385)', aliases:'Romero, motion to strike, strike prior, three strikes',
       summary:'Trial court discretion to strike prior under PC 1385. Williams three-factor test: (1) present offense, (2) prior offenses, (3) defendant\'s background/character/prospects.',
       keyHoldings:['Romero (1996) 13 Cal.4th 497 — courts may strike a strike prior','Williams (1998) — three-factor test','Carmony (2004) — abuse of discretion standard','PC 1385(c) post-2022 — great weight to priors over 5 years'],
-      mattersUsed:['Caldwell (CR-23-010065) — hearing 4/14/26','Brown (CR-25-003661) — motion file-ready v4'],
+      mattersUsed:['Caldwell (CR-23-010065) — hearing 4/14/26','Brown (CR-25-003661) — motion file-ready'],
       pitfalls:['Client declaration critical for Factor 3','Ensure rap sheet/CLETS in record','If DA surprise opposition — request continuance']}},
   { id:'pitchess-1974', label:'Pitchess (1974)', type:'authority', status:'current', hasPage:true, hot:false,
     detail:{ title:'Pitchess Motion (Evid. Code 1043-1047)', aliases:'Pitchess, peace officer personnel records',
@@ -348,112 +350,261 @@ const nodes = [
   { id:'pc-1001-36', label:'PC 1001.36 Diversion', type:'authority', status:'current', hasPage:true, hot:false,
     detail:{ title:'Mental Health Diversion (PC 1001.36)', aliases:'MH diversion, 1001.36, diversion',
       summary:'Pre-adjudication diversion for qualifying mental disorders. Post-2022 presumption in defendant\'s favor (Doron). Successful completion = dismissal.',
-      keyHoldings:['Doron (2023) — qualifying diagnosis = presumption','Harlow (2025) — prosecution bears clear/convincing burden','Hall (2024) — carjacking is eligible','Williams (2021) — dangerousness = super-strike standard only'],
-      mattersUsed:['Weaver (25-CR-005354) — carjacking + firearms, motion finalized 4/9/26'],
-      pitfalls:['Expert report must address all statutory criteria','Regional Center referral may help','Treatment plan before hearing']}},
+      keyHoldings:['PC 1001.36(b) — presumption in favor','Doron (2023) — changed standard','Expert eval required','Probation investigation'],
+      mattersUsed:['Weaver (25-CR-005354) — FSIQ 72 by Pojman'],
+      pitfalls:['Get screening memo early','Defense-friendly expert recommended','File before any plea']}},
 
-  // === Issues (wiki page) ===
-  { id:'recusal-side-switch', label:'Recusal — Side-Switch', type:'issue', status:'current', hasPage:true, hot:true,
-    detail:{ title:'Recusal — Side-Switch Conflict', aliases:'Side-switch, Billups conflict, PC 1424, recusal',
-      summary:'Defense attorney (Billups) left defense and joined DA\'s office. Affects 4+ matters. Screening gap: no ethical wall for ~3 months. Pattern: file PC 1424, if denied pursue writ.',
-      keyHoldings:['Conner (1983) — foundational DA recusal standard','Eubanks (1996) — two-prong test','Haraguchi (2008) — writ relief granted','Choi (2000) — office-wide disqualification despite wall'],
-      playbook:['1. File motion to recuse (PC 1424)','2. If denied — writ to CoA','3. State bar complaint','4. Coordinate across affected matters'],
-      affectedMatters:['MejiaMejia — recusal denied, writ planned','Ruiz Salas — heard 4/10/26, outcome unknown','Rodrigues — intake, Franks motion','Bar complaint due 4/15/26']}},
+  // === Issue (1 total) ===
+  { id:'recusal-side-switch', label:'Billups Recusal / Side Switch', type:'issue', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Central Recusal Issue — Billups Defense-to-DA Switch', summary:'Darryl Billups counsel until Aug 2025, then joined Alameda DA Sept 15, 2025. No ethical wall until Dec 12, 2025. Creates recusal/disqualification issues on MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell.',
+      affectedMatters:['MejiaMejia — appeared through Aug, writ filed','Ruiz Salas — recusal filed 2/18, hearing 4/10','Rodgers — Billups overlap flagged','Rodrigues — first defendant Billups left','Navarro — dismissal motion','Mitchell — bar complaint due 4/15'],
+      timeline:['Through Aug 2025 — Billups defense counsel','Sept 15, 2025 — Joined Alameda DA','Sept–Dec 2025 — No ethical wall (3-month gap)','Dec 12, 2025 — Ethical wall implemented'],
+      relatedAuthorities:['Romero (1996)','Pitchess (1974)']}},
 
-  // === Contacts (wiki page — Billups is now type:contact, subtype:person) ===
+  // === Contacts (12 total) ===
   { id:'billups-darryl', label:'Billups, Darryl', type:'contact', subtype:'person', role:'opposing-counsel', status:'current', hasPage:true, hot:true,
-    detail:{ title:'Darryl J. Billups', aliases:'Darryl Billups, Billups, DJ Billups',
-      subtitle:'Contact &middot; Person &middot; Opposing Counsel (former defense)',
-      summary:'Former defense counsel who joined Alameda DA\'s office Sept 15, 2025. Central figure in recusal litigation. Screening gap: no ethical wall until Dec 12, 2025.',
+    detail:{ title:'Darryl J. Billups', subtitle:'Contact · Person · Opposing Counsel (former defense)',
+      summary:'Former defense counsel who joined Alameda DA Sept 15, 2025. Central figure in recusal litigation. Screening gap: no ethical wall until Dec 12, 2025.',
       roleHistory:['Through Aug 2025 — Defense counsel for Noonan clients','Sept 15, 2025 — Joined Alameda DA','Sept–Dec 2025 — No ethical wall (3-month gap)','Dec 12, 2025 — Ethical wall implemented'],
-      affectedMatters:['MejiaMejia — appeared in court through Aug 2025','Ruiz Salas — recusal filed 2/18/26','Rodrigues — "first defendant Billups left"','Bar complaint due 4/15/26']}},
+      affectedMatters:['MejiaMejia — appeared through Aug 2025','Ruiz Salas — recusal filed 2/18','Rodrigues — first defendant Billups left','Mitchell — bar complaint due 4/15','Rodgers — potential Billups overlap'] }},
 
-  // === Courts (wiki page — now level:department) ===
+  { id:'noonan-john', label:'Noonan, John W.', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'John W. Noonan', subtitle:'Contact · Person · Attorney of Record', summary:'Attorney of record on all Noonan matters. Practice owner.' }},
+
+  { id:'noonan-christine', label:'Noonan, Christine', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Christine Noonan', subtitle:'Contact · Person · Office Manager', summary:'Office manager / paralegal. Named defendant in Culver v. Noonan. Primary case assignment coordinator.' }},
+
+  { id:'fuerch-stephen', label:'Fuerch, Stephen', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Stephen Fuerch', subtitle:'Contact · Person · Outside Counsel', summary:'Outside counsel / reviewer. Handles Culver appeal. Reviews filing binders.' }},
+
+  { id:'alpers-steven', label:'Alpers, Steven', type:'contact', subtype:'person', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Steven Alpers', subtitle:'Contact · Person · Appellate Counsel', summary:'Handling writ of prohibition for MejiaMejia recusal. Appeared for Ruiz Salas 4/10.' }},
+
+  { id:'sellers-wade', label:'Sellers, Wade', type:'contact', subtype:'person', role:'expert', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Wade Sellers', subtitle:'Contact · Person · Private Investigator', summary:'PI working across multiple matters (Acosta, Bratcher, Hunter).' }},
+
+  { id:'israels-valli', label:'Israels, Valli', type:'contact', subtype:'person', role:'judge', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Hon. Valli Israels', subtitle:'Contact · Person · Judge', summary:'Judge, Alameda County. Presiding over Rodgers Pitchess in camera review.' }},
+
+  { id:'villalobos', label:'Villalobos, Ruben A.', type:'contact', subtype:'person', role:'judge', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Hon. Ruben A. Villalobos', subtitle:'Contact · Person · Judge', summary:'Judge, Stanislaus Dept 2. Presiding over Caldwell Romero motion.' }},
+
+  { id:'pojman-andrew', label:'Pojman, Andrew P.', type:'contact', subtype:'person', role:'expert', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Andrew P. Pojman, Ph.D.', subtitle:'Contact · Person · Expert', summary:'Evaluating expert for Weaver. FSIQ 72, Mild Intellectual Disability. PC 1001.36 diversion eval.' }},
+
+  { id:'rafanello-catherine', label:'Rafanello, Catherine', type:'contact', subtype:'person', role:'client', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Catherine Noonan-Rafanello', subtitle:'Contact · Person · Client', summary:'Client in Rafanello v. ConvergeOne. Christine\'s sister. Commission dispute ~$50K.' }},
+
+  { id:'convergeone', label:'ConvergeOne', type:'contact', subtype:'company', role:'other', status:'current', hasPage:true, hot:false,
+    detail:{ title:'ConvergeOne / C1', subtitle:'Contact · Company', summary:'Respondent in Rafanello commission dispute. Applied "blended margin" methodology not in signed comp plan.' }},
+
+  { id:'alameda-da', label:'Alameda County DA', type:'contact', subtype:'company', role:'opposing-counsel', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County DA\'s Office', subtitle:'Contact · Company · Opposing Counsel', summary:'Prosecuting office on most Alameda County matters. Billups joined as Deputy DA Sept 15, 2025.' }},
+
+  // === Courts (6 total) ===
+  { id:'alameda-county', label:'Alameda County', type:'court', level:'county', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County Superior Court', subtitle:'Court · County Level', summary:'Primary county for most Noonan criminal matters.',
+      mattersHere:['Acosta','Blackwell','MejiaMejia','Navarro','Rodgers','Rodrigues','Rodriguez','Ruiz Salas'] }},
+
+  { id:'alameda-dept-711', label:'Alameda Dept 711', type:'court', level:'department', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County — Department 711', subtitle:'Court · Department Level', summary:'Recusal/dismissal motions hearing 5/22.',
+      mattersHere:['Navarro (CR-24-001345) — 5/22 at 9am','Rodrigues (CR-21-004636) — 5/22 at 9am'] }},
+
+  { id:'alameda-dept-11', label:'Alameda Dept 11', type:'court', level:'department', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Alameda County — Department 11', subtitle:'Court · Department Level', summary:'Ruiz Salas motions. Hearing was 4/10.',
+      mattersHere:['Ruiz Salas (CR-23-009962)'] }},
+
+  { id:'stan-county', label:'Stanislaus County', type:'court', level:'county', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Stanislaus County Superior Court', subtitle:'Court · County Level', summary:'Modesto, CA. 4 criminal matters.',
+      mattersHere:['Caldwell (Dept 2)','Brown','Dillard (Dept 4)','Mitchell'] }},
+
   { id:'stan-dept-2', label:'Stanislaus Dept 2', type:'court', level:'department', status:'current', hasPage:true, hot:true,
-    detail:{ title:'Stanislaus County Superior Court — Dept 2', aliases:'Dept 2, Stanislaus Dept 2, Modesto Dept 2',
-      subtitle:'Court &middot; Department Level',
-      summary:'Judge Ruben A. Villalobos. Clerk: Ruth Bustamante. Reporter: Laura Fowler.',
-      notes:['PC 977 appearance accepted on 2/9/26','Caldwell Romero motion heard here — 30 min time estimate','Address needs verification (Modesto vs Oakland listing)'],
-      mattersHere:['Caldwell (CR-23-010065) — Romero motion, hearing 4/14 at 8:30 AM']}},
+    detail:{ title:'Stanislaus County — Dept 2', subtitle:'Court · Department Level', summary:'Judge Villalobos. Caldwell Romero motion heard 4/14.',
+      notes:['PC 977 appearance accepted','30 min hearing estimate','Portal: stanportal.stanct.org'],
+      mattersHere:['Caldwell (CR-23-010065) — Romero motion 4/14'] }},
 
-  // === Contacts (referenced, no wiki page) ===
-  { id:'villalobos', label:'Villalobos, Ruben A.', type:'contact', subtype:'person', role:'judge', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Hon. Ruben A. Villalobos', subtitle:'Contact &middot; Person &middot; Judge', summary:'Judge, Stanislaus County Dept 2. Presiding over Caldwell Romero motion.' }},
-  { id:'noonan-john', label:'Noonan, John W.', type:'contact', subtype:'person', role:'other', status:'current', hasPage:false, hot:false,
-    detail:{ title:'John W. Noonan', subtitle:'Contact &middot; Person &middot; Attorney of Record', summary:'Attorney of record. Appearing on Caldwell, Rodgers, and other matters. Practice owner.' }},
-  { id:'israels-valli', label:'Israels, Valli', type:'contact', subtype:'person', role:'judge', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Hon. Valli Israels', subtitle:'Contact &middot; Person &middot; Judge', summary:'Judge, Stanislaus Dept 5. Presiding over Rodgers Pitchess in camera review.' }},
-  { id:'pojman-andrew', label:'Pojman, Andrew P.', type:'contact', subtype:'person', role:'expert', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Andrew P. Pojman, Ph.D.', subtitle:'Contact &middot; Person &middot; Expert', summary:'Evaluating expert for Weaver. FSIQ 72 — Mild Intellectual Disability. PC 1001.36 diversion evaluation.' }},
+  { id:'sacramento-county', label:'Sacramento County', type:'court', level:'county', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Sacramento County Superior Court', subtitle:'Court · County Level', summary:'Hunter case. Case number pending confirmation.',
+      mattersHere:['Hunter (CR-24-XXXXXX)'] }},
 
-  // === Matters (referenced, no wiki page) ===
-  { id:'caldwell', label:'Caldwell', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Caldwell — CR-23-010065', summary:'Romero motion (PC 1385). 2007 robbery + 2014 attempted criminal threats priors. Hearing 4/14/26 at 8:30 AM, Stanislaus Dept 2, Judge Villalobos. Binder delivered. No DA opposition.',
-      caseNo:'CR-23-010065', nextHearing:'4/14/26 at 8:30 AM — Romero motion' }},
-  { id:'brown', label:'Brown', type:'matter', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Brown — CR-25-003661', summary:'Romero motion. 2003 PC 245(a)(1) strike, 23 years old. Motion file-ready v4 completed 4/7/26.', caseNo:'CR-25-003661' }},
-  { id:'mejiamejia', label:'MejiaMejia', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'MejiaMejia — 22-CR-003198', summary:'Billups appeared and discussed strategy through Aug 2025. Recusal DENIED 1/16/26. Writ to First DCA planned. Jury trial 5/26/26.',
-      caseNo:'22-CR-003198', nextHearing:'5/26/26 — jury trial' }},
-  { id:'ruiz-salas', label:'Ruiz Salas', type:'matter', status:'needs-review', hasPage:false, hot:true,
-    detail:{ title:'Ruiz Salas — CR-23-009962', summary:'Officer Gaskin — Johnson admonition. Pitchess filed 1/23/26 with Suppression, Recusal, Continuance. Hearing 4/10/26 — outcome unknown.', caseNo:'CR-23-009962' }},
-  { id:'rodgers', label:'Rodgers', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Rodgers — CR-2024-001537', summary:'Pitchess in camera. Officer Solis fired for dishonesty. Two conflicting reports (MPD vs CHP). In camera 4/14/26, defense excused. Ruling 5/26/26. Dismissal motion 18 days overdue.',
-      caseNo:'CR-2024-001537', nextHearing:'4/14/26 — in camera; ruling 5/26/26' }},
-  { id:'rodrigues', label:'Rodrigues, Derek', type:'matter', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Rodrigues — Derek', summary:'"The very first defendant Darryl Billups left." Intake stage. Franks motion + dismissal requested.' }},
-  { id:'weaver', label:'Weaver', type:'matter', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Weaver — 25-CR-005354', summary:'PC 215(a) carjacking + firearms. Dr. Pojman eval: FSIQ 72, Mild Intellectual Disability. PC 1001.36 motion FINALIZED 4/9/26. Needs filing + service.', caseNo:'25-CR-005354' }},
-  { id:'mitchell', label:'Mitchell', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Mitchell', summary:'Billups bar complaint due 4/15 (TOMORROW). Indicated sentence hearing 4/27. Separate hearing date 17 days overdue.', nextHearing:'4/27 — indicated sentence hearing' }},
-  { id:'adamski', label:'Adamski', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Adamski — Appeal', summary:'Jurisdictional deadline April 25-30.' }},
-  { id:'culver', label:'Culver v. Noonan', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Culver v. Noonan', summary:'Hearing set for 4/21/26.', nextHearing:'4/21/26' }},
-  { id:'hunter', label:'Hunter', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Hunter', summary:'Case analysis / legal memo was due 4/4 — now 10 days overdue.' }},
-  { id:'hobbs-blackwell', label:'Hobbs/Blackwell', type:'matter', status:'current', hasPage:false, hot:true,
-    detail:{ title:'Hobbs/Blackwell', summary:'Motion filing 16 days overdue. Waiting on warrant search video from DA (no response).' }},
-  { id:'rafanello', label:'Rafanello', type:'matter', status:'current', hasPage:false, hot:false,
-    detail:{ title:'Rafanello v. Converge', summary:'Commission dispute, ~$50K. Intake processed. Waiting on signed comp plan. Case folder created.' }}
+  // === Matters (25 total) ===
+  { id:'acosta', label:'Acosta', type:'matter', matter_status:'Closed', matter_stage:'Post-Conviction', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Acosta — CR-24-012393', summary:'WITHDRAWN Feb 6, 2026. Pitchess WON as to Stilwell. File transmitted to new attorney. Civil claim deadline June 9, 2026.', caseNo:'CR-24-012393' }},
+
+  { id:'adler', label:'Adler', type:'matter', matter_status:'Closed', matter_stage:'Sentencing', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Adler — Misdemeanor', summary:'RESOLVED Nov 17, 2025. Misdemeanor, no jail time. Mental health / police misconduct.' }},
+
+  { id:'blackwell', label:'Blackwell', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Blackwell — 25-CR-007675', summary:'Hobbs motion completed but filing OVERDUE (16+ days). Discovery from Axon/Evidence.com.', caseNo:'25-CR-007675' }},
+
+  { id:'bratcher', label:'Bratcher', type:'matter', matter_status:'Open', matter_stage:'Discovery', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Bratcher — TP25002454', summary:'PI Wade Sellers investigation. Status needs review.', caseNo:'TP25002454' }},
+
+  { id:'brown', label:'Brown', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Brown — CR-25-003661', summary:'DUI with GBI. Tox report MISSING. 995 motion + Romero motion pending. Hearing July 14, 2026.', caseNo:'CR-25-003661', nextHearing:'7/14/26 — hearing' }},
+
+  { id:'caldwell', label:'Caldwell', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Caldwell — CR-23-010065', summary:'Romero motion heard 4/14/26. Binder delivered. Father appeared. No DA opposition. Outcome pending.', caseNo:'CR-23-010065' }},
+
+  { id:'culver-labor', label:'Culver v. Noonan', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Culver v. Noonan — 26CV169360', summary:'Labor Board appeal. Opposition to Motion to Dismiss filed 3/11. Reply brief due ~4/1 (may be overdue).', caseNo:'26CV169360' }},
+
+  { id:'culver-wc', label:'Culver WC', type:'matter', matter_status:'Pending', matter_stage:'Discovery', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Culver — WC-CM-870160', summary:'Workers comp claim. May be consolidated with Labor Board appeal.', caseNo:'WC-CM-870160' }},
+
+  { id:'dillard', label:'Dillard', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Dillard — CR-25-010297', summary:'PC 422 criminal threats. 70-year-old veteran, in custody, $650K bail. Military diversion (PC 1001.8). Mar 9 hearing outcome pending.', caseNo:'CR-25-010297' }},
+
+  { id:'hunter', label:'Hunter', type:'matter', matter_status:'Open', matter_stage:'Discovery', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Hunter — CR-24-XXXXXX', summary:'PC 266i(b)(2) pimping minor, PC 236.1(c)(1) human trafficking minor. Case analysis OVERDUE (11+ days). Already serving LIFE.', caseNo:'CR-24-XXXXXX [pending]' }},
+
+  { id:'ikem', label:'Ikem', type:'matter', matter_status:'Pending', matter_stage:'Post-Conviction', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Ikem — ECH0002496607', summary:'Traffic. Application to Vacate Civil Assessment filed Dec 4, 2025. Outcome pending.', caseNo:'ECH0002496607' }},
+
+  { id:'iyengar', label:'Iyengar', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Iyengar — DUI', summary:'DUI. 1538.5 suppression motion strategy approved May 2025. Current status needs review.' }},
+
+  { id:'mejiamejia', label:'MejiaMejia', type:'matter', matter_status:'Open', matter_stage:'Trial Prep', status:'current', hasPage:true, hot:true,
+    detail:{ title:'MejiaMejia — 22-CR-003198', summary:'Recusal DENIED. Writ to First DCA. Jury trial May 26, 2026.', caseNo:'22-CR-003198', nextHearing:'5/26/26 — jury trial' }},
+
+  { id:'mitchell', label:'Mitchell', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Mitchell — CR-22-002886', summary:'Multiple DUIs, Watson advisement. In custody 4+ years. Bar complaint against Billups DUE TODAY (4/15). Indicated sentence hearing 4/27.', caseNo:'CR-22-002886', nextHearing:'4/27 — indicated sentence' }},
+
+  { id:'navarro', label:'Navarro', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Navarro — CR-24-001345', summary:'Recusal/dismissal. Reply to AG writ in progress. Hearing May 22, Dept 711. Civil claim deadline June 9.', caseNo:'CR-24-001345', nextHearing:'5/22/26 — Dept 711' }},
+
+  { id:'noonan-trust', label:'Noonan Trust', type:'matter', matter_status:'Open', matter_stage:'Intake', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Noonan Family Trust', summary:'Civil trust dispute. Mother with dementia, allegedly coerced amendments. New attorney engaged.' }},
+
+  { id:'rafanello', label:'Rafanello', type:'matter', matter_status:'Open', matter_stage:'Intake', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Rafanello v. ConvergeOne', summary:'Commission dispute ~$50K. Waiting on signed comp plans from Cathy. Follow up by 4/21.' }},
+
+  { id:'rodgers', label:'Rodgers', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
+    detail:{ title:'Rodgers — CR-2024-001537', summary:'Pitchess in camera 4/14. Officer Solis fired for dishonesty. Ruling 5/26. Dismissal motion 18 days overdue.', caseNo:'CR-2024-001537', nextHearing:'5/26/26 — Pitchess ruling' }},
+
+  { id:'rodrigues', label:'Rodrigues', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Rodrigues — CR-21-004636', summary:'Billups conflict — "first defendant Billups left." Hearing May 22, Dept 711. Civil claim deadline June 9.', caseNo:'CR-21-004636', nextHearing:'5/22/26 — Dept 711' }},
+
+  { id:'rodriguez', label:'Rodriguez', type:'matter', matter_status:'Closed', matter_stage:'Post-Conviction', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Rodriguez — CR-24-010846', summary:'DISMISSED Dec 5, 2025. Sex sting case. Civil claim deadline June 9, 2026.', caseNo:'CR-24-010846' }},
+
+  { id:'ruiz-salas', label:'Ruiz Salas', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'needs-review', hasPage:true, hot:true,
+    detail:{ title:'Ruiz Salas — CR-23-009962', summary:'4 motions filed 2/18. Hearing 4/10 — outcome UNKNOWN. Brady letter missing.', caseNo:'CR-23-009962' }},
+
+  { id:'schiff', label:'Schiff', type:'matter', matter_status:'Open', matter_stage:'Intake', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Schiff — 24M-07568', summary:'Misdemeanor. Minimal data available.', caseNo:'24M-07568' }},
+
+  { id:'valenzuela', label:'Valenzuela', type:'matter', matter_status:'Open', matter_stage:'Preliminary Hearing', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Valenzuela — PX', summary:'Sexual offense. PX held Nov 2025. Offer: 240 with EHMMM, 2yr probation, lifetime registration.' }},
+
+  { id:'weaver', label:'Weaver', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
+    detail:{ title:'Weaver — 25-CR-005354', summary:'PC 215(a) carjacking + firearms. Dr. Pojman: FSIQ 72, Mild Intellectual Disability. 1001.36 motion FINALIZED 4/9, needs filing.', caseNo:'25-CR-005354' }},
+
+  { id:'wolfe', label:'Wolfe', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'needs-review', hasPage:true, hot:false,
+    detail:{ title:'Wolfe — C2214071', summary:'Continuance filed Dec 2025. Father passed away. Status needs review.', caseNo:'C2214071' }}
 ];
 
 const links = [
+  // Authorities → Matters
   {source:'romero-1996',target:'caldwell',label:'authority used'},
   {source:'romero-1996',target:'brown',label:'authority used'},
-  {source:'romero-1996',target:'recusal-side-switch',label:'related issue'},
-  {source:'romero-1996',target:'villalobos',label:'related contact'},
   {source:'pitchess-1974',target:'rodgers',label:'authority used'},
   {source:'pitchess-1974',target:'ruiz-salas',label:'authority used'},
-  {source:'pitchess-1974',target:'recusal-side-switch',label:'related issue'},
-  {source:'pitchess-1974',target:'israels-valli',label:'related contact'},
+  {source:'pitchess-1974',target:'acosta',label:'Pitchess WON'},
   {source:'pc-1001-36',target:'weaver',label:'authority used'},
-  {source:'pc-1001-36',target:'pojman-andrew',label:'evaluating expert'},
+
+  // Issue → Matters
   {source:'recusal-side-switch',target:'mejiamejia',label:'pattern applies'},
   {source:'recusal-side-switch',target:'ruiz-salas',label:'pattern applies'},
   {source:'recusal-side-switch',target:'rodgers',label:'pattern applies'},
   {source:'recusal-side-switch',target:'rodrigues',label:'pattern applies'},
-  {source:'recusal-side-switch',target:'billups-darryl',label:'central figure'},
-  {source:'recusal-side-switch',target:'noonan-john',label:'AOR'},
+  {source:'recusal-side-switch',target:'navarro',label:'pattern applies'},
+  {source:'recusal-side-switch',target:'mitchell',label:'bar complaint'},
+
+  // Billups → Matters
   {source:'billups-darryl',target:'mejiamejia',label:'former counsel'},
   {source:'billups-darryl',target:'ruiz-salas',label:'former counsel'},
   {source:'billups-darryl',target:'rodgers',label:'conflict'},
   {source:'billups-darryl',target:'rodrigues',label:'former counsel'},
   {source:'billups-darryl',target:'mitchell',label:'bar complaint'},
-  {source:'stan-dept-2',target:'caldwell',label:'venue'},
-  {source:'stan-dept-2',target:'villalobos',label:'presiding judge'},
+  {source:'billups-darryl',target:'recusal-side-switch',label:'central figure'},
+  {source:'billups-darryl',target:'alameda-da',label:'employed by'},
+
+  // Noonan John → Matters (AOR on most)
   {source:'noonan-john',target:'caldwell',label:'AOR'},
   {source:'noonan-john',target:'rodgers',label:'AOR'},
   {source:'noonan-john',target:'mejiamejia',label:'AOR'},
   {source:'noonan-john',target:'weaver',label:'AOR'},
+  {source:'noonan-john',target:'mitchell',label:'AOR'},
+  {source:'noonan-john',target:'brown',label:'AOR'},
+  {source:'noonan-john',target:'dillard',label:'AOR'},
+  {source:'noonan-john',target:'hunter',label:'AOR'},
+  {source:'noonan-john',target:'blackwell',label:'AOR'},
+  {source:'noonan-john',target:'navarro',label:'AOR'},
+  {source:'noonan-john',target:'rodrigues',label:'AOR'},
+  {source:'noonan-john',target:'ruiz-salas',label:'AOR'},
+
+  // Christine → Matters
+  {source:'noonan-christine',target:'culver-labor',label:'named defendant'},
+  {source:'noonan-christine',target:'noonan-trust',label:'client'},
+  {source:'noonan-christine',target:'rafanello',label:'sister of client'},
+
+  // Other contacts → Matters
+  {source:'fuerch-stephen',target:'culver-labor',label:'outside counsel'},
+  {source:'fuerch-stephen',target:'blackwell',label:'reviewer'},
+  {source:'fuerch-stephen',target:'mitchell',label:'reviewer'},
+  {source:'alpers-steven',target:'mejiamejia',label:'appellate counsel'},
+  {source:'alpers-steven',target:'ruiz-salas',label:'appeared'},
+  {source:'sellers-wade',target:'acosta',label:'PI'},
+  {source:'sellers-wade',target:'bratcher',label:'PI'},
+  {source:'sellers-wade',target:'hunter',label:'PI'},
+  {source:'pojman-andrew',target:'weaver',label:'evaluating expert'},
+  {source:'rafanello-catherine',target:'rafanello',label:'client'},
+  {source:'convergeone',target:'rafanello',label:'respondent'},
+
+  // Judges → Courts and Matters
+  {source:'villalobos',target:'stan-dept-2',label:'presiding judge'},
   {source:'villalobos',target:'caldwell',label:'presiding judge'},
   {source:'israels-valli',target:'rodgers',label:'presiding judge'},
-  {source:'pojman-andrew',target:'weaver',label:'evaluating expert'},
+
+  // Courts → Matters
+  {source:'stan-dept-2',target:'caldwell',label:'venue'},
+  {source:'stan-county',target:'brown',label:'venue'},
+  {source:'stan-county',target:'dillard',label:'venue'},
+  {source:'stan-county',target:'mitchell',label:'venue'},
+  {source:'alameda-county',target:'blackwell',label:'venue'},
+  {source:'alameda-county',target:'mejiamejia',label:'venue'},
+  {source:'alameda-county',target:'rodgers',label:'venue'},
+  {source:'alameda-county',target:'acosta',label:'venue'},
+  {source:'alameda-county',target:'rodriguez',label:'venue'},
+  {source:'alameda-dept-711',target:'navarro',label:'venue'},
+  {source:'alameda-dept-711',target:'rodrigues',label:'venue'},
+  {source:'alameda-dept-11',target:'ruiz-salas',label:'venue'},
+  {source:'sacramento-county',target:'hunter',label:'venue'},
+
+  // Court hierarchy
+  {source:'alameda-county',target:'alameda-dept-711',label:'department'},
+  {source:'alameda-county',target:'alameda-dept-11',label:'department'},
+  {source:'stan-county',target:'stan-dept-2',label:'department'},
+
+  // Authorities → Contacts / Issue
+  {source:'romero-1996',target:'villalobos',label:'related'},
+  {source:'pitchess-1974',target:'israels-valli',label:'related'},
+  {source:'pitchess-1974',target:'recusal-side-switch',label:'related issue'},
+  {source:'romero-1996',target:'recusal-side-switch',label:'related issue'},
+  {source:'pc-1001-36',target:'pojman-andrew',label:'evaluating expert'},
+
+  // Cross-matter links
   {source:'caldwell',target:'brown',label:'same authority (Romero)'},
   {source:'rodgers',target:'ruiz-salas',label:'same authority (Pitchess)'},
-  {source:'mejiamejia',target:'rodrigues',label:'same issue (Billups recusal)'},
-  {source:'mitchell',target:'billups-darryl',label:'bar complaint subject'},
-  {source:'rodgers',target:'billups-darryl',label:'Billups overlap'},
+  {source:'mejiamejia',target:'rodrigues',label:'same issue (Billups)'},
+  {source:'navarro',target:'rodrigues',label:'same issue (Billups)'},
+  {source:'navarro',target:'rodriguez',label:'civil claim cluster'},
+  {source:'navarro',target:'acosta',label:'civil claim cluster'},
+  {source:'rodriguez',target:'acosta',label:'civil claim cluster'},
+  {source:'culver-labor',target:'culver-wc',label:'related proceedings'},
+  {source:'noonan-john',target:'noonan-christine',label:'family/firm'},
+  {source:'alameda-da',target:'recusal-side-switch',label:'employing office'},
 ];
 
 // Deduplicate
@@ -464,33 +615,38 @@ links.forEach(l => {
 });
 
 const hotItems = {
-  'caldwell':          {urgency:'today',   text:'Hearing TODAY 8:30 AM — Romero motion',date:'2026-04-14'},
-  'rodgers':           {urgency:'today',   text:'In camera TODAY 8:30 AM (defense excused)',date:'2026-04-14'},
-  'mitchell':          {urgency:'overdue', text:'Bar complaint due TOMORROW (4/15)',date:'2026-04-15'},
-  'adamski':           {urgency:'upcoming',text:'Jurisdictional deadline April 25-30',date:'2026-04-25'},
-  'culver':            {urgency:'upcoming',text:'Hearing 4/21',date:'2026-04-21'},
-  'mejiamejia':        {urgency:'upcoming',text:'Jury trial 5/26',date:'2026-05-26'},
-  'hunter':            {urgency:'overdue', text:'Legal memo 10 DAYS OVERDUE (was due 4/4)',date:'2026-04-04'},
-  'hobbs-blackwell':   {urgency:'overdue', text:'Motion filing 16 DAYS OVERDUE',date:'2026-03-29'},
+  'mitchell':          {urgency:'overdue', text:'Bar complaint DUE TODAY (4/15)',date:'2026-04-15'},
+  'hunter':            {urgency:'overdue', text:'Legal memo 11 DAYS OVERDUE (was due 4/4)',date:'2026-04-04'},
+  'blackwell':         {urgency:'overdue', text:'Hobbs motion filing 16+ DAYS OVERDUE',date:'2026-03-29'},
+  'rodgers':           {urgency:'overdue', text:'Dismissal motion 18 DAYS OVERDUE. Pitchess ruling 5/26.',date:'2026-03-28'},
   'ruiz-salas':        {urgency:'overdue', text:'Hearing outcome UNKNOWN (4/10)',date:'2026-04-10'},
-  'recusal-side-switch':{urgency:'overdue',text:'Bar complaint due TOMORROW (4/15)',date:'2026-04-15'},
-  'billups-darryl':    {urgency:'overdue', text:'Bar complaint due TOMORROW (4/15)',date:'2026-04-15'},
-  'stan-dept-2':       {urgency:'today',   text:'Caldwell hearing TODAY 8:30 AM',date:'2026-04-14'},
+  'caldwell':          {urgency:'overdue', text:'Hearing 4/14 completed — outcome pending',date:'2026-04-14'},
+  'culver-labor':      {urgency:'upcoming',text:'Reply brief due ~4/1 (may be overdue)',date:'2026-04-01'},
+  'mejiamejia':        {urgency:'upcoming',text:'Jury trial 5/26',date:'2026-05-26'},
+  'navarro':           {urgency:'upcoming',text:'Hearing 5/22 Dept 711',date:'2026-05-22'},
+  'rodrigues':         {urgency:'upcoming',text:'Hearing 5/22 Dept 711',date:'2026-05-22'},
+  'recusal-side-switch':{urgency:'overdue',text:'Bar complaint DUE TODAY (4/15)',date:'2026-04-15'},
+  'billups-darryl':    {urgency:'overdue', text:'Bar complaint DUE TODAY (4/15)',date:'2026-04-15'},
+  'stan-dept-2':       {urgency:'overdue', text:'Caldwell hearing 4/14 — outcome pending',date:'2026-04-14'},
 };
 
 const calEvents = [
-  {date:'2026-03-29',label:'Hobbs/Blackwell',text:'Motion filing was due',nodeId:'hobbs-blackwell',urgency:'overdue'},
+  {date:'2026-03-28',label:'Rodgers',text:'Dismissal motion was due',nodeId:'rodgers',urgency:'overdue'},
+  {date:'2026-03-29',label:'Blackwell',text:'Hobbs motion filing was due',nodeId:'blackwell',urgency:'overdue'},
+  {date:'2026-04-01',label:'Culver v. Noonan',text:'Reply brief due',nodeId:'culver-labor',urgency:'overdue'},
   {date:'2026-04-04',label:'Hunter',text:'Legal memo was due',nodeId:'hunter',urgency:'overdue'},
   {date:'2026-04-10',label:'Ruiz Salas',text:'Hearing (outcome unknown)',nodeId:'ruiz-salas',urgency:'overdue'},
-  {date:'2026-04-14',label:'Caldwell',text:'Romero motion hearing 8:30 AM, Dept 2',nodeId:'caldwell',urgency:'today'},
-  {date:'2026-04-14',label:'Rodgers',text:'In camera Pitchess 8:30 AM, Dept 5',nodeId:'rodgers',urgency:'today'},
+  {date:'2026-04-14',label:'Caldwell',text:'Romero hearing Dept 2 (completed)',nodeId:'caldwell',urgency:'overdue'},
+  {date:'2026-04-14',label:'Rodgers',text:'In camera Pitchess (completed)',nodeId:'rodgers',urgency:'overdue'},
   {date:'2026-04-15',label:'Mitchell / Billups',text:'State bar complaint due',nodeId:'mitchell',urgency:'overdue'},
-  {date:'2026-04-21',label:'Culver v. Noonan',text:'Hearing',nodeId:'culver',urgency:'upcoming'},
-  {date:'2026-04-25',label:'Adamski',text:'Appeal deadline begins',nodeId:'adamski',urgency:'upcoming'},
+  {date:'2026-04-21',label:'Rafanello',text:'Follow up on signed comp plans',nodeId:'rafanello',urgency:'upcoming'},
   {date:'2026-04-27',label:'Mitchell',text:'Indicated sentence hearing',nodeId:'mitchell',urgency:'upcoming'},
-  {date:'2026-04-30',label:'Adamski',text:'Appeal deadline ends',nodeId:'adamski',urgency:'upcoming'},
+  {date:'2026-05-22',label:'Navarro',text:'Hearing 9am Dept 711',nodeId:'navarro',urgency:'upcoming'},
+  {date:'2026-05-22',label:'Rodrigues',text:'Hearing 9am Dept 711',nodeId:'rodrigues',urgency:'upcoming'},
   {date:'2026-05-26',label:'MejiaMejia',text:'Jury trial',nodeId:'mejiamejia',urgency:'upcoming'},
   {date:'2026-05-26',label:'Rodgers',text:'Pitchess ruling',nodeId:'rodgers',urgency:'upcoming'},
+  {date:'2026-06-09',label:'Navarro/Rodriguez/Acosta',text:'Civil claim deadline (jurisdictional)',nodeId:'navarro',urgency:'upcoming'},
+  {date:'2026-07-14',label:'Brown',text:'Hearing',nodeId:'brown',urgency:'upcoming'},
 ];
 
 // ============================================================
@@ -507,15 +663,13 @@ function nodeColorDim(d) {
   return TD[d.type] || 'rgba(99,102,241,0.15)';
 }
 
-// Court level sizing
 function courtScale(d) {
   if (d.type!=='court') return 1;
   if (d.level==='county') return 1.3;
   if (d.level==='branch') return 0.75;
-  return 1; // department
+  return 1;
 }
 
-// Connection counts for node sizing
 const cc = {};
 dl.forEach(l=>{cc[l.source]=(cc[l.source]||0)+1;cc[l.target]=(cc[l.target]||0)+1});
 
@@ -549,7 +703,11 @@ function switchView(v) {
   if(v==='cards') buildCards();
 }
 
-function toggleBanner(){bannerCollapsed=!bannerCollapsed;document.getElementById('hot-banner').classList.toggle('collapsed',bannerCollapsed)}
+function toggleBanner(){
+  bannerCollapsed=!bannerCollapsed;
+  document.getElementById('hot-banner').classList.toggle('collapsed',bannerCollapsed);
+  document.getElementById('hot-pill').style.display=bannerCollapsed?'flex':'none';
+}
 
 // ============================================================
 // HOT BANNER
@@ -560,6 +718,7 @@ function buildHotBanner(){
   const sorted=Object.entries(hotItems).map(([id,h])=>({id,...h,node:nodes.find(n=>n.id===id)})).filter(h=>h.node).sort((a,b)=>ord[a.urgency]-ord[b.urgency]);
   const seen=new Set(), uniq=sorted.filter(h=>{if(seen.has(h.text))return false;seen.add(h.text);return true});
   document.getElementById('hot-count').textContent=uniq.length+' items';
+  document.getElementById('hot-pill-count').textContent=uniq.length;
   g.innerHTML=uniq.map(h=>`<div class="hc ${h.urgency}" onclick="showDetail(nodes.find(n=>n.id==='${h.id}'))">
     <div class="hc-u">${h.urgency==='overdue'?'OVERDUE':h.urgency==='today'?'TODAY':'UPCOMING'}</div>
     <div class="hc-l">${h.node.label}</div>
@@ -575,7 +734,7 @@ function buildCalendar(){
   h+=buildMonth(2026,3,'April 2026');
   h+=buildMonth(2026,4,'May 2026');
   h+='<div class="tl-sec"><div class="tl-sec-t" style="color:#ef4444">Full Timeline</div>';
-  const today='2026-04-14';
+  const today='2026-04-15';
   [...calEvents].sort((a,b)=>a.date.localeCompare(b.date)).forEach(ev=>{
     const cls=ev.urgency==='overdue'?'overdue':ev.date===today?'today-tl':'upcoming-tl';
     const ds=new Date(ev.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -589,7 +748,7 @@ function buildCalendar(){
 }
 
 function buildMonth(yr,mo,title){
-  const today='2026-04-14';
+  const today='2026-04-15';
   const fd=new Date(yr,mo,1).getDay(), dim=new Date(yr,mo+1,0).getDate();
   const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   let h=`<div class="cal-mh">${title}</div><div class="cal-g">`;
@@ -600,378 +759,221 @@ function buildMonth(yr,mo,title){
     const isT=ds===today;
     const evs=calEvents.filter(e=>e.date===ds);
     h+=`<div class="cal-d${isT?' td':''}"><div class="cal-dn">${d}</div>`;
-    evs.forEach(ev=>{
-      const cls=ev.urgency==='overdue'?'overdue':(isT?'today-ev':'upcoming-ev');
-      h+=`<div class="cal-ev ${cls}" onclick="showDetail(nodes.find(n=>n.id==='${ev.nodeId}'))">${ev.label}</div>`;
+    evs.forEach(e=>{
+      const ec=e.urgency==='overdue'?'overdue':e.date===today?'today-ev':'upcoming-ev';
+      h+=`<div class="cal-ev ${ec}" onclick="showDetail(nodes.find(n=>n.id==='${e.nodeId}'))">${e.label}</div>`;
     });
     h+='</div>';
   }
-  return h+'</div>';
+  h+='</div>';
+  return h;
 }
 
 // ============================================================
-// CARDS (MOBILE) VIEW
+// CARDS VIEW
 // ============================================================
 function buildCards(){
   const c=document.getElementById('cards-view');
+  const byType=(t)=>nodes.filter(n=>n.type===t).sort((a,b)=>a.label.localeCompare(b.label));
   let h='<div class="mob-inner">';
-  const hotN=nodes.filter(n=>n.hot).sort((a,b)=>{
-    const o={overdue:0,today:1,upcoming:2};
-    return (o[hotItems[a.id]?.urgency]??3)-(o[hotItems[b.id]?.urgency]??3);
-  });
-  if(hotN.length){
-    h+='<div class="mob-sec"><div class="mob-sec-t" style="color:#ef4444"><div class="mob-dot" style="background:#ef4444"></div>Action Required</div>';
-    hotN.forEach(n=>{h+=mCard(n)});
+
+  const hotCount=Object.keys(hotItems).filter(k=>hotItems[k]).length;
+  if(hotCount>0){
+    h+=`<div class="mob-sec"><div class="mob-sec-t" style="color:#ef4444"><span class="mob-dot" style="background:#ef4444"></span>Urgent (${hotCount})</div>`;
+    Object.entries(hotItems).forEach(([id,item])=>{
+      const nd=nodes.find(n=>n.id===id);if(!nd)return;
+      const cls='ho';
+      h+=`<div class="mob-c ${cls}" onclick="showDetail(nd)"><div class="mob-c-title">${nd.label}</div><div class="mob-c-sum">${item.text}</div></div>`;
+    });
     h+='</div>';
   }
-  ['matter','contact','court','authority','issue'].forEach(type=>{
-    const tn=nodes.filter(n=>n.type===type&&!n.hot);
-    if(!tn.length)return;
-    h+=`<div class="mob-sec"><div class="mob-sec-t" style="color:${TC[type]}"><div class="mob-dot" style="background:${TC[type]}"></div>${type.charAt(0).toUpperCase()+type.slice(1)}s</div>`;
-    tn.forEach(n=>{h+=mCard(n)});
+
+  ['matter','court','contact','authority','issue'].forEach(t=>{
+    const ns=byType(t);
+    if(ns.length===0)return;
+    const clr=TC[t];
+    h+=`<div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:${clr}"></span>${t.charAt(0).toUpperCase()+t.slice(1)}s (${ns.length})</div>`;
+    ns.forEach(n=>{
+      const isH=hotItems[n.id];
+      h+=`<div class="mob-c${isH?' ho':''}" onclick="showDetail(n)"><div class="mob-c-title">${n.label}</div>${n.detail&&n.detail.summary?`<div class="mob-c-sum">${n.detail.summary}</div>`:''}${isH?`<div class="mob-c-hot ${isH.urgency}">${isH.text}</div>`:''}</div>`;
+    });
     h+='</div>';
   });
   h+='</div>';
   c.innerHTML=h;
 }
 
-function mCard(n){
-  const hi=hotItems[n.id];
-  const hc=hi?(hi.urgency==='overdue'?'ho':hi.urgency==='today'?'ht':'hu'):'';
-  const clr=nodeColor(n);
-  const isClient=n.type==='contact'&&n.role==='client';
-  let h=`<div class="mob-c ${hc}" onclick="this.classList.toggle('expanded')">`;
-  h+=`<div class="mob-c-title"><span>${n.detail?.title||n.label}</span>`;
-  if(isClient) h+=`<span style="color:${CLIENT_CLR};font-size:14px">&#9733;</span>`;
-  h+=`<span class="mob-c-badge" style="background:${nodeColorDim(n)};color:${clr}">${n.type}${n.subtype?' &middot; '+n.subtype:''}${n.role?' &middot; '+n.role:''}</span></div>`;
-  if(hi) h+=`<div class="mob-c-hot ${hi.urgency}">${hi.urgency==='overdue'?'&#9888; ':hi.urgency==='today'?'&#9200; ':'&#128197; '}${hi.text}</div>`;
-  if(n.detail?.summary) h+=`<div class="mob-c-sum">${n.detail.summary}</div>`;
-  h+='<div class="mob-c-det">';
-  if(n.detail?.nextHearing) h+=`<p style="font-size:12px;color:#fcd34d;margin-bottom:6px"><strong>Next:</strong> ${n.detail.nextHearing}</p>`;
-  if(n.detail?.caseNo) h+=`<p style="font-size:12px;color:#94a3b8;margin-bottom:6px;font-family:JetBrains Mono,monospace">${n.detail.caseNo}</p>`;
-  const conn=[];
-  dl.forEach(l=>{
-    const sid=typeof l.source==='object'?l.source.id:l.source;
-    const tid=typeof l.target==='object'?l.target.id:l.target;
-    if(sid===n.id){const t=nodes.find(nd=>nd.id===tid);if(t)conn.push(t)}
-    if(tid===n.id){const s=nodes.find(nd=>nd.id===sid);if(s)conn.push(s)}
-  });
-  if(conn.length){
-    h+=`<p style="font-size:11px;color:#64748b;margin-top:8px;margin-bottom:4px">Connections:</p>`;
-    h+=conn.map(c=>`<span class="rc" style="color:${nodeColor(c)};border-color:${nodeColor(c)}33" onclick="event.stopPropagation();showDetail(nodes.find(n=>n.id==='${c.id}'))">${c.label}</span>`).join('');
-  }
-  h+=`<p style="margin-top:10px"><span class="rc" style="color:#a5b4fc;border-color:rgba(99,102,241,.3)" onclick="event.stopPropagation();showDetail(nodes.find(nd=>nd.id==='${n.id}'))">Open detail &rarr;</span></p>`;
-  h+='</div></div>';
-  return h;
-}
-
-// ============================================================
-// D3 GRAPH
-// ============================================================
-
-const svg=d3.select('#graph-svg');
-let W=window.innerWidth, H=window.innerHeight;
-
-const zoom=d3.zoom().scaleExtent([0.2,4]).on('zoom',e=>container.attr('transform',e.transform));
-svg.call(zoom);
-const container=svg.append('g');
-const defs=svg.append('defs');
-
-// Glow filter
-const gf=defs.append('filter').attr('id','glow').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
-gf.append('feGaussianBlur').attr('stdDeviation','4').attr('result','b');
-const gm=gf.append('feMerge');gm.append('feMergeNode').attr('in','b');gm.append('feMergeNode').attr('in','SourceGraphic');
-
-// Urgency glow filters
-[['overdue','#ef4444',10],['today-glow','#f59e0b',8],['upcoming-glow','#3b82f6',6]].forEach(([name,clr,std])=>{
-  const f=defs.append('filter').attr('id',name).attr('x','-200%').attr('y','-200%').attr('width','500%').attr('height','500%');
-  f.append('feFlood').attr('flood-color',clr).attr('flood-opacity',.4).attr('result','fl');
-  f.append('feComposite').attr('in','fl').attr('in2','SourceGraphic').attr('operator','in').attr('result','m');
-  f.append('feGaussianBlur').attr('in','m').attr('stdDeviation',std).attr('result','bl');
-  const mg=f.append('feMerge');mg.append('feMergeNode').attr('in','bl');mg.append('feMergeNode').attr('in','SourceGraphic');
-});
-
-// Star symbol for client contacts
-defs.append('symbol').attr('id','star').attr('viewBox','0 0 24 24')
-  .append('path').attr('d','M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z')
-  .attr('fill',CLIENT_CLR);
-
-const simulation = d3.forceSimulation(nodes)
-  .force('link',d3.forceLink(dl).id(d=>d.id).distance(d=>{
-    const s=nodes.find(n=>n.id===(d.source.id||d.source));
-    const t=nodes.find(n=>n.id===(d.target.id||d.target));
-    return(s&&t&&s.type===t.type)?80:140;
-  }).strength(0.4))
-  .force('charge',d3.forceManyBody().strength(-350).distanceMax(500))
-  .force('center',d3.forceCenter(W/2,H/2))
-  .force('collision',d3.forceCollide().radius(d=>nodeRadius(d)+15))
-  .force('x',d3.forceX(W/2).strength(0.04))
-  .force('y',d3.forceY(H/2).strength(0.04));
-
-// Links
-const linkG=container.append('g');
-const link=linkG.selectAll('line').data(dl).join('line').attr('class','link')
-  .attr('stroke',d=>{const s=typeof d.source==='object'?d.source:nodes.find(n=>n.id===d.source);return s?nodeColor(s):'#334155'})
-  .attr('stroke-opacity',0.15).attr('stroke-width',1.5);
-
-// Nodes
-const nodeG=container.append('g');
-const node=nodeG.selectAll('g').data(nodes).join('g')
-  .style('cursor','pointer')
-  .call(d3.drag().on('start',(e,d)=>{if(!e.active)simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
-    .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
-    .on('end',(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null}));
-
-// Expanding pulse rings for hot nodes
-node.filter(d=>d.hot).each(function(d){
-  const g=d3.select(this);
-  const hi=hotItems[d.id];
-  const clr=hi?.urgency==='overdue'?'#ef4444':hi?.urgency==='today'?'#f59e0b':'#3b82f6';
-  const r=nodeRadius(d);
-  const an=hi?.urgency==='overdue'?'pulseOverdue':hi?.urgency==='today'?'pulseToday':'pulseUpcoming';
-  for(let i=0;i<2;i++){
-    g.append('circle').attr('r',r).attr('fill',clr).attr('stroke','none').attr('opacity',0)
-      .style('animation',`${an} 3s ease-out ${i*1.5}s infinite`);
-  }
-});
-
-// Spinning dashed hot ring
-node.filter(d=>d.hot).append('circle').attr('class','hot-ring')
-  .attr('r',d=>nodeRadius(d)+5).attr('fill','none')
-  .attr('stroke',d=>{const hi=hotItems[d.id];return hi?.urgency==='overdue'?'#ef4444':hi?.urgency==='today'?'#f59e0b':'#3b82f6'})
-  .attr('stroke-width',2.5).attr('stroke-dasharray','6,4').attr('opacity',0.9);
-
-// Background glow
-node.append('circle')
-  .attr('r',d=>nodeRadius(d)+(d.hot?16:8))
-  .attr('fill',d=>{
-    if(d.hot){const hi=hotItems[d.id];return hi?.urgency==='overdue'?'#ef4444':hi?.urgency==='today'?'#f59e0b':nodeColor(d)}
-    return nodeColor(d);
-  })
-  .attr('opacity',d=>d.hot?0.2:0.08)
-  .attr('filter',d=>{
-    if(!d.hot)return 'url(#glow)';
-    const hi=hotItems[d.id];
-    return hi?.urgency==='overdue'?'url(#overdue)':hi?.urgency==='today'?'url(#today-glow)':'url(#upcoming-glow)';
-  });
-
-// Main circle
-node.append('circle').attr('class','nc')
-  .attr('r',d=>nodeRadius(d))
-  .attr('fill',d=>{const c=d3.color(nodeColor(d));return d.hasPage?c.toString():c.darker(0.8).toString()})
-  .attr('fill-opacity',d=>d.hasPage?0.85:0.45)
-  .attr('stroke',d=>nodeColor(d))
-  .attr('stroke-width',d=>d.hasPage?2.5:1.5)
-  .attr('stroke-opacity',d=>d.hasPage?0.9:0.4);
-
-// Client star badge on contact nodes with role:client
-node.filter(d=>d.type==='contact'&&d.role==='client')
-  .append('use').attr('href','#star')
-  .attr('width',12).attr('height',12)
-  .attr('x',d=>nodeRadius(d)-4).attr('y',d=>-nodeRadius(d)-4);
-
-// Client star for judge/expert/opposing too — show role indicator
-// Actually just show star for clients. For judges show a small "J" badge etc.
-node.filter(d=>d.type==='contact'&&d.role==='judge')
-  .append('circle')
-  .attr('cx',d=>nodeRadius(d)*0.7).attr('cy',d=>-nodeRadius(d)*0.7)
-  .attr('r',6).attr('fill','#1e293b').attr('stroke',TC.court).attr('stroke-width',1.5);
-node.filter(d=>d.type==='contact'&&d.role==='judge')
-  .append('text').attr('x',d=>nodeRadius(d)*0.7).attr('y',d=>-nodeRadius(d)*0.7)
-  .attr('text-anchor','middle').attr('dominant-baseline','central')
-  .attr('fill',TC.court).attr('font-size','7px').attr('font-weight','700').attr('font-family',"'JetBrains Mono',monospace")
-  .attr('pointer-events','none').text('J');
-
-node.filter(d=>d.type==='contact'&&d.role==='expert')
-  .append('circle')
-  .attr('cx',d=>nodeRadius(d)*0.7).attr('cy',d=>-nodeRadius(d)*0.7)
-  .attr('r',6).attr('fill','#1e293b').attr('stroke',TC.authority).attr('stroke-width',1.5);
-node.filter(d=>d.type==='contact'&&d.role==='expert')
-  .append('text').attr('x',d=>nodeRadius(d)*0.7).attr('y',d=>-nodeRadius(d)*0.7)
-  .attr('text-anchor','middle').attr('dominant-baseline','central')
-  .attr('fill',TC.authority).attr('font-size','7px').attr('font-weight','700').attr('font-family',"'JetBrains Mono',monospace")
-  .attr('pointer-events','none').text('E');
-
-// Type letter
-node.append('text').attr('text-anchor','middle').attr('dominant-baseline','central')
-  .attr('fill','#fff').attr('font-size',d=>nodeRadius(d)*0.65+'px')
-  .attr('font-weight','700').attr('font-family',"'JetBrains Mono',monospace")
-  .attr('opacity',0.9).attr('pointer-events','none')
-  .text(d=>typeLetter(d));
-
-// Labels
-const labels=nodeG.selectAll('text.node-label').data(nodes).join('text')
-  .attr('class','node-label').attr('dy',d=>nodeRadius(d)+14)
-  .attr('fill','#94a3b8').attr('font-size','10px').text(d=>d.label);
-
-// Tooltip
-const tip=document.getElementById('tooltip');
-node.on('mouseover',function(e,d){
-  const isClient=d.type==='contact'&&d.role==='client';
-  tip.innerHTML=`<strong>${d.label}</strong>${isClient?' &#9733;':''}<br><span style="color:${nodeColor(d)};font-size:11px">${d.type}${d.subtype?' &middot; '+d.subtype:''}${d.role?' &middot; '+d.role:''}</span>${d.hot?`<br><span style="color:#fca5a5;font-size:11px">${hotItems[d.id]?.text||''}</span>`:''}`;
-  tip.classList.add('visible');
-  const conn=new Set([d.id]);
-  dl.forEach(l=>{const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;if(sid===d.id)conn.add(tid);if(tid===d.id)conn.add(sid)});
-  node.selectAll('.nc').attr('opacity',n=>conn.has(n.id)?1:0.15);
-  labels.attr('opacity',n=>conn.has(n.id)?1:0.1);
-  link.attr('stroke-opacity',l=>{const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;return(sid===d.id||tid===d.id)?0.5:0.03}).attr('stroke-width',l=>{const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;return(sid===d.id||tid===d.id)?2.5:1});
-});
-node.on('mousemove',function(e){tip.style.left=(e.pageX+14)+'px';tip.style.top=(e.pageY-14)+'px'});
-node.on('mouseout',function(){
-  tip.classList.remove('visible');
-  node.selectAll('.nc').attr('opacity',1);
-  labels.attr('opacity',1);
-  link.attr('stroke-opacity',0.15).attr('stroke-width',1.5);
-});
-node.on('click',function(e,d){e.stopPropagation();showDetail(d)});
-svg.on('click',()=>closePanel());
-
-document.getElementById('sn').textContent=nodes.length;
-document.getElementById('se').textContent=dl.length;
-document.getElementById('sh').textContent=Object.keys(hotItems).length;
-
-simulation.on('tick',()=>{
-  link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-  node.attr('transform',d=>`translate(${d.x},${d.y})`);
-  labels.attr('x',d=>d.x).attr('y',d=>d.y);
-});
-
 // ============================================================
 // DETAIL PANEL
 // ============================================================
-function showDetail(d){
-  const panel=document.getElementById('detail-panel');
-  const badge=document.getElementById('p-badge');
-  const title=document.getElementById('p-title');
-  const status=document.getElementById('p-status');
-  const body=document.getElementById('p-body');
-  const clr=nodeColor(d);
-  const isClient=d.type==='contact'&&d.role==='client';
+function showDetail(nd){
+  if(!nd)return;
+  const p=document.getElementById('detail-panel');
+  const pb=document.getElementById('p-badge');
+  const pt=document.getElementById('p-title');
+  const ps=document.getElementById('p-status');
+  const pbody=document.getElementById('p-body');
 
-  // Badge with subtype/role info
-  let badgeText=d.type;
-  if(d.subtype) badgeText+=` &middot; ${d.subtype}`;
-  if(d.role) badgeText+=` &middot; ${d.role}`;
-  if(d.level) badgeText+=` &middot; ${d.level}`;
-  badge.innerHTML=(isClient?'&#9733; ':'')+badgeText;
-  badge.style.background=nodeColorDim(d);
-  badge.style.color=clr;
+  pb.innerHTML=`<span style="background:${nodeColor(nd)};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span><span>${nd.type.charAt(0).toUpperCase()+nd.type.slice(1)}</span>`;
+  pt.textContent=nd.detail?.title||nd.label;
 
-  title.textContent=d.detail?.title||d.label;
+  let st='';
+  if(nd.status) st+=`<span class="sdot" style="background:${nd.status==='current'?'#60a5fa':nd.status==='needs-review'?'#f59e0b':'#94a3b8'}"></span>`;
+  st+=(nd.status||'unknown').charAt(0).toUpperCase()+(nd.status||'unknown').slice(1);
+  ps.innerHTML=st;
 
-  const sc=d.status==='current'?'#22c55e':d.status==='needs-review'?'#f59e0b':'#64748b';
-  status.innerHTML=`<span class="sdot" style="background:${sc}"></span>${d.status}${d.hasPage?'':' &middot; <span style="color:#64748b">no wiki page yet</span>'}`;
-
-  let h='';
-  const hi=hotItems[d.id];
-  if(hi){
-    const icons={overdue:'&#128308;',today:'&#128993;',upcoming:'&#128309;'};
-    h+=`<div class="uf ${hi.urgency}"><span class="fi">${icons[hi.urgency]}</span><span>${hi.text}</span></div>`;
+  let body='';
+  const h=hotItems[nd.id];
+  if(h){
+    const uc=h.urgency==='overdue'?'overdue':h.urgency==='today'?'today':'upcoming';
+    body+=`<div class="uf ${uc}"><span class="fi">⚡</span>${h.text}</div>`;
   }
 
-  if(d.detail?.subtitle) h+=`<div class="p-sec"><p style="font-size:12px;color:#94a3b8;font-style:italic">${d.detail.subtitle}</p></div>`;
-  if(d.detail?.summary) h+=`<div class="p-sec"><div class="p-sec-t">Summary</div><p>${d.detail.summary}</p></div>`;
-  if(d.detail?.aliases) h+=`<div class="p-sec"><div class="p-sec-t">Aliases</div><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#94a3b8">${d.detail.aliases}</p></div>`;
-  if(d.detail?.caseNo) h+=`<div class="p-sec"><div class="p-sec-t">Case Number</div><p style="font-family:'JetBrains Mono',monospace;font-size:13px">${d.detail.caseNo}</p></div>`;
-  if(d.detail?.nextHearing) h+=`<div class="p-sec"><div class="p-sec-t">Next Hearing</div><p>${d.detail.nextHearing}</p></div>`;
-  if(d.detail?.keyHoldings) h+=`<div class="p-sec"><div class="p-sec-t">Key Holdings</div>${d.detail.keyHoldings.map(x=>`<p style="margin-bottom:6px;font-size:12px;line-height:1.5">&#x2022; ${x}</p>`).join('')}</div>`;
-  if(d.detail?.roleHistory) h+=`<div class="p-sec"><div class="p-sec-t">Role History</div>${d.detail.roleHistory.map(x=>`<p style="margin-bottom:6px;font-size:12px;line-height:1.5">&#x2022; ${x}</p>`).join('')}</div>`;
-  if(d.detail?.playbook) h+=`<div class="p-sec"><div class="p-sec-t">Playbook</div>${d.detail.playbook.map(x=>`<p style="margin-bottom:6px;font-size:12px;line-height:1.5">${x}</p>`).join('')}</div>`;
-  const matters=d.detail?.mattersUsed||d.detail?.affectedMatters||d.detail?.mattersHere;
-  if(matters) h+=`<div class="p-sec"><div class="p-sec-t">Related Matters</div>${matters.map(x=>`<p style="margin-bottom:6px;font-size:12px;line-height:1.5">&#x2022; ${x}</p>`).join('')}</div>`;
-  if(d.detail?.notes) h+=`<div class="p-sec"><div class="p-sec-t">Practice Notes</div>${d.detail.notes.map(x=>`<p style="margin-bottom:6px;font-size:12px;line-height:1.5">&#x2022; ${x}</p>`).join('')}</div>`;
-  if(d.detail?.pitfalls) h+=`<div class="p-sec"><div class="p-sec-t">Pitfalls</div>${d.detail.pitfalls.map(x=>`<p style="margin-bottom:6px;font-size:12px;line-height:1.5;color:#fca5a5">&#x26A0; ${x}</p>`).join('')}</div>`;
+  if(nd.detail){
+    const d=nd.detail;
+    if(d.summary) body+=`<div class="p-sec"><div class="p-sec-t">Summary</div><p>${d.summary}</p></div>`;
+    if(d.caseNo) body+=`<div class="p-sec"><div class="p-sec-t">Case Number</div><p>${d.caseNo}</p></div>`;
+    if(d.nextHearing) body+=`<div class="p-sec"><div class="p-sec-t">Next Hearing</div><p>${d.nextHearing}</p></div>`;
+    if(d.subtitle) body+=`<div class="p-sec"><div class="p-sec-t">Subtitle</div><p>${d.subtitle}</p></div>`;
+    if(d.roleHistory){body+=`<div class="p-sec"><div class="p-sec-t">Role History</div><p>${d.roleHistory.map(rh=>`<span class="rc">${rh}</span>`).join('')}</p></div>`;}
+    if(d.affectedMatters){body+=`<div class="p-sec"><div class="p-sec-t">Affected Matters</div><p>${d.affectedMatters.map(m=>`<span class="rc">${m}</span>`).join('')}</p></div>`;}
+    if(d.keyHoldings){body+=`<div class="p-sec"><div class="p-sec-t">Key Holdings</div><p>${d.keyHoldings.map(kh=>`<span class="rc">${kh}</span>`).join('')}</p></div>`;}
+    if(d.mattersUsed){body+=`<div class="p-sec"><div class="p-sec-t">Matters Used</div><p>${d.mattersUsed.map(m=>`<span class="rc">${m}</span>`).join('')}</p></div>`;}
+    if(d.pitfalls){body+=`<div class="p-sec"><div class="p-sec-t">Pitfalls</div><p>${d.pitfalls.map(pf=>`<span class="rc">${pf}</span>`).join('')}</p></div>`;}
+    if(d.mattersHere){body+=`<div class="p-sec"><div class="p-sec-t">Matters Here</div><p>${d.mattersHere.map(m=>`<span class="rc">${m}</span>`).join('')}</p></div>`;}
+    if(d.notes){body+=`<div class="p-sec"><div class="p-sec-t">Notes</div><p>${d.notes.map(n=>`<span class="rc">${n}</span>`).join('')}</p></div>`;}
+    if(d.timeline){body+=`<div class="p-sec"><div class="p-sec-t">Timeline</div><p>${d.timeline.map(t=>`<span class="rc">${t}</span>`).join('')}</p></div>`;}
+    if(d.relatedAuthorities){body+=`<div class="p-sec"><div class="p-sec-t">Related Authorities</div><p>${d.relatedAuthorities.map(a=>`<span class="rc">${a}</span>`).join('')}</p></div>`;}
+  }
 
-  const conn=[];
-  dl.forEach(l=>{
-    const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;
-    if(sid===d.id){const t=nodes.find(n=>n.id===tid);if(t)conn.push({node:t,label:l.label})}
-    if(tid===d.id){const s=nodes.find(n=>n.id===sid);if(s)conn.push({node:s,label:l.label})}
-  });
-  if(conn.length) h+=`<div class="p-sec"><div class="p-sec-t">Connections (${conn.length})</div>${conn.map(c=>`<span class="rc" style="color:${nodeColor(c.node)};border-color:${nodeColor(c.node)}33" onclick="navigateToNode('${c.node.id}')">${c.node.label} <span style="color:#64748b;font-size:10px">${c.label}</span></span>`).join('')}</div>`;
-
-  body.innerHTML=h;
-  panel.classList.add('open');
+  pbody.innerHTML=body;
+  p.classList.add('open');
 }
 
-function closePanel(){document.getElementById('detail-panel').classList.remove('open')}
-
-function navigateToNode(id){
-  const d=nodes.find(n=>n.id===id);
-  if(d){
-    showDetail(d);
-    if(currentView==='graph'){
-      const tr=d3.zoomTransform(svg.node());
-      svg.transition().duration(600).call(zoom.transform,d3.zoomIdentity.translate(W/2-d.x*tr.k,H/2-d.y*tr.k).scale(tr.k));
-    }
-  }
+function closePanel(){
+  document.getElementById('detail-panel').classList.remove('open');
 }
 
 // ============================================================
-// SEARCH
+// GRAPH RENDERING
 // ============================================================
-const si=document.getElementById('search-input');
-si.addEventListener('input',function(){
-  const q=this.value.toLowerCase().trim();
-  if(!q){node.selectAll('.nc').attr('opacity',1);labels.attr('opacity',1);link.attr('stroke-opacity',0.15);return}
-  const m=new Set();
-  nodes.forEach(n=>{const t=[n.label,n.type,n.subtype,n.role,n.level,n.detail?.title,n.detail?.aliases,n.detail?.summary,n.detail?.caseNo].filter(Boolean).join(' ').toLowerCase();if(t.includes(q))m.add(n.id)});
-  node.selectAll('.nc').attr('opacity',n=>m.has(n.id)?1:0.1);
-  labels.attr('opacity',n=>m.has(n.id)?1:0.08);
-  link.attr('stroke-opacity',0.03);
-  if(m.size===1){const id=[...m][0];const d=nodes.find(n=>n.id===id);if(d){const tr=d3.zoomTransform(svg.node());svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity.translate(W/2-d.x*tr.k,H/2-d.y*tr.k).scale(tr.k))}}
-});
+const svg=d3.select('#graph-svg');
+let simulation;
 
-// ============================================================
-// FILTER
-// ============================================================
-let af='all';
-document.querySelectorAll('.fp').forEach(pill=>{
-  pill.addEventListener('click',function(){
-    document.querySelectorAll('.fp').forEach(p=>p.classList.remove('active'));
-    this.classList.add('active');
-    af=this.dataset.type;
-    if(af==='all'){node.style('display','block');labels.style('display','block');link.style('display','block');node.selectAll('.nc').attr('opacity',1);labels.attr('opacity',1);link.attr('stroke-opacity',0.15)}
-    else{
-      const mids=new Set(nodes.filter(n=>n.type===af).map(n=>n.id));
-      const ext=new Set(mids);
-      dl.forEach(l=>{const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;if(mids.has(sid))ext.add(tid);if(mids.has(tid))ext.add(sid)});
-      node.style('display',d=>ext.has(d.id)?'block':'none');
-      labels.style('display',d=>ext.has(d.id)?'block':'none');
-      node.selectAll('.nc').attr('opacity',d=>mids.has(d.id)?1:0.35);
-      labels.attr('opacity',d=>mids.has(d.id)?1:0.4);
-      link.style('display',l=>{const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;return(ext.has(sid)&&ext.has(tid))?'block':'none'});
-      link.attr('stroke-opacity',l=>{const sid=typeof l.source==='object'?l.source.id:l.source;const tid=typeof l.target==='object'?l.target.id:l.target;return(mids.has(sid)||mids.has(tid))?0.3:0.08});
-    }
-    simulation.alpha(0.3).restart();
+function initGraph(){
+  const w=window.innerWidth, h=window.innerHeight;
+
+  svg.attr('width',w).attr('height',h);
+
+  const links_d=dl.map(d=>({...d}));
+  const nodes_d=nodes.map(d=>({...d}));
+
+  simulation=d3.forceSimulation(nodes_d)
+    .force('link',d3.forceLink(links_d).id(d=>d.id).distance(d=>{
+      const s=d.source.type, t=d.target.type;
+      if(s==='court'||t==='court')return 120;
+      if(s==='authority'||t==='authority')return 100;
+      if(s==='issue'||t==='issue')return 110;
+      return 80;
+    }).strength(0.3))
+    .force('charge',d3.forceManyBody().strength(-600))
+    .force('collide',d3.forceCollide(d=>nodeRadius(d)+8))
+    .force('center',d3.forceCenter(w/2,h/2).strength(0.08))
+    .on('tick',tick);
+
+  const link=svg.selectAll('.link').data(links_d).enter().append('line')
+    .attr('class','link').attr('stroke','rgba(255,255,255,0.1)').attr('stroke-width',1.5);
+
+  const node=svg.selectAll('.node').data(nodes_d).enter().append('g')
+    .attr('class','node').call(d3.drag().on('start',dragStart).on('drag',dragging).on('end',dragEnd))
+    .on('click',e=>{e.stopPropagation();showDetail(e.currentTarget.__data__)})
+    .on('mouseover',nodeHover).on('mouseout',nodeUnhover);
+
+  node.append('circle').attr('r',d=>nodeRadius(d)).attr('fill',d=>nodeColor(d))
+    .attr('stroke',d=>d.hot?'#ef4444':'none').attr('stroke-width',d=>d.hot?2:0);
+
+  node.append('circle').attr('class','hot-ring').attr('r',d=>nodeRadius(d))
+    .attr('fill','none').attr('stroke','#ef4444').attr('stroke-width',1)
+    .attr('stroke-dasharray','2,2').style('opacity',d=>d.hot?1:0)
+    .style('animation',d=>d.hot?`ringSpin 4s linear infinite`:'none');
+
+  node.append('text').attr('class','node-label').text(d=>d.label).attr('font-size',d=>nodeRadius(d)*0.7+'px');
+
+  svg.on('click',()=>closePanel());
+
+  function tick(){
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  }
+
+  window.addEventListener('resize',()=>{
+    const nw=window.innerWidth, nh=window.innerHeight;
+    svg.attr('width',nw).attr('height',nh);
+    simulation.force('center',d3.forceCenter(nw/2,nh/2).strength(0.08));
   });
-});
 
-// ============================================================
-// KEYBOARD
-// ============================================================
+  updateStats();
+  updateFilters();
+  buildHotBanner();
+  document.getElementById('search-input').addEventListener('keyup',search);
+  document.querySelectorAll('.fp').forEach(f=>f.addEventListener('click',filter));
+}
+
+function dragStart(e,d){e.sourceEvent.stopPropagation();d.fx=d.x;d.fy=d.y}
+function dragging(e,d){d.fx=e.x;d.fy=e.y}
+function dragEnd(e,d){d.fx=null;d.fy=null}
+
+function nodeHover(e,d){
+  const t=document.getElementById('tooltip');
+  t.textContent=`${d.label} (${d.type})`;
+  t.style.left=(e.pageX+10)+'px';
+  t.style.top=(e.pageY+10)+'px';
+  t.classList.add('visible');
+}
+
+function nodeUnhover(){
+  document.getElementById('tooltip').classList.remove('visible');
+}
+
+function updateStats(){
+  document.getElementById('sn').textContent=nodes.length;
+  document.getElementById('se').textContent=dl.length;
+  document.getElementById('sh').textContent=Object.keys(hotItems).length;
+}
+
+function updateFilters(){
+  const typed=document.querySelectorAll('.fp[data-type]');
+  typed.forEach(f=>{
+    const t=f.dataset.type;
+    const count=t==='all'?nodes.length:nodes.filter(n=>n.type===t).length;
+    f.textContent=(t==='all'?'All':t.charAt(0).toUpperCase()+t.slice(1))+` (${count})`;
+    if(t!=='all') f.insertAdjacentHTML('afterbegin','<span class="dot" style="background:var(--clr-'+t+')"></span>');
+  });
+}
+
+function filter(e){
+  const t=e.currentTarget.dataset.type;
+  document.querySelectorAll('.fp').forEach(f=>f.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  svg.selectAll('.node').style('opacity',d=>t==='all'||d.type===t?1:0.15).style('pointer-events',d=>t==='all'||d.type===t?'auto':'none');
+  svg.selectAll('.link').style('opacity',d=>{
+    if(t==='all')return 0.1;
+    return(d.source.type===t||d.target.type===t)?0.3:0.02;
+  });
+}
+
+function search(e){
+  const q=e.target.value.toLowerCase();
+  svg.selectAll('.node').style('opacity',d=>d.label.toLowerCase().includes(q)||d.id.includes(q)?1:0.15)
+    .style('pointer-events',d=>d.label.toLowerCase().includes(q)||d.id.includes(q)?'auto':'none');
+}
+
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closePanel();si.value='';si.dispatchEvent(new Event('input'))}
-  if(e.key==='/'&&document.activeElement!==si){e.preventDefault();si.focus()}
-  if(e.key==='1')switchView('graph');if(e.key==='2')switchView('calendar');if(e.key==='3')switchView('cards');
+  if(e.key==='/'){e.preventDefault();document.getElementById('search-input').focus()}
+  if(e.key==='Escape'){closePanel()}
 });
 
-// ============================================================
-// INIT
-// ============================================================
-buildHotBanner();
-
-setTimeout(()=>{
-  const b=container.node().getBBox();
-  const bH=bannerCollapsed?0:130;
-  const sc=Math.min(W/(b.width+100),(H-56-bH)/(b.height+100),1.5)*0.85;
-  const tx=W/2-(b.x+b.width/2)*sc;
-  const ty=((H-56-bH)/2+56+bH)-(b.y+b.height/2)*sc;
-  svg.transition().duration(1000).ease(d3.easeCubicOut).call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(sc));
-},2000);
-
-if(window.innerWidth<=600){switchView('cards');toggleBanner()}
-
+initGraph();
 </script>
 </body>
 </html>
