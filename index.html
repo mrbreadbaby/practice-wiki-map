@@ -70,12 +70,26 @@
   /* ===== HOT BANNER ===== */
   #hot-banner{position:fixed;top:56px;left:0;right:0;background:linear-gradient(180deg,rgba(15,10,5,.97),rgba(10,14,23,.95));backdrop-filter:blur(20px);border-bottom:1px solid rgba(239,68,68,0.15);z-index:95;max-height:220px;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:1}
   #hot-banner.collapsed{max-height:0;opacity:0;pointer-events:none}
-  .hb-inner{padding:12px 16px 14px;position:relative}
+  .hb-inner{padding:12px 16px 14px;padding-right:56px;position:relative}
   .hb-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;min-width:0}
   .hb-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#ef4444;flex-shrink:0}
   .hb-count{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,0.15);color:#fca5a5;font-weight:600;flex-shrink:0}
-  .hb-hide{flex-shrink:0;margin-left:auto;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#94a3b8;cursor:pointer;padding:6px 14px;font-size:12px;font-weight:500;font-family:inherit;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-width:50px;text-align:center}
-  .hb-hide:hover,.hb-hide:active{background:rgba(255,255,255,0.2);color:#e2e8f0}
+  /* Banner close: fixed overlay X in top-right corner of banner */
+  .hb-close{
+    position:absolute;top:8px;right:8px;
+    width:44px;height:44px;
+    border-radius:10px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.2);
+    color:#e2e8f0;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;font-weight:600;line-height:1;
+    transition:all .15s;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    z-index:2;
+  }
+  .hb-close:hover,.hb-close:active{background:rgba(255,255,255,0.25);color:#fff}
   .hb-grid{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
   .hb-grid::-webkit-scrollbar{display:none}
   .hc{flex-shrink:0;padding:10px 14px;border-radius:10px;cursor:pointer;min-width:190px;max-width:280px;transition:all .2s;-webkit-tap-highlight-color:transparent}
@@ -225,6 +239,29 @@
 
   .client-star{color:var(--clr-client);font-size:12px}
 
+  /* ===== ZOOM CONTROLS ===== */
+  #zoom-controls{
+    position:fixed;bottom:56px;right:16px;
+    display:flex;flex-direction:column;gap:6px;
+    z-index:80;
+  }
+  .zoom-btn{
+    width:44px;height:44px;
+    border-radius:10px;
+    background:rgba(15,20,33,0.92);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.08);
+    color:#94a3b8;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;font-weight:600;
+    transition:all .15s;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .zoom-btn:hover,.zoom-btn:active{background:rgba(30,40,66,0.95);color:#e2e8f0;border-color:rgba(255,255,255,0.15)}
+  .zoom-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
   /* ===== RESPONSIVE ===== */
   @media(max-width:900px){
     #top-bar{gap:8px;padding:6px 10px}
@@ -264,9 +301,13 @@
     .p-close:active{background:rgba(239,68,68,0.5)}
     .p-title{font-size:16px}
 
-    /* MOBILE HOT BANNER — ensure Hide button visible */
-    .hb-head{flex-wrap:nowrap;overflow:visible}
-    .hb-hide{padding:8px 16px;font-size:13px;min-height:36px}
+    /* MOBILE BANNER CLOSE — make it bigger */
+    .hb-close{width:48px;height:48px;font-size:24px;top:6px;right:6px;
+      background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.3)}
+
+    /* MOBILE ZOOM CONTROLS */
+    #zoom-controls{bottom:16px;right:8px}
+    .zoom-btn{width:48px;height:48px;font-size:22px}
   }
 </style>
 </head>
@@ -298,10 +339,10 @@
 
 <div id="hot-banner">
   <div class="hb-inner">
+    <button class="hb-close" onclick="toggleBanner()" aria-label="Hide banner">&times;</button>
     <div class="hb-head">
       <span class="hb-title">Action Required</span>
       <span class="hb-count" id="hot-count"></span>
-      <button class="hb-hide" onclick="toggleBanner()">Hide</button>
     </div>
     <div class="hb-grid" id="hb-grid"></div>
   </div>
@@ -335,6 +376,12 @@
   <span><span class="sv" id="sn">0</span> nodes</span>
   <span><span class="sv" id="se">0</span> connections</span>
   <span><span class="sv" id="sh">0</span> urgent</span>
+</div>
+
+<div id="zoom-controls">
+  <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out" title="Zoom out">&minus;</button>
+  <button class="zoom-btn" onclick="zoomFit()" aria-label="Fit all" title="Fit all nodes"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
 </div>
 
 <div class="node-tooltip" id="tooltip"></div>
@@ -720,6 +767,7 @@ function switchView(v) {
   document.getElementById('legend').style.display = v==='graph'?'flex':'none';
   document.getElementById('stats').style.display = v==='graph'?'flex':'none';
   document.getElementById('filter-bar').style.display = v==='graph'?'flex':'none';
+  document.getElementById('zoom-controls').style.display = v==='graph'?'flex':'none';
   if(v==='graph') simulation.alpha(0.1).restart();
   if(v==='calendar'){ updateContentPadding(); buildCalendar(); }
   if(v==='cards'){ updateContentPadding(); buildCards(); }
@@ -890,11 +938,20 @@ function closePanel(){
 // ============================================================
 const svg=d3.select('#graph-svg');
 let simulation;
+let svgZoom; // D3 zoom behavior reference
+let graphContainer; // g element that gets zoomed
 
 function initGraph(){
   const w=window.innerWidth, h=window.innerHeight;
 
   svg.attr('width',w).attr('height',h);
+
+  // Set up D3 zoom on the SVG, transform a <g> container
+  svgZoom=d3.zoom().scaleExtent([0.15,4]).on('zoom',e=>{
+    graphContainer.attr('transform',e.transform);
+  });
+  svg.call(svgZoom);
+  graphContainer=svg.append('g').attr('id','graph-g');
 
   const links_d=dl.map(d=>({...d}));
   const nodes_d=nodes.map(d=>({...d}));
@@ -912,11 +969,15 @@ function initGraph(){
     .force('center',d3.forceCenter(w/2,h/2).strength(0.08))
     .on('tick',tick);
 
-  const link=svg.selectAll('.link').data(links_d).enter().append('line')
+  // All graph elements now go into graphContainer (so zoom transforms them)
+  const link=graphContainer.selectAll('.link').data(links_d).enter().append('line')
     .attr('class','link').attr('stroke','rgba(255,255,255,0.1)').attr('stroke-width',1.5);
 
-  const node=svg.selectAll('.node').data(nodes_d).enter().append('g')
-    .attr('class','node').call(d3.drag().on('start',dragStart).on('drag',dragging).on('end',dragEnd))
+  const node=graphContainer.selectAll('.node').data(nodes_d).enter().append('g')
+    .attr('class','node').call(d3.drag()
+      .on('start',(e,d)=>{e.sourceEvent.stopPropagation();d.fx=d.x;d.fy=d.y})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
+      .on('end',(e,d)=>{d.fx=null;d.fy=null}))
     .on('click',e=>{e.stopPropagation();showDetail(e.currentTarget.__data__)})
     .on('mouseover',nodeHover).on('mouseout',nodeUnhover);
 
@@ -932,6 +993,9 @@ function initGraph(){
 
   svg.on('click',()=>closePanel());
 
+  // Store nodes_d reference for zoomFit
+  window._graphNodes=nodes_d;
+
   function tick(){
     link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
     node.attr('transform',d=>`translate(${d.x},${d.y})`);
@@ -943,6 +1007,9 @@ function initGraph(){
     simulation.force('center',d3.forceCenter(nw/2,nh/2).strength(0.08));
   });
 
+  // Auto-fit after simulation settles
+  setTimeout(zoomFit, 2500);
+
   updateStats();
   updateFilters();
   buildHotBanner();
@@ -951,9 +1018,26 @@ function initGraph(){
   document.querySelectorAll('.fp').forEach(f=>f.addEventListener('click',filter));
 }
 
-function dragStart(e,d){e.sourceEvent.stopPropagation();d.fx=d.x;d.fy=d.y}
-function dragging(e,d){d.fx=e.x;d.fy=e.y}
-function dragEnd(e,d){d.fx=null;d.fy=null}
+// === ZOOM CONTROLS ===
+function zoomIn(){
+  svg.transition().duration(300).call(svgZoom.scaleBy, 1.4);
+}
+function zoomOut(){
+  svg.transition().duration(300).call(svgZoom.scaleBy, 0.7);
+}
+function zoomFit(){
+  const gNode=document.getElementById('graph-g');
+  if(!gNode)return;
+  const bbox=gNode.getBBox();
+  if(bbox.width===0||bbox.height===0)return;
+  const w=window.innerWidth, h=window.innerHeight;
+  const pad=60;
+  const scale=Math.min((w-pad*2)/(bbox.width),(h-pad*2)/(bbox.height),1.5)*0.85;
+  const tx=w/2-(bbox.x+bbox.width/2)*scale;
+  const ty=h/2-(bbox.y+bbox.height/2)*scale;
+  svg.transition().duration(600).ease(d3.easeCubicOut)
+    .call(svgZoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
+}
 
 function nodeHover(e,d){
   const t=document.getElementById('tooltip');
