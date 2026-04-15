@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" style="--cal-top-pad: 188px; --cards-top-pad: 184px; --pipe-top-pad: 184px; --admin-top-pad: 184px;"><head>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -558,444 +559,79 @@
   <h1>Noonan Practice Wiki</h1>
   <span class="sub">Schema v2.1 · April 15, 2026</span>
   <div class="view-toggles">
-    <button class="view-btn" data-view="graph" onclick="switchView('graph')">Graph</button>
+    <button class="view-btn active" data-view="graph" onclick="switchView('graph')">Graph</button>
     <button class="view-btn" data-view="calendar" onclick="switchView('calendar')">Calendar</button>
     <button class="view-btn" data-view="cards" onclick="switchView('cards')">Cards</button>
     <button class="view-btn" data-view="pipeline" onclick="switchView('pipeline')">Pipeline</button>
-    <button class="view-btn active" data-view="admin" onclick="switchView('admin')">Admin</button>
+    <button class="view-btn" data-view="admin" onclick="switchView('admin')">Admin</button>
   </div>
-  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle theme">☾</button>
-  <div id="filter-bar" style="display: none;">
-    <div class="fp active" data-type="all" style="--pc:#a5b4fc;--pb:rgba(99,102,241,0.15)">All (47)</div>
-    <div class="fp" data-type="matter" style="--pc:var(--clr-matter);--pb:rgba(96,165,250,0.12)"><span class="dot" style="background:var(--clr-matter)"></span>Matter (25)</div>
-    <div class="fp" data-type="contact" style="--pc:var(--clr-contact);--pb:rgba(192,132,252,0.12)"><span class="dot" style="background:var(--clr-contact)"></span>Contact (12)</div>
-    <div class="fp" data-type="court" style="--pc:var(--clr-court);--pb:rgba(52,211,153,0.12)"><span class="dot" style="background:var(--clr-court)"></span>Court (6)</div>
-    <div class="fp" data-type="authority" style="--pc:var(--clr-authority);--pb:rgba(251,191,36,0.12)"><span class="dot" style="background:var(--clr-authority)"></span>Authority (3)</div>
-    <div class="fp" data-type="issue" style="--pc:var(--clr-issue);--pb:rgba(251,113,133,0.12)"><span class="dot" style="background:var(--clr-issue)"></span>Issue (1)</div>
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle theme">&#9790;</button>
+  <div id="filter-bar">
+    <div class="fp active" data-type="all" style="--pc:#a5b4fc;--pb:rgba(99,102,241,0.15)">All</div>
+    <div class="fp" data-type="matter" style="--pc:var(--clr-matter);--pb:rgba(96,165,250,0.12)"><span class="dot" style="background:var(--clr-matter)"></span>Matter</div>
+    <div class="fp" data-type="contact" style="--pc:var(--clr-contact);--pb:rgba(192,132,252,0.12)"><span class="dot" style="background:var(--clr-contact)"></span>Contact</div>
+    <div class="fp" data-type="court" style="--pc:var(--clr-court);--pb:rgba(52,211,153,0.12)"><span class="dot" style="background:var(--clr-court)"></span>Court</div>
+    <div class="fp" data-type="authority" style="--pc:var(--clr-authority);--pb:rgba(251,191,36,0.12)"><span class="dot" style="background:var(--clr-authority)"></span>Authority</div>
+    <div class="fp" data-type="issue" style="--pc:var(--clr-issue);--pb:rgba(251,113,133,0.12)"><span class="dot" style="background:var(--clr-issue)"></span>Issue</div>
   </div>
   <div id="search-box">
-    <span class="si">🔍</span>
+    <span class="si">&#128269;</span>
     <input type="text" id="search-input" placeholder="Search... ( / )">
   </div>
-  <div id="hot-pill" class="hot-pill" onclick="toggleBanner()" style="display:none">Action Required <span id="hot-pill-count">12</span></div>
+  <div id="hot-pill" class="hot-pill" onclick="toggleBanner()" style="display:none">Action Required <span id="hot-pill-count"></span></div>
 </div>
 
 <div id="hot-banner">
   <div class="hb-inner">
     <div class="hb-head" onclick="toggleBanner()">
       <span class="hb-title">Action Required</span>
-      <span class="hb-count" id="hot-count">12 items</span>
-      <button class="banner-close-btn" onclick="event.stopPropagation();toggleBanner()">CLOSE ×</button>
+      <span class="hb-count" id="hot-count"></span>
+      <button class="banner-close-btn" onclick="event.stopPropagation();toggleBanner()">CLOSE &times;</button>
     </div>
-    <div class="hb-grid" id="hb-grid"><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Hunter</div>
-    <div class="hc-t">Legal memo 11 DAYS OVERDUE (was due 4/4)</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Blackwell</div>
-    <div class="hc-t">Hobbs motion filing 16+ DAYS OVERDUE</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Rodgers</div>
-    <div class="hc-t">Dismissal motion 18 DAYS OVERDUE. Pitchess ruling 5/26.</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Ruiz Salas</div>
-    <div class="hc-t">Hearing outcome UNKNOWN (4/10)</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Caldwell</div>
-    <div class="hc-t">Hearing 4/14 completed — outcome pending</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Culver v. Noonan</div>
-    <div class="hc-t">Reply brief due ~4/1 (14 days overdue)</div></div><div class="hc overdue" onclick="showDetail(nodes.find(n=&gt;n.id==='stan-dept-2'))">
-    <div class="hc-u">OVERDUE</div>
-    <div class="hc-l">Stanislaus Dept 2</div>
-    <div class="hc-t">Caldwell hearing 4/14 — outcome pending</div></div><div class="hc today" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">
-    <div class="hc-u">TODAY</div>
-    <div class="hc-l">Mitchell</div>
-    <div class="hc-t">Bar complaint DUE TODAY (4/15)</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">MejiaMejia</div>
-    <div class="hc-t">Jury trial 5/26</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">Navarro</div>
-    <div class="hc-t">Hearing 5/22 Dept 711</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">Weaver</div>
-    <div class="hc-t">PC 1001.36 motion FINALIZED — needs filing + service</div></div><div class="hc upcoming" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))">
-    <div class="hc-u">UPCOMING</div>
-    <div class="hc-l">Rafanello</div>
-    <div class="hc-t">Follow up on Cathy's signed comp plans by 4/21</div></div></div>
+    <div class="hb-grid" id="hb-grid"></div>
   </div>
 </div>
 
-<div id="graph-container" style="display: none;"><svg id="graph-svg" width="1470" height="1056"><g id="graph-g" transform="translate(-629.3705798105864,-384.04020434817915) scale(1.431083216827104)"><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1152.763133014078" y1="965.1257938248793" x2="1008.1046913820701" y2="986.43398686571" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1152.763133014078" y1="965.1257938248793" x2="978.5638524428911" y2="897.4033849622502" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1225.5657230459246" y1="469.0100848867234" x2="1126.5232697503163" y2="543.4799017089009" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1225.5657230459246" y1="469.0100848867234" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1225.5657230459246" y1="469.0100848867234" x2="1056.446711186241" y2="256.3157429856063" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="451.6743701234003" y1="1062.0475759317512" x2="646.9625930321105" y2="864.4327413885413" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1181.9473737015119" y1="704.6277390314109" x2="1119.606006272704" y2="606.0989990575797" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1181.9473737015119" y1="704.6277390314109" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1181.9473737015119" y1="704.6277390314109" x2="1126.5232697503163" y2="543.4799017089009" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1181.9473737015119" y1="704.6277390314109" x2="1028.362268465126" y2="594.2174642279441" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1181.9473737015119" y1="704.6277390314109" x2="1045.4662266504822" y2="474.4234818506908" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1181.9473737015119" y1="704.6277390314109" x2="960.1629903829496" y2="778.5219215907384" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="1119.606006272704" y2="606.0989990575797" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="1126.5232697503163" y2="543.4799017089009" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="1028.362268465126" y2="594.2174642279441" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="960.1629903829496" y2="778.5219215907384" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="1181.9473737015119" y2="704.6277390314109" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1104.1889727552434" y1="702.2938236060716" x2="1293.227104805992" y2="786.3248230276653" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="1008.1046913820701" y2="986.43398686571" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="1126.5232697503163" y2="543.4799017089009" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="1119.606006272704" y2="606.0989990575797" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="646.9625930321105" y2="864.4327413885413" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="960.1629903829496" y2="778.5219215907384" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="978.5638524428911" y2="897.4033849622502" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="837.9675929337179" y2="859.1257704735036" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="820.4811417936193" y2="367.3705244516749" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="891.0561426906258" y2="511.74710376240114" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="1045.4662266504822" y2="474.4234818506908" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="1028.362268465126" y2="594.2174642279441" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="555.2620335187361" y1="623.529948533629" x2="470.80430415106065" y2="511.8685400191905" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="555.2620335187361" y1="623.529948533629" x2="363.35641820807405" y2="640.6691752160355" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="555.2620335187361" y1="623.529948533629" x2="199.63924740736863" y2="598.1120647020257" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="719.3447219875948" y1="614.6914890309206" x2="470.80430415106065" y2="511.8685400191905" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="719.3447219875948" y1="614.6914890309206" x2="891.0561426906258" y2="511.74710376240114" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="719.3447219875948" y1="614.6914890309206" x2="960.1629903829496" y2="778.5219215907384" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1335.2001691043797" y1="620.3415977087778" x2="1119.606006272704" y2="606.0989990575797" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1335.2001691043797" y1="620.3415977087778" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="879.8585248339608" y1="123.62558902038495" x2="1056.446711186241" y2="256.3157429856063" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="879.8585248339608" y1="123.62558902038495" x2="775.1665105121411" y2="-75.24458716418728" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="879.8585248339608" y1="123.62558902038495" x2="820.4811417936193" y2="367.3705244516749" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="431.5507798552423" y1="959.4633142764868" x2="646.9625930321105" y2="864.4327413885413" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="-3.286704160975766" y1="522.945807973818" x2="199.63924740736863" y2="598.1120647020257" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="-10.128914379579216" y1="631.9578561579417" x2="199.63924740736863" y2="598.1120647020257" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1099.4149921824269" y1="1154.2125148081734" x2="954.9669056029978" y2="1215.4631733560784" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1099.4149921824269" y1="1154.2125148081734" x2="1008.1046913820701" y2="986.43398686571" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1284.854435012278" y1="367.8368553329706" x2="1126.5232697503163" y2="543.4799017089009" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="954.9669056029978" y1="1215.4631733560784" x2="1008.1046913820701" y2="986.43398686571" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="881.0429815692728" y1="1042.0725466654353" x2="978.5638524428911" y2="897.4033849622502" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="881.0429815692728" y1="1042.0725466654353" x2="837.9675929337179" y2="859.1257704735036" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="881.0429815692728" y1="1042.0725466654353" x2="960.1629903829496" y2="778.5219215907384" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="891.0561426906258" y2="511.74710376240114" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="1119.606006272704" y2="606.0989990575797" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="1126.5232697503163" y2="543.4799017089009" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="1056.446711186241" y2="256.3157429856063" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="1135.718504074249" y2="225.70744320528982" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="991.3431482047613" y1="356.1534180813031" x2="1045.4662266504822" y2="474.4234818506908" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="991.3431482047613" y1="356.1534180813031" x2="1028.362268465126" y2="594.2174642279441" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1354.3543396944992" y1="419.91656651609793" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="678.7146964798807" y1="148.10033614385404" x2="820.4811417936193" y2="367.3705244516749" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="991.3431482047613" y2="356.1534180813031" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1140.2748566730554" y1="368.83231686453365" x2="1354.3543396944992" y2="419.91656651609793" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="881.0429815692728" y1="1042.0725466654353" x2="954.9669056029978" y2="1215.4631733560784" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1152.763133014078" y1="965.1257938248793" x2="1099.4149921824269" y2="1154.2125148081734" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1225.5657230459246" y1="469.0100848867234" x2="1284.854435012278" y2="367.8368553329706" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1225.5657230459246" y1="469.0100848867234" x2="1181.9473737015119" y2="704.6277390314109" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1152.763133014078" y1="965.1257938248793" x2="1181.9473737015119" y2="704.6277390314109" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="451.6743701234003" y1="1062.0475759317512" x2="431.5507798552423" y2="959.4633142764868" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1008.1046913820701" y1="986.43398686571" x2="978.5638524428911" y2="897.4033849622502" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1126.5232697503163" y1="543.4799017089009" x2="1200.643415652606" y2="607.5809401470011" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1119.606006272704" y1="606.0989990575797" x2="1028.362268465126" y2="594.2174642279441" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1045.4662266504822" y1="474.4234818506908" x2="1028.362268465126" y2="594.2174642279441" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1045.4662266504822" y1="474.4234818506908" x2="1135.718504074249" y2="225.70744320528982" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1045.4662266504822" y1="474.4234818506908" x2="1056.446711186241" y2="256.3157429856063" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1135.718504074249" y1="225.70744320528982" x2="1056.446711186241" y2="256.3157429856063" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="470.80430415106065" y1="511.8685400191905" x2="296.04753752695257" y2="386.4484233298539" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="934.6803426592447" y1="668.2728960304831" x2="555.2620335187361" y2="623.529948533629" style="opacity: 0.1;"></line><line class="link" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" x1="1293.227104805992" y1="786.3248230276653" x2="1181.9473737015119" y2="704.6277390314109" style="opacity: 0.1;"></line><g class="node" transform="translate(1152.763133014078,965.1257938248793)" style="opacity: 1; pointer-events: auto;"><circle r="20" fill="#fbbf24" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14px">Romero (1996)</text></g><g class="node" transform="translate(1225.5657230459246,469.0100848867234)" style="opacity: 1; pointer-events: auto;"><circle r="21.5" fill="#fbbf24" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="15.049999999999999px">Pitchess (1974)</text></g><g class="node" transform="translate(451.6743701234003,1062.0475759317512)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#fbbf24" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">PC 1001.36 Diversion</text></g><g class="node" transform="translate(1181.9473737015119,704.6277390314109)" style="opacity: 1; pointer-events: auto;"><circle r="24" fill="#fb7185" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Billups Recusal / Side Switch</text></g><g class="node" transform="translate(1104.1889727552434,702.2938236060716)" style="opacity: 1; pointer-events: auto;"><circle r="24" fill="#c084fc" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Billups, Darryl</text></g><g class="node" transform="translate(934.6803426592447,668.2728960304831)" style="opacity: 1; pointer-events: auto;"><circle r="24" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="16.799999999999997px">Noonan, John W.</text></g><g class="node" transform="translate(555.2620335187361,623.529948533629)" style="opacity: 1; pointer-events: auto;"><circle r="20" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14px">Noonan, Christine</text></g><g class="node" transform="translate(719.3447219875948,614.6914890309206)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Fuerch, Stephen</text></g><g class="node" transform="translate(1335.2001691043797,620.3415977087778)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Alpers, Steven</text></g><g class="node" transform="translate(879.8585248339608,123.62558902038495)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Sellers, Wade</text></g><g class="node" transform="translate(1284.854435012278,367.8368553329706)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Israels, Valli</text></g><g class="node" transform="translate(1099.4149921824269,1154.2125148081734)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Villalobos, Ruben A.</text></g><g class="node" transform="translate(431.5507798552423,959.4633142764868)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Pojman, Andrew P.</text></g><g class="node" transform="translate(-3.286704160975766,522.945807973818)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#e879f9" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Rafanello, Catherine</text></g><g class="node" transform="translate(-10.128914379579216,631.9578561579417)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">ConvergeOne</text></g><g class="node" transform="translate(1293.227104805992,786.3248230276653)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#c084fc" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Alameda County DA</text></g><g class="node" transform="translate(1140.2748566730554,368.83231686453365)" style="opacity: 1; pointer-events: auto;"><circle r="31.200000000000003" fill="#34d399" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="31.200000000000003" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="21.84px">Alameda County</text></g><g class="node" transform="translate(991.3431482047613,356.1534180813031)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#34d399" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Alameda Dept 711</text></g><g class="node" transform="translate(1354.3543396944992,419.91656651609793)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#34d399" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Alameda Dept 11</text></g><g class="node" transform="translate(881.0429815692728,1042.0725466654353)" style="opacity: 1; pointer-events: auto;"><circle r="26" fill="#34d399" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="26" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="18.2px">Stanislaus County</text></g><g class="node" transform="translate(954.9669056029978,1215.4631733560784)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#34d399" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Stanislaus Dept 2</text></g><g class="node" transform="translate(678.7146964798807,148.10033614385404)" style="opacity: 1; pointer-events: auto;"><circle r="20.150000000000002" fill="#34d399" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20.150000000000002" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14.105px">Sacramento County</text></g><g class="node" transform="translate(1056.446711186241,256.3157429856063)" style="opacity: 1; pointer-events: auto;"><circle r="21.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="15.049999999999999px">Acosta</text></g><g class="node" transform="translate(612.2543911679813,-1447.9740532472915)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Adler</text></g><g class="node" transform="translate(891.0561426906258,511.74710376240114)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Blackwell</text></g><g class="node" transform="translate(775.1665105121411,-75.24458716418728)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Bratcher</text></g><g class="node" transform="translate(978.5638524428911,897.4033849622502)" style="opacity: 1; pointer-events: auto;"><circle r="20" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="20" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="14px">Brown</text></g><g class="node" transform="translate(1008.1046913820701,986.43398686571)" style="opacity: 1; pointer-events: auto;"><circle r="21.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="15.049999999999999px">Caldwell</text></g><g class="node" transform="translate(470.80430415106065,511.8685400191905)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Culver v. Noonan</text></g><g class="node" transform="translate(296.04753752695257,386.4484233298539)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Culver WC</text></g><g class="node" transform="translate(837.9675929337179,859.1257704735036)" style="opacity: 1; pointer-events: auto;"><circle r="17" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="17" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="11.899999999999999px">Dillard</text></g><g class="node" transform="translate(820.4811417936193,367.3705244516749)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Hunter</text></g><g class="node" transform="translate(618.7964388491642,2504.7433709529896)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Ikem</text></g><g class="node" transform="translate(-883.5251768069425,-895.3744182695706)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Iyengar</text></g><g class="node" transform="translate(1119.606006272704,606.0989990575797)" style="opacity: 1; pointer-events: auto;"><circle r="23" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="23" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.099999999999998px">MejiaMejia</text></g><g class="node" transform="translate(960.1629903829496,778.5219215907384)" style="opacity: 1; pointer-events: auto;"><circle r="21.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="21.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="15.049999999999999px">Mitchell</text></g><g class="node" transform="translate(1045.4662266504822,474.4234818506908)" style="opacity: 1; pointer-events: auto;"><circle r="23" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="23" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="16.099999999999998px">Navarro</text></g><g class="node" transform="translate(363.35641820807405,640.6691752160355)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Noonan Trust</text></g><g class="node" transform="translate(199.63924740736863,598.1120647020257)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Rafanello</text></g><g class="node" transform="translate(1126.5232697503163,543.4799017089009)" style="opacity: 1; pointer-events: auto;"><circle r="24" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Rodgers</text></g><g class="node" transform="translate(1028.362268465126,594.2174642279441)" style="opacity: 1; pointer-events: auto;"><circle r="23" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="23" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="16.099999999999998px">Rodrigues</text></g><g class="node" transform="translate(1135.718504074249,225.70744320528982)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="12.95px">Rodriguez</text></g><g class="node" transform="translate(1200.643415652606,607.5809401470011)" style="opacity: 1; pointer-events: auto;"><circle r="24" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="24" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="16.799999999999997px">Ruiz Salas</text></g><g class="node" transform="translate(-1276.3624322389628,1349.98328923)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Schiff</text></g><g class="node" transform="translate(1195.992404935032,-1516.0291639451452)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Valenzuela</text></g><g class="node" transform="translate(646.9625930321105,864.4327413885413)" style="opacity: 1; pointer-events: auto;"><circle r="18.5" fill="#60a5fa" stroke="#ef4444" stroke-width="2"></circle><circle class="hot-ring" r="18.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 1; animation: 4s linear 0s infinite normal none running ringSpin;"></circle><text class="node-label" font-size="12.95px">Weaver</text></g><g class="node" transform="translate(-1316.0843311231731,-339.05773526961025)" style="opacity: 1; pointer-events: auto;"><circle r="15.5" fill="#60a5fa" stroke="none" stroke-width="0"></circle><circle class="hot-ring" r="15.5" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2" style="opacity: 0; animation: auto ease 0s 1 normal none running none;"></circle><text class="node-label" font-size="10.85px">Wolfe</text></g></g></svg></div>
-<div id="cal-view" class=""></div>
-<div id="cards-view" class=""></div>
-<div id="pipeline-view" class=""></div>
-<div id="admin-view" class="active"><div class="admin-inner"><div class="admin-hdr">
-    <span class="admin-title">Admin — Matters (25)</span>
-    <span id="admin-change-badge" class="admin-changes">1 change</span>
-    <button id="admin-save-btn" class="admin-save-btn" onclick="adminSave()" disabled="">Saving...</button>
-  </div><div class="admin-filters">
-    <select class="admin-filter" onchange="adminFilters.status=this.value;buildAdmin()">
-      <option value="all" selected="">All Status</option>
-      <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-    </select>
-    <select class="admin-filter" onchange="adminFilters.stage=this.value;buildAdmin()">
-      <option value="all" selected="">All Stages</option>
-      <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-    </select>
-    <select class="admin-filter" onchange="adminFilters.urgency=this.value;buildAdmin()">
-      <option value="all" selected="">All Urgency</option>
-      <option value="overdue">Overdue</option>
-      <option value="today">Today</option>
-      <option value="upcoming">Upcoming</option>
-      <option value="none">None</option>
-    </select>
-  </div><div class="admin-wrap"><table class="admin-tbl">
-    <thead><tr>
-      <th class=" sorted" onclick="adminSortBy('label')">Matter <span class="sort-arrow">▲</span></th>
-      <th class="" onclick="adminSortBy('case')">Case # <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('status')">Status <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('stage')">Stage <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('urgency')">Urg <span class="sort-arrow">⇅</span></th>
-      <th class="" onclick="adminSortBy('hearing')">Next Hearing <span class="sort-arrow">⇅</span></th>
-      <th>Notes</th>
-    </tr></thead><tbody><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='acosta'))">Acosta</span></td>
-      <td><span class="admin-case">CR-24-012393</span></td>
-      <td><select class="admin-sel" data-id="acosta" data-field="matter_status" onchange="setAdminEdit('acosta','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed" selected="">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="acosta" data-field="matter_stage" onchange="setAdminEdit('acosta','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction" selected="">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('acosta')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('acosta','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='adler'))">Adler</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="adler" data-field="matter_status" onchange="setAdminEdit('adler','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed" selected="">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="adler" data-field="matter_stage" onchange="setAdminEdit('adler','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing" selected="">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('adler')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('adler','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='blackwell'))">Blackwell</span></td>
-      <td><span class="admin-case">25-CR-007675</span></td>
-      <td><select class="admin-sel" data-id="blackwell" data-field="matter_status" onchange="setAdminEdit('blackwell','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="blackwell" data-field="matter_stage" onchange="setAdminEdit('blackwell','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('blackwell')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('blackwell','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='bratcher'))">Bratcher</span></td>
-      <td><span class="admin-case">TP25002454</span></td>
-      <td><select class="admin-sel" data-id="bratcher" data-field="matter_status" onchange="setAdminEdit('bratcher','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="bratcher" data-field="matter_stage" onchange="setAdminEdit('bratcher','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery" selected="">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('bratcher')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('bratcher','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='brown'))">Brown</span></td>
-      <td><span class="admin-case">CR-25-003661</span></td>
-      <td><select class="admin-sel" data-id="brown" data-field="matter_status" onchange="setAdminEdit('brown','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="brown" data-field="matter_stage" onchange="setAdminEdit('brown','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('brown')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">7/14/26 — hearing</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('brown','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='caldwell'))">Caldwell</span></td>
-      <td><span class="admin-case">CR-23-010065</span></td>
-      <td><select class="admin-sel" data-id="caldwell" data-field="matter_status" onchange="setAdminEdit('caldwell','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="caldwell" data-field="matter_stage" onchange="setAdminEdit('caldwell','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('caldwell')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('caldwell','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-labor'))">Culver v. Noonan</span></td>
-      <td><span class="admin-case">26CV169360</span></td>
-      <td><select class="admin-sel" data-id="culver-labor" data-field="matter_status" onchange="setAdminEdit('culver-labor','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="culver-labor" data-field="matter_stage" onchange="setAdminEdit('culver-labor','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('culver-labor')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('culver-labor','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='culver-wc'))">Culver WC</span></td>
-      <td><span class="admin-case">WC-CM-870160</span></td>
-      <td><select class="admin-sel changed" data-id="culver-wc" data-field="matter_status" onchange="setAdminEdit('culver-wc','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending" selected="">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="culver-wc" data-field="matter_stage" onchange="setAdminEdit('culver-wc','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery" selected="">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('culver-wc')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="This file can be merged with culver v. noonan matter. then queue it up some where &quot;deleltions&quot; can live - so we can regularly check items you want to delete before we delete them." placeholder="Quick note..." onchange="setAdminEdit('culver-wc','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='dillard'))">Dillard</span></td>
-      <td><span class="admin-case">CR-25-010297</span></td>
-      <td><select class="admin-sel" data-id="dillard" data-field="matter_status" onchange="setAdminEdit('dillard','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="dillard" data-field="matter_stage" onchange="setAdminEdit('dillard','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('dillard')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('dillard','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='hunter'))">Hunter</span></td>
-      <td><span class="admin-case">CR-24-XXXXXX [pending]</span></td>
-      <td><select class="admin-sel" data-id="hunter" data-field="matter_status" onchange="setAdminEdit('hunter','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="hunter" data-field="matter_stage" onchange="setAdminEdit('hunter','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery" selected="">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('hunter')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('hunter','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='ikem'))">Ikem</span></td>
-      <td><span class="admin-case">ECH0002496607</span></td>
-      <td><select class="admin-sel" data-id="ikem" data-field="matter_status" onchange="setAdminEdit('ikem','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending" selected="">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="ikem" data-field="matter_stage" onchange="setAdminEdit('ikem','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction" selected="">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('ikem')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('ikem','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='iyengar'))">Iyengar</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="iyengar" data-field="matter_status" onchange="setAdminEdit('iyengar','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="iyengar" data-field="matter_stage" onchange="setAdminEdit('iyengar','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('iyengar')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('iyengar','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='mejiamejia'))">MejiaMejia</span></td>
-      <td><span class="admin-case">22-CR-003198</span></td>
-      <td><select class="admin-sel" data-id="mejiamejia" data-field="matter_status" onchange="setAdminEdit('mejiamejia','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="mejiamejia" data-field="matter_stage" onchange="setAdminEdit('mejiamejia','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep" selected="">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('mejiamejia')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">5/26/26 — jury trial</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('mejiamejia','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-today">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='mitchell'))">Mitchell</span></td>
-      <td><span class="admin-case">CR-22-002886</span></td>
-      <td><select class="admin-sel" data-id="mitchell" data-field="matter_status" onchange="setAdminEdit('mitchell','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="mitchell" data-field="matter_stage" onchange="setAdminEdit('mitchell','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-today" onclick="cycleUrgency('mitchell')" title="Click to cycle urgency"><span style="color:#f59e0b">●</span></div></td>
-      <td><span class="admin-hearing">4/27/26 — indicated sentence</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('mitchell','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='navarro'))">Navarro</span></td>
-      <td><span class="admin-case">CR-24-001345</span></td>
-      <td><select class="admin-sel" data-id="navarro" data-field="matter_status" onchange="setAdminEdit('navarro','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="navarro" data-field="matter_stage" onchange="setAdminEdit('navarro','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('navarro')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">5/22/26 — Dept 711</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('navarro','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='noonan-trust'))">Noonan Trust</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="noonan-trust" data-field="matter_status" onchange="setAdminEdit('noonan-trust','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="noonan-trust" data-field="matter_stage" onchange="setAdminEdit('noonan-trust','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake" selected="">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('noonan-trust')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('noonan-trust','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rafanello'))">Rafanello</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="rafanello" data-field="matter_status" onchange="setAdminEdit('rafanello','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rafanello" data-field="matter_stage" onchange="setAdminEdit('rafanello','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake" selected="">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('rafanello')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rafanello','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rodgers'))">Rodgers</span></td>
-      <td><span class="admin-case">CR-2024-001537</span></td>
-      <td><select class="admin-sel" data-id="rodgers" data-field="matter_status" onchange="setAdminEdit('rodgers','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rodgers" data-field="matter_stage" onchange="setAdminEdit('rodgers','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('rodgers')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">5/26/26 — Pitchess ruling</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rodgers','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rodrigues'))">Rodrigues</span></td>
-      <td><span class="admin-case">CR-21-004636</span></td>
-      <td><select class="admin-sel" data-id="rodrigues" data-field="matter_status" onchange="setAdminEdit('rodrigues','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rodrigues" data-field="matter_stage" onchange="setAdminEdit('rodrigues','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('rodrigues')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">5/22/26 — Dept 711</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rodrigues','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='rodriguez'))">Rodriguez</span></td>
-      <td><span class="admin-case">CR-24-010846</span></td>
-      <td><select class="admin-sel" data-id="rodriguez" data-field="matter_status" onchange="setAdminEdit('rodriguez','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open">Open</option><option value="Pending">Pending</option><option value="Closed" selected="">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="rodriguez" data-field="matter_stage" onchange="setAdminEdit('rodriguez','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction" selected="">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('rodriguez')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('rodriguez','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-overdue">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='ruiz-salas'))">Ruiz Salas</span></td>
-      <td><span class="admin-case">CR-23-009962</span></td>
-      <td><select class="admin-sel" data-id="ruiz-salas" data-field="matter_status" onchange="setAdminEdit('ruiz-salas','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="ruiz-salas" data-field="matter_stage" onchange="setAdminEdit('ruiz-salas','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-overdue" onclick="cycleUrgency('ruiz-salas')" title="Click to cycle urgency"><span style="color:#ef4444">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('ruiz-salas','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='schiff'))">Schiff</span></td>
-      <td><span class="admin-case">24M-07568</span></td>
-      <td><select class="admin-sel" data-id="schiff" data-field="matter_status" onchange="setAdminEdit('schiff','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="schiff" data-field="matter_stage" onchange="setAdminEdit('schiff','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake" selected="">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('schiff')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('schiff','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='valenzuela'))">Valenzuela</span></td>
-      <td><span class="admin-case">—</span></td>
-      <td><select class="admin-sel" data-id="valenzuela" data-field="matter_status" onchange="setAdminEdit('valenzuela','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="valenzuela" data-field="matter_stage" onchange="setAdminEdit('valenzuela','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing" selected="">Preliminary Hearing</option><option value="Pre-trial Motions">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('valenzuela')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('valenzuela','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class=" row-upcoming">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='weaver'))">Weaver</span></td>
-      <td><span class="admin-case">25-CR-005354</span></td>
-      <td><select class="admin-sel" data-id="weaver" data-field="matter_status" onchange="setAdminEdit('weaver','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="weaver" data-field="matter_stage" onchange="setAdminEdit('weaver','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-upcoming" onclick="cycleUrgency('weaver')" title="Click to cycle urgency"><span style="color:#3b82f6">●</span></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('weaver','note',this.value);this.classList.add('changed')"></td>
-    </tr><tr class="">
-      <td><span class="admin-name" onclick="showDetail(nodes.find(n=&gt;n.id==='wolfe'))">Wolfe</span></td>
-      <td><span class="admin-case">C2214071</span></td>
-      <td><select class="admin-sel" data-id="wolfe" data-field="matter_status" onchange="setAdminEdit('wolfe','matter_status',this.value);this.classList.add('changed')">
-        <option value="Open" selected="">Open</option><option value="Pending">Pending</option><option value="Closed">Closed</option>
-      </select></td>
-      <td><select class="admin-sel" data-id="wolfe" data-field="matter_stage" onchange="setAdminEdit('wolfe','matter_stage',this.value);this.classList.add('changed')">
-        <option value="Intake">Intake</option><option value="Arraignment">Arraignment</option><option value="Discovery">Discovery</option><option value="Preliminary Hearing">Preliminary Hearing</option><option value="Pre-trial Motions" selected="">Pre-trial Motions</option><option value="Trial Prep">Trial Prep</option><option value="Trial">Trial</option><option value="Sentencing">Sentencing</option><option value="Post-Conviction">Post-Conviction</option>
-      </select></td>
-      <td><div class="admin-urg urg-none" onclick="cycleUrgency('wolfe')" title="Click to cycle urgency"></div></td>
-      <td><span class="admin-hearing">—</span></td>
-      <td><input type="text" class="admin-note" value="" placeholder="Quick note..." onchange="setAdminEdit('wolfe','note',this.value);this.classList.add('changed')"></td>
-    </tr></tbody></table></div></div></div>
-<div id="admin-toast" class="admin-toast success">Saved &amp; pushed to GitHub</div>
+<div id="graph-container"><svg id="graph-svg"></svg></div>
+<div id="cal-view"></div>
+<div id="cards-view"></div>
+<div id="pipeline-view"></div>
+<div id="admin-view"></div>
+<div id="admin-toast" class="admin-toast"></div>
 
-<div id="detail-panel" class="">
+<div id="detail-panel">
   <div class="p-hdr">
-    <button class="p-close" onclick="closePanel()" aria-label="Close">×</button>
-    <div id="p-badge" class="p-badge"><span style="background:#c084fc;width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span><span>Contact</span></div>
-    <div id="p-title" class="p-title">John W. Noonan</div>
-    <div id="p-status" class="p-status"><span class="sdot" style="background:#60a5fa"></span>Current</div>
+    <button class="p-close" onclick="closePanel()" aria-label="Close">&times;</button>
+    <div id="p-badge" class="p-badge"></div>
+    <div id="p-title" class="p-title"></div>
+    <div id="p-status" class="p-status"></div>
   </div>
-  <div class="p-body" id="p-body"><div class="p-sec"><div class="p-sec-t">Summary</div><p>Attorney of record on all Noonan matters. Practice owner.</p></div><div class="p-sec"><div class="p-sec-t">Subtitle</div><p>Contact · Person · Attorney of Record</p></div></div>
+  <div class="p-body" id="p-body"></div>
 </div>
 
-<div id="legend" style="display: none;">
+<div id="legend">
   <div class="li"><div class="ld" style="background:var(--clr-matter)"></div>Matter</div>
   <div class="li"><div class="ld" style="background:var(--clr-contact)"></div>Contact</div>
-  <div class="li"><div class="ld" style="background:var(--clr-client)"></div>Client <span class="client-star">★</span></div>
+  <div class="li"><div class="ld" style="background:var(--clr-client)"></div>Client <span class="client-star">&#9733;</span></div>
   <div class="li"><div class="ld" style="background:var(--clr-court)"></div>Court</div>
   <div class="li"><div class="ld" style="background:var(--clr-authority)"></div>Authority</div>
   <div class="li"><div class="ld" style="background:var(--clr-issue)"></div>Issue</div>
-  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="2,2"></circle></svg>Urgent</div>
+  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="2,2"/></svg>Urgent</div>
 </div>
 
-<div id="stats" style="display: none;">
-  <span><span class="sv" id="sn">47</span> nodes</span>
-  <span><span class="sv" id="se">79</span> connections</span>
-  <span><span class="sv" id="sh">15</span> urgent</span>
+<div id="stats">
+  <span><span class="sv" id="sn">0</span> nodes</span>
+  <span><span class="sv" id="se">0</span> connections</span>
+  <span><span class="sv" id="sh">0</span> urgent</span>
 </div>
 
-<div id="zoom-controls" style="display: none;">
+<div id="zoom-controls">
   <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in" title="Zoom in">+</button>
-  <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out" title="Zoom out">−</button>
-  <button class="zoom-btn" onclick="zoomFit()" aria-label="Fit all" title="Fit all nodes"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg></button>
+  <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out" title="Zoom out">&minus;</button>
+  <button class="zoom-btn" onclick="zoomFit()" aria-label="Fit all" title="Fit all nodes"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
 </div>
 
-<div class="node-tooltip" id="tooltip" style="left: 949px; top: 607px;">Billups, Darryl (contact)</div>
+<div class="node-tooltip" id="tooltip"></div>
 
 <script>
 // ============================================================
@@ -1970,9 +1606,37 @@ async function adminSave(){
     const shaData=await shaResp.json();
     const sha=shaData.sha;
 
-    // Get current page HTML
-    const html=document.documentElement.outerHTML;
-    const b64=btoa(unescape(encodeURIComponent('<!DOCTYPE html>\n'+html)));
+    // Serialize updated nodes back into the HTML source
+    // Find the script containing nodes definition and replace with current state
+    const fullHtml=document.documentElement.outerHTML;
+    // Regex to find and replace the nodes array in the source
+    const nodesJson=JSON.stringify(nodes.map(n=>{
+      const o={id:n.id,label:n.label,type:n.type};
+      if(n.subtype) o.subtype=n.subtype;
+      if(n.role) o.role=n.role;
+      if(n.level) o.level=n.level;
+      o.matter_status=n.matter_status||'';
+      o.matter_stage=n.matter_stage||'';
+      o.status=n.status||'current';
+      o.hasPage=!!n.hasPage;
+      o.hot=n.hot||false;
+      if(n._adminNote) o.admin_notes=n._adminNote;
+      if(n.detail) o.detail=n.detail;
+      return o;
+    }),null,2);
+    // Replace the nodes array in source (between "const nodes = [" and the matching "];\n")
+    const nodesStart=fullHtml.indexOf('const nodes = [');
+    const nodesSearchFrom=nodesStart+'const nodes = ['.length;
+    // Find the closing ]; by counting bracket depth
+    let depth=1,i=nodesSearchFrom;
+    while(depth>0 && i<fullHtml.length){
+      if(fullHtml[i]==='[') depth++;
+      if(fullHtml[i]===']') depth--;
+      i++;
+    }
+    const nodesEnd=i;
+    const updatedHtml=fullHtml.substring(0,nodesStart)+'const nodes = '+nodesJson+';'+fullHtml.substring(nodesEnd);
+    const b64=btoa(unescape(encodeURIComponent('<!DOCTYPE html>\n'+updatedHtml)));
 
     const pushResp=await fetch('https://api.github.com/repos/mrbreadbaby/practice-wiki-map/contents/index.html',{
       method:'PUT',
@@ -2061,6 +1725,5 @@ initGraph();
 // Auto-switch to cards on mobile
 if(window.innerWidth<=600){ switchView('cards'); }
 </script>
-
-
-</body></html>
+</body>
+</html>
