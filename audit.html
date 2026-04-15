@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Audit — Noonan Practice Automation</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #131a2b;
+    --border: #1e2a42;
+    --text: #c8d6e5;
+    --text-dim: #6b7f99;
+    --text-bright: #e8f0fe;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --gray: #4b5563;
+    --flow-blue: #60a5fa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 32px;
+  }
+  h2 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  /* Storage Map */
+  .storage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 700px) {
+    .storage-grid { grid-template-columns: 1fr; }
+  }
+  .storage-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .storage-box .loc-name {
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+  }
+  .storage-box .loc-path {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: 'SF Mono', 'Menlo', monospace;
+    margin-bottom: 8px;
+    word-break: break-all;
+  }
+  .storage-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .storage-box li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 2px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .storage-box li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+  }
+  .storage-box.primary { border-left: 3px solid var(--green); }
+  .storage-box.active { border-left: 3px solid var(--accent); }
+  .storage-box.pending { border-left: 3px solid var(--amber); }
+  .storage-box.deferred { border-left: 3px solid var(--gray); }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 80px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 68px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .tl-item .tl-time {
+    position: absolute;
+    left: -72px;
+    top: 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    width: 60px;
+    text-align: right;
+    font-family: 'SF Mono', 'Menlo', monospace;
+  }
+  .tl-item .tl-dot {
+    position: absolute;
+    left: -16px;
+    top: 14px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--surface);
+  }
+  .tl-item .tl-dot.green { background: var(--green); }
+  .tl-item .tl-dot.amber { background: var(--amber); }
+  .tl-item .tl-dot.red { background: var(--red); }
+  .tl-item .tl-dot.gray { background: var(--gray); }
+  .tl-item .tl-label {
+    font-size: 0.88rem;
+    color: var(--text-bright);
+    font-weight: 500;
+  }
+  .tl-item .tl-note {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .tl-section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+  @media (max-width: 700px) {
+    .timeline { padding-left: 60px; }
+    .timeline::before { left: 48px; }
+    .tl-item .tl-time { left: -52px; width: 44px; font-size: 0.7rem; }
+  }
+
+  /* Flow diagram */
+  .flow-group {
+    margin-bottom: 18px;
+  }
+  .flow-group-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--flow-blue);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .flow-chain {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .flow-node {
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: #1a2744;
+    color: var(--text-bright);
+    white-space: nowrap;
+    border: 1px solid var(--border);
+  }
+  .flow-node.todo {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+  .flow-node.notyet {
+    border-color: var(--red);
+    color: var(--red);
+    border-style: dashed;
+  }
+  .flow-arrow {
+    color: var(--flow-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  /* Knowledge hierarchy */
+  .knowledge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .k-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .k-item .k-order {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 20px;
+    text-align: center;
+    padding-top: 2px;
+  }
+  .k-item .k-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+  .k-item .k-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .k-item .k-load {
+    font-size: 0.72rem;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+
+  /* Status dashboard */
+  .status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 700px) {
+    .status-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 450px) {
+    .status-grid { grid-template-columns: 1fr; }
+  }
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.82rem;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.green { background: var(--green); }
+  .dot.amber { background: var(--amber); }
+  .dot.red { background: var(--red); }
+  .dot.gray { background: var(--gray); }
+  .status-name { color: var(--text); }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    font-size: 0.78rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-dim);
+  }
+
+  .updated {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<h1>System Audit — Noonan Practice Automation</h1>
+<p class="subtitle">Jeremy Pemberton &middot; Generated April 15, 2026 &middot; Draft v1 — iterate freely</p>
+
+<!-- ============ SECTION 1: STORAGE MAP ============ -->
+<section>
+<h2>1. Where Things Live</h2>
+<div class="storage-grid">
+
+  <div class="storage-box primary">
+    <div class="loc-name">iCloud (PRIMARY)</div>
+    <div class="loc-path">~/Documents/Cases/Noonan/</div>
+    <ul>
+      <li>Matter working folders</li>
+      <li>Admin/wiki/ — schema, entity pages, hot cache, logs</li>
+      <li>Admin/wiki/wiki-map.html (source)</li>
+      <li>PROJECT-SPEC.md (615 lines, canonical spec)</li>
+      <li>SCHEMA.md v2.1, hot.md, dispatch-diary.md</li>
+    </ul>
+  </div>
+
+  <div class="storage-box active">
+    <div class="loc-name">Dispatch Agent Memory</div>
+    <div class="loc-path">/agent/memory/ (Cowork internal)</div>
+    <ul>
+      <li>CLAUDE.md — compact working memory (auto-loaded)</li>
+      <li>MEMORY.md index + 15+ memory files</li>
+      <li>People, projects, processes, tools, decisions</li>
+      <li>Read on demand by session</li>
+    </ul>
+  </div>
+
+  <div class="storage-box active">
+    <div class="loc-name">GitHub Pages</div>
+    <div class="loc-path">mrbreadbaby/practice-wiki-map</div>
+    <ul>
+      <li>wiki-map.html deployed to Pages</li>
+      <li>5 views: force graph, calendar, mobile, pipeline, admin</li>
+      <li>Public repo (switch to private later)</li>
+      <li>Push via Contents API + Chrome file_upload</li>
+    </ul>
+  </div>
+
+  <div class="storage-box pending">
+    <div class="loc-name">Google Drive (Noonan)</div>
+    <div class="loc-path">noonlawoffices.com Workspace</div>
+    <ul>
+      <li>Sharing layer — NOT connected yet</li>
+      <li>Mirror iCloud structure for Christine/John</li>
+      <li>Drive for Desktop = Finder interface only</li>
+      <li>Planned: 2x daily iCloud &rarr; Drive sync</li>
+    </ul>
+  </div>
+
+  <div class="storage-box deferred">
+    <div class="loc-name">OneDrive (Shared)</div>
+    <div class="loc-path">Discovery files from Noonan matters</div>
+    <ul>
+      <li>Read-only source</li>
+      <li>Discovery from active clients</li>
+      <li>Wiki indexes, doesn't migrate</li>
+    </ul>
+  </div>
+
+  <div class="storage-box active">
+    <div class="loc-name">Cowork Project Settings</div>
+    <div class="loc-path">Law Time project instructions</div>
+    <ul>
+      <li>Core operating rules (safety net)</li>
+      <li>Loaded automatically for project tasks</li>
+      <li>Scoped to Noonan project context</li>
+    </ul>
+  </div>
+
+  <div class="storage-box active">
+    <div class="loc-name">Scheduled Tasks Folder</div>
+    <div class="loc-path">~/Documents/Claude/Scheduled/</div>
+    <ul>
+      <li>daily-wiki-map-rebuild</li>
+      <li>daily-imessage-review</li>
+      <li>daily-briefing</li>
+      <li>weekly-memory-review</li>
+    </ul>
+  </div>
+
+</div>
+</section>
+
+<!-- ============ SECTION 2: TIMELINE ============ -->
+<section>
+<h2>2. What Runs and When</h2>
+
+<p class="tl-section-label">Scheduled — Daily</p>
+<div class="timeline">
+  <div class="tl-item">
+    <span class="tl-time">7:45a</span>
+    <span class="tl-dot amber"></span>
+    <div class="tl-label">Daily Wiki Map Rebuild</div>
+    <div class="tl-note">Reads wiki .md files &rarr; generates HTML. TODO: needs GitHub push step wired in.</div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-time">7:55a</span>
+    <span class="tl-dot green"></span>
+    <div class="tl-label">Daily iMessage Review</div>
+    <div class="tl-note">Scans chat.db &rarr; updates Practice Dashboard + hot.md. Working.</div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-time">8:00a</span>
+    <span class="tl-dot green"></span>
+    <div class="tl-label">Daily Briefing Email</div>
+    <div class="tl-note">Compiles briefing &rarr; Gmail draft &rarr; auto-send to Jeremy. Working.</div>
+  </div>
+</div>
+
+<p class="tl-section-label">Scheduled — Weekly</p>
+<div class="timeline">
+  <div class="tl-item">
+    <span class="tl-time">Sun 8p</span>
+    <span class="tl-dot amber"></span>
+    <div class="tl-label">Weekly Memory Review</div>
+    <div class="tl-note">New. First run April 19. Consolidates/prunes memory files.</div>
+  </div>
+</div>
+
+<p class="tl-section-label">On Demand</p>
+<div class="timeline">
+  <div class="tl-item">
+    <span class="tl-time">manual</span>
+    <span class="tl-dot green"></span>
+    <div class="tl-label">/save Command</div>
+    <div class="tl-note">Writes dispatch-diary + hot.md + spec updates + memory saves.</div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-time">manual</span>
+    <span class="tl-dot green"></span>
+    <div class="tl-label">Admin View Save</div>
+    <div class="tl-note">Pushes wiki-map.html to GitHub via Contents API.</div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-time">manual</span>
+    <span class="tl-dot green"></span>
+    <div class="tl-label">Ralph Wiki Map Updates</div>
+    <div class="tl-note">Edits wiki-map.html, pushes to GitHub Pages.</div>
+  </div>
+</div>
+
+<p class="tl-section-label">Not Yet Built</p>
+<div class="timeline">
+  <div class="tl-item" style="border-color: var(--red); border-style: dashed;">
+    <span class="tl-time">&mdash;</span>
+    <span class="tl-dot red"></span>
+    <div class="tl-label" style="color: var(--red);">intake@ email monitoring &middot; Drive sync &middot; ResearchCA scraper &middot; Reverse sync (admin&rarr;.md)</div>
+    <div class="tl-note">All planned in Track A/B build plan. Not yet implemented.</div>
+  </div>
+</div>
+</section>
+
+<!-- ============ SECTION 3: DATA FLOWS ============ -->
+<section>
+<h2>3. How Data Flows</h2>
+
+<div class="flow-group">
+  <div class="flow-group-title">Wiki Map Pipeline</div>
+  <div class="flow-chain">
+    <span class="flow-node">Wiki .md files</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Daily rebuild (7:45a)</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">wiki-map.html</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node todo">GitHub push (TODO)</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">GitHub Pages</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Phone / Browser</span>
+  </div>
+</div>
+
+<div class="flow-group">
+  <div class="flow-group-title">Admin View Edits</div>
+  <div class="flow-chain">
+    <span class="flow-node">Admin view edits</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">GitHub push</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">Reverse sync to .md (TODO)</span>
+  </div>
+</div>
+
+<div class="flow-group">
+  <div class="flow-group-title">iMessage Intelligence</div>
+  <div class="flow-chain">
+    <span class="flow-node">iMessages</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">chat.db</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Daily review (7:55a)</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Practice Dashboard + hot.md</span>
+  </div>
+</div>
+
+<div class="flow-group">
+  <div class="flow-group-title">Daily Briefing</div>
+  <div class="flow-chain">
+    <span class="flow-node">Email (Gmail MCP)</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Daily briefing compile (8:00a)</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Gmail draft</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Auto-send</span>
+  </div>
+</div>
+
+<div class="flow-group">
+  <div class="flow-group-title">Human Input (Now)</div>
+  <div class="flow-chain">
+    <span class="flow-node">Jeremy tells Ralph</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">Ralph edits .md files</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node">iCloud sync</span>
+  </div>
+</div>
+
+<div class="flow-group">
+  <div class="flow-group-title">Intake Pipeline (NOT YET)</div>
+  <div class="flow-chain">
+    <span class="flow-node notyet">Christine / clients</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">intake@noonlawoffices.com</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">Identify &rarr; Match &rarr; OCR</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">File &rarr; Wiki Ingest</span>
+  </div>
+</div>
+
+<div class="flow-group">
+  <div class="flow-group-title">Drive Sync (NOT YET)</div>
+  <div class="flow-chain">
+    <span class="flow-node notyet">iCloud matter folders</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">Drive API push (2x/day)</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">Google Drive</span>
+    <span class="flow-arrow">&rarr;</span>
+    <span class="flow-node notyet">Share links &rarr; wiki pages</span>
+  </div>
+</div>
+
+</section>
+
+<!-- ============ SECTION 4: KNOWLEDGE ARCHITECTURE ============ -->
+<section>
+<h2>4. Where Rules / Instructions Live</h2>
+<div class="knowledge-list">
+
+  <div class="k-item">
+    <div class="k-order">1</div>
+    <div>
+      <div class="k-name">CLAUDE.md</div>
+      <div class="k-desc">Compact working memory. Loaded automatically every session. Core identity, routing rules, active context summary.</div>
+      <div class="k-load">auto-load &middot; every session</div>
+    </div>
+  </div>
+
+  <div class="k-item">
+    <div class="k-order">2</div>
+    <div>
+      <div class="k-name">PROJECT-SPEC.md</div>
+      <div class="k-desc">Full canonical spec. Architecture, build plan, operating rules, decision log. 615 lines, ~2-3% context window.</div>
+      <div class="k-load">file read &middot; every session start</div>
+    </div>
+  </div>
+
+  <div class="k-item">
+    <div class="k-order">3</div>
+    <div>
+      <div class="k-name">hot.md</div>
+      <div class="k-desc">Session state: what's urgent, what changed, overdue items, waiting-on. Rebuilt at session end. Never authoritative.</div>
+      <div class="k-load">file read &middot; every session start</div>
+    </div>
+  </div>
+
+  <div class="k-item">
+    <div class="k-order">4</div>
+    <div>
+      <div class="k-name">dispatch-diary.md</div>
+      <div class="k-desc">Permanent append-only history of all decisions and activities. Read latest entries for context at session start.</div>
+      <div class="k-load">file read &middot; recent entries at start</div>
+    </div>
+  </div>
+
+  <div class="k-item">
+    <div class="k-order">5</div>
+    <div>
+      <div class="k-name">MEMORY.md Index + 15+ memory files</div>
+      <div class="k-desc">Deep knowledge: people, projects, processes, tools, case details, technical decisions. Read on demand.</div>
+      <div class="k-load">on-demand &middot; when topic arises</div>
+    </div>
+  </div>
+
+  <div class="k-item">
+    <div class="k-order">6</div>
+    <div>
+      <div class="k-name">SCHEMA.md v2.1</div>
+      <div class="k-desc">Page types, naming conventions, metadata requirements, statement labels, update rules. Authority on wiki structure.</div>
+      <div class="k-load">on-demand &middot; when doing wiki work</div>
+    </div>
+  </div>
+
+  <div class="k-item">
+    <div class="k-order">7</div>
+    <div>
+      <div class="k-name">Cowork Project Instructions</div>
+      <div class="k-desc">Core operating rules baked into Law Time project settings. Safety net if spec isn't loaded. Auto-loaded for project tasks.</div>
+      <div class="k-load">auto-load &middot; project task context</div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ============ SECTION 5: STATUS DASHBOARD ============ -->
+<section>
+<h2>5. Status Dashboard</h2>
+
+<div class="legend">
+  <div class="legend-item"><span class="dot green"></span> Working</div>
+  <div class="legend-item"><span class="dot amber"></span> Partially working / needs attention</div>
+  <div class="legend-item"><span class="dot red"></span> Not built yet</div>
+  <div class="legend-item"><span class="dot gray"></span> Parked / deferred</div>
+</div>
+
+<div class="status-grid">
+
+  <div class="status-item"><span class="dot green"></span><span class="status-name">Wiki Map (5 views)</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">GitHub Pages deploy</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">Daily iMessage review</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">Daily briefing email</span></div>
+  <div class="status-item"><span class="dot amber"></span><span class="status-name">Daily wiki rebuild</span></div>
+  <div class="status-item"><span class="dot amber"></span><span class="status-name">Weekly memory review</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">Admin save + persist</span></div>
+  <div class="status-item"><span class="dot amber"></span><span class="status-name">GitHub token push</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">/save command</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">CLAUDE.md</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">Memory system</span></div>
+  <div class="status-item"><span class="dot green"></span><span class="status-name">PROJECT-SPEC.md</span></div>
+  <div class="status-item"><span class="dot red"></span><span class="status-name">Intake pipeline</span></div>
+  <div class="status-item"><span class="dot red"></span><span class="status-name">Drive sync</span></div>
+  <div class="status-item"><span class="dot red"></span><span class="status-name">Westlaw relay</span></div>
+  <div class="status-item"><span class="dot red"></span><span class="status-name">ResearchCA scraper</span></div>
+  <div class="status-item"><span class="dot red"></span><span class="status-name">eFiling co-pilot</span></div>
+  <div class="status-item"><span class="dot red"></span><span class="status-name">Reverse sync (admin&rarr;.md)</span></div>
+  <div class="status-item"><span class="dot amber"></span><span class="status-name">Productivity plugin</span></div>
+  <div class="status-item"><span class="dot amber"></span><span class="status-name">Mobile UI stability</span></div>
+
+</div>
+</section>
+
+<div class="updated">
+  Last rebuilt: April 15, 2026 &middot; Source: PROJECT-SPEC.md + hot.md + SCHEMA.md
+</div>
+
+</body>
+</html>
