@@ -764,10 +764,9 @@ const nodes = [
     detail:{ title:'Caldwell — CR-23-010065', summary:'Romero motion heard 4/14/26. Binder delivered. Father appeared. No DA opposition. Outcome pending.', caseNo:'CR-23-010065' }},
 
   { id:'culver-labor', label:'Culver v. Noonan', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:true,
-    detail:{ title:'Culver v. Noonan — 26CV169360', summary:'Labor Board appeal. Opposition to Motion to Dismiss filed 3/11. Reply brief due ~4/1 (14 days overdue).', caseNo:'26CV169360' }},
+    detail:{ title:'Culver v. Noonan — 26CV169360', summary:'Labor Board appeal. Opposition to Motion to Dismiss filed 3/11. Reply brief due ~4/1 (may be overdue). Workers comp claim (WC-CM-870160) merged into this matter 4/15.', caseNo:'26CV169360' }},
 
-  { id:'culver-wc', label:'Culver WC', type:'matter', matter_status:'Pending', matter_stage:'Discovery', status:'needs-review', hasPage:true, hot:false,
-    detail:{ title:'Culver — WC-CM-870160', summary:'Workers comp claim. May be consolidated with Labor Board appeal.', caseNo:'WC-CM-870160' }},
+  // Culver WC (WC-CM-870160) REMOVED — merged into Culver v. Noonan (26CV169360) on 2026-04-15 per Jeremy's direction. File moved to wasteland/.
 
   { id:'dillard', label:'Dillard', type:'matter', matter_status:'Open', matter_stage:'Pre-trial Motions', status:'current', hasPage:true, hot:false,
     detail:{ title:'Dillard — CR-25-010297', summary:'PC 422 criminal threats. 70-year-old veteran, in custody, $650K bail. Military diversion (PC 1001.8). Mar 9 hearing outcome pending.', caseNo:'CR-25-010297' }},
@@ -919,7 +918,7 @@ const links = [
   {source:'navarro',target:'rodriguez',label:'civil claim cluster'},
   {source:'navarro',target:'acosta',label:'civil claim cluster'},
   {source:'rodriguez',target:'acosta',label:'civil claim cluster'},
-  {source:'culver-labor',target:'culver-wc',label:'related proceedings'},
+  // culver-wc link removed — merged into culver-labor
   {source:'noonan-john',target:'noonan-christine',label:'family/firm'},
   {source:'alameda-da',target:'recusal-side-switch',label:'employing office'},
 ];
