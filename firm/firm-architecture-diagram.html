@@ -28,8 +28,30 @@
     height: 100vh;
     width: 100vw;
   }
+  /* Firm dashboards nav */
+  .firm-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 110;
+    height: 30px;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 4px 16px;
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; overflow-x: auto;
+  }
+  .firm-nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 3px 9px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .firm-nav a:hover { background: rgba(88,166,255,0.1); color: var(--accent); }
+  .firm-nav a.current { font-weight: 600; color: #e8f0fe; background: rgba(255,255,255,0.05); }
+
   #header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    position: fixed; top: 30px; left: 0; right: 0; z-index: 100;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     padding: 12px 20px;
@@ -68,7 +90,7 @@
   #canvas {
     width: 100%;
     height: 100%;
-    padding-top: 56px;
+    padding-top: 86px;
   }
   svg { width: 100%; height: 100%; }
 
@@ -108,7 +130,7 @@
   #detail-panel {
     position: fixed;
     right: -420px;
-    top: 56px;
+    top: 86px;
     bottom: 0;
     width: 400px;
     background: var(--surface);
@@ -181,6 +203,13 @@
 </style>
 </head>
 <body>
+<nav class="firm-nav">
+  <a href="./">Index</a>
+  <a href="./firm-brief-2026-04-30.html">Brief</a>
+  <a href="./firm-system-audit.html">System Audit</a>
+  <a class="current" href="./firm-architecture-diagram.html">Architecture</a>
+  <a href="./firm-wiki-map.html">Wiki Map</a>
+</nav>
 <div id="header">
   <h1>Noonan Law — System Architecture</h1>
   <div class="legend">
@@ -219,7 +248,7 @@ const CATEGORY_SHAPES = {
 const nodes = [
   // Central Hub
   { id: 'wiki', label: 'Law Office Wiki', category: 'hub', status: 'built',
-    desc: 'Central knowledge system. Schema v2.1 with 5 page types. ~47 nodes in wiki map. Single source of truth indexing all data sources. Deployed to GitHub Pages.' },
+    desc: 'Central knowledge system. Five page types (matter, contact, court, authority, issue). Single source of truth indexing all data sources. Deployed to GitHub Pages.' },
   // Wiki sub-nodes
   { id: 'matter', label: 'Matter Pages', category: 'sub-node', status: 'built',
     desc: 'Case tracking pages with procedural posture, deadlines, hearings, filed documents. Clio-compatible statuses (Open/Pending/Closed) and criminal defense stages.' },
@@ -248,7 +277,7 @@ const nodes = [
 
   // Outputs (OUT)
   { id: 'github', label: 'GitHub Pages', category: 'output', status: 'built',
-    desc: 'Wiki map hosted at mrbreadbaby.github.io/practice-wiki-map. D3.js interactive visualization. Three views: force graph, calendar timeline, mobile cards. Daily rebuild scheduled.' },
+    desc: 'Firm dashboards hosted at mrbreadbaby.github.io/command-center/firm/. D3.js interactive wiki map plus brief, system audit, architecture views. Daily rebuild scheduled.' },
   { id: 'gdrive', label: 'Google Drive', category: 'output', status: 'in-progress',
     desc: 'Sharing layer for Christine/John access. iCloud → Drive sync (twice daily + on-demand). Drive links embedded in wiki pages. Drive for Desktop installed as Finder interface only.' },
   { id: 'efiling', label: 'eFiling (Tyler)', category: 'output', status: 'planned',
@@ -331,7 +360,7 @@ const links = [
 
 // --- BUILD SVG ---
 const width = window.innerWidth;
-const height = window.innerHeight - 56;
+const height = window.innerHeight - 86;
 
 const svg = d3.select('#canvas').append('svg')
   .attr('width', width)
