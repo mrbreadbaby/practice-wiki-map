@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noonan Law — System Architecture</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --amber: #d29922;
+    --blue: #58a6ff;
+    --gray: #484f58;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  #header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  #header h1 span { color: var(--accent); }
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+  .legend-item:hover { opacity: 1; }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  #canvas {
+    width: 100%;
+    height: 100%;
+    padding-top: 56px;
+  }
+  svg { width: 100%; height: 100%; }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    max-width: 360px;
+    font-size: 13px;
+    line-height: 1.5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  #tooltip.visible { opacity: 1; }
+  #tooltip h3 {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+  #tooltip .status-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  #tooltip p { color: var(--text-muted); margin-bottom: 4px; }
+
+  /* Detail panel */
+  #detail-panel {
+    position: fixed;
+    right: -420px;
+    top: 56px;
+    bottom: 0;
+    width: 400px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    z-index: 150;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    padding: 24px;
+  }
+  #detail-panel.open { right: 0; }
+  #detail-panel h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  #detail-panel .detail-type {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  #detail-panel .detail-status {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  #detail-panel .detail-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  #detail-panel .detail-connections h4 {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  #detail-panel .conn-item {
+    padding: 6px 10px;
+    background: var(--bg);
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  #detail-panel .conn-item:hover { background: var(--border); }
+  #close-panel {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #close-panel:hover { color: #fff; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    #header { padding: 8px 12px; }
+    #header h1 { font-size: 15px; }
+    .legend { gap: 8px; font-size: 11px; }
+    #detail-panel { width: 100%; right: -100%; }
+  }
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>Noonan Law — System Architecture</h1>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Built</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> In Progress</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Planned</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gray)"></div> Deferred</div>
+  </div>
+</div>
+<div id="canvas"></div>
+<div id="tooltip"></div>
+<div id="detail-panel">
+  <button id="close-panel">&times;</button>
+  <div id="detail-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const STATUS_COLORS = {
+  built: '#3fb950',
+  'in-progress': '#d29922',
+  planned: '#58a6ff',
+  deferred: '#484f58'
+};
+
+const CATEGORY_SHAPES = {
+  hub: { symbol: 'circle', size: 2200 },
+  'sub-node': { symbol: 'circle', size: 600 },
+  source: { symbol: 'diamond', size: 900 },
+  output: { symbol: 'square', size: 800 },
+  processing: { symbol: 'star', size: 1600 },
+  tool: { symbol: 'triangle', size: 700 }
+};
+
+// --- DATA ---
+const nodes = [
+  // Central Hub
+  { id: 'wiki', label: 'Law Office Wiki', category: 'hub', status: 'built',
+    desc: 'Central knowledge system. Schema v2.1 with 5 page types. ~47 nodes in wiki map. Single source of truth indexing all data sources. Deployed to GitHub Pages.' },
+  // Wiki sub-nodes
+  { id: 'matter', label: 'Matter Pages', category: 'sub-node', status: 'built',
+    desc: 'Case tracking pages with procedural posture, deadlines, hearings, filed documents. Clio-compatible statuses (Open/Pending/Closed) and criminal defense stages.' },
+  { id: 'contact', label: 'Contact Pages', category: 'sub-node', status: 'built',
+    desc: 'People and organizations. Contact is the base entity (Clio-aligned); Client is a role. Cross-matter relationship tracking.' },
+  { id: 'court', label: 'Court Pages', category: 'sub-node', status: 'built',
+    desc: 'Judge tendencies, staff, practice notes, local rules. Levels: county, department, branch. Deadline rules engine (replacing Clio).' },
+  { id: 'authority', label: 'Authority Pages', category: 'sub-node', status: 'built',
+    desc: 'Legal standards, key holdings, reusable argument blocks. Romero, Pitchess, PC 1001.36 built. Verification via Westlaw Quick Check during drafting.' },
+  { id: 'issue', label: 'Issue Pages', category: 'sub-node', status: 'built',
+    desc: 'Recurring litigation patterns and playbooks. Cross-matter threads. Recusal/side-switch conflict (Billups) built.' },
+
+  // Data Sources (IN)
+  { id: 'icloud', label: 'iCloud Files', category: 'source', status: 'built',
+    desc: 'Canonical document storage. All working files live here. Documents/Cases/Noonan/ is the primary working directory. Ralph reads/writes directly.' },
+  { id: 'onedrive', label: 'OneDrive Discovery', category: 'source', status: 'planned',
+    desc: 'Shared folder with discovery from active Noonan clients. Read-only source. Ralph pulls relevant content via ingest pipeline, links back in wiki pages.' },
+  { id: 'gmail', label: 'Gmail / intake@', category: 'source', status: 'built',
+    desc: 'admin@noonanlawoffices.com connected via MCP. intake@ is a Google Group (Collaborative Inbox) — universal drop box for documents, correspondence, anything. Hourly monitoring.' },
+  { id: 'researchca', label: 'ResearchCA', category: 'source', status: 'planned',
+    desc: 'Tyler-hosted court case status portal. Chrome automation scraper planned. Will pull hearing dates, filings, case status and update wiki matter pages.' },
+  { id: 'physical', label: 'Christine / Physical', category: 'source', status: 'built',
+    desc: 'Hard copy case files at Dublin office. Wiki matter pages note physical file location. Christine scans to iCloud intake when digital copy needed.' },
+  { id: 'westlaw', label: 'Westlaw Precision', category: 'source', status: 'planned',
+    desc: 'Legal research + cite verification (Quick Check). Two workflows: Research Relay for case prep, Quick Check for draft verification. Chrome automation required.' },
+
+  // Outputs (OUT)
+  { id: 'github', label: 'GitHub Pages', category: 'output', status: 'built',
+    desc: 'Wiki map hosted at mrbreadbaby.github.io/practice-wiki-map. D3.js interactive visualization. Three views: force graph, calendar timeline, mobile cards. Daily rebuild scheduled.' },
+  { id: 'gdrive', label: 'Google Drive', category: 'output', status: 'in-progress',
+    desc: 'Sharing layer for Christine/John access. iCloud → Drive sync (twice daily + on-demand). Drive links embedded in wiki pages. Drive for Desktop installed as Finder interface only.' },
+  { id: 'efiling', label: 'eFiling (Tyler)', category: 'output', status: 'planned',
+    desc: 'Court filing portal. Service & eFiling Co-pilot planned. Tyler efile checklist with Chrome automation — fill fields, save draft, operator submits. Known Chrome profile caching issue.' },
+  { id: 'service-email', label: 'Service Emails', category: 'output', status: 'planned',
+    desc: 'Gmail MCP assembles service email from admin@noonanlawoffices.com with approval gate. Links to Drive copies of filed documents.' },
+
+  // Processing Layer
+  { id: 'ralph', label: 'Ralph (Dispatch)', category: 'processing', status: 'built',
+    desc: 'AI assistant / automation engine. Routes tasks across Noonan, Personal, Consulting projects. Manages wiki, intake pipeline, research relay, drafting.' },
+
+  // Skills
+  { id: 'intake-skill', label: 'Intake/Ingest Skill', category: 'processing', status: 'in-progress',
+    desc: 'Full triage pipeline: monitor intake@, identify, match to matter, OCR/cleanup, file to iCloud, sync to Drive, wiki ingest (extract entities, update pages, log), flag for attention.' },
+  { id: 'research-skill', label: 'Research Skill', category: 'processing', status: 'planned',
+    desc: 'Westlaw Research Relay + ResearchCA scraper procedures. Batches AI-generated legal questions, tracks research cycles, integrates results into wiki authority pages.' },
+  { id: 'efiling-skill', label: 'eFiling Skill', category: 'processing', status: 'planned',
+    desc: 'Service email assembly + Tyler efile checklist. Gmail MCP for service emails, Chrome automation for Tyler portal.' },
+  { id: 'drafting-skill', label: 'Drafting Skill', category: 'processing', status: 'planned',
+    desc: 'Project Builder context assembly from wiki + Quick Check verification. Word templates for California court filings. Multi-AI adversarial review as QC.' },
+
+  // Tools
+  { id: 'chrome', label: 'Chrome Automation', category: 'tool', status: 'built',
+    desc: 'Claude in Chrome MCP for all browser work. Used for Westlaw, ResearchCA, Tyler efile, GitHub pushes. Computer-use is read-only for browsers.' },
+  { id: 'mcp', label: 'MCP Connections', category: 'tool', status: 'in-progress',
+    desc: 'Gmail MCP (connected), Google Calendar MCP (connected), Google Drive MCP (planned). Chrome extension for browser automation. Word MCP for drafting.' },
+  { id: 'gcal', label: 'Google Calendar', category: 'tool', status: 'built',
+    desc: 'Court dates, deadlines, hearing schedules for noonanlawoffices.com. Connected via MCP.' },
+  { id: 'word', label: 'Microsoft Word', category: 'tool', status: 'in-progress',
+    desc: 'Motion drafting backbone via MCP connector. Pre-formatted templates needed for California court filings (28-line numbered pages, proper margins, caption block). Ralph drops content into templates.' }
+];
+
+const links = [
+  // Wiki sub-nodes
+  { source: 'wiki', target: 'matter', type: 'contains' },
+  { source: 'wiki', target: 'contact', type: 'contains' },
+  { source: 'wiki', target: 'court', type: 'contains' },
+  { source: 'wiki', target: 'authority', type: 'contains' },
+  { source: 'wiki', target: 'issue', type: 'contains' },
+
+  // Sources → Ralph → Wiki
+  { source: 'icloud', target: 'ralph', type: 'data-in' },
+  { source: 'onedrive', target: 'ralph', type: 'data-in' },
+  { source: 'gmail', target: 'ralph', type: 'data-in' },
+  { source: 'researchca', target: 'ralph', type: 'data-in' },
+  { source: 'physical', target: 'ralph', type: 'data-in' },
+  { source: 'westlaw', target: 'ralph', type: 'data-in' },
+
+  // Ralph → Wiki
+  { source: 'ralph', target: 'wiki', type: 'process' },
+
+  // Wiki / Ralph → Outputs
+  { source: 'ralph', target: 'github', type: 'data-out' },
+  { source: 'ralph', target: 'gdrive', type: 'data-out' },
+  { source: 'ralph', target: 'efiling', type: 'data-out' },
+  { source: 'ralph', target: 'service-email', type: 'data-out' },
+
+  // Skills connect to Ralph
+  { source: 'intake-skill', target: 'ralph', type: 'skill' },
+  { source: 'research-skill', target: 'ralph', type: 'skill' },
+  { source: 'efiling-skill', target: 'ralph', type: 'skill' },
+  { source: 'drafting-skill', target: 'ralph', type: 'skill' },
+
+  // Tools
+
+  { source: 'chrome', target: 'ralph', type: 'tool' },
+  { source: 'mcp', target: 'ralph', type: 'tool' },
+  { source: 'gcal', target: 'ralph', type: 'tool' },
+  { source: 'word', target: 'ralph', type: 'tool' },
+
+  // Cross connections
+  { source: 'gmail', target: 'intake-skill', type: 'feeds' },
+  { source: 'westlaw', target: 'research-skill', type: 'feeds' },
+  { source: 'researchca', target: 'research-skill', type: 'feeds' },
+  { source: 'efiling-skill', target: 'efiling', type: 'feeds' },
+  { source: 'efiling-skill', target: 'service-email', type: 'feeds' },
+  { source: 'drafting-skill', target: 'word', type: 'feeds' },
+  { source: 'icloud', target: 'gdrive', type: 'sync' },
+];
+
+// --- BUILD SVG ---
+const width = window.innerWidth;
+const height = window.innerHeight - 56;
+
+const svg = d3.select('#canvas').append('svg')
+  .attr('width', width)
+  .attr('height', height);
+
+// Defs for arrows and glow
+const defs = svg.append('defs');
+
+// Arrow markers for each link type
+['data-in','data-out','process','contains','skill','tool','feeds','sync'].forEach(t => {
+  defs.append('marker')
+    .attr('id', `arrow-${t}`)
+    .attr('viewBox', '0 -5 10 10')
+    .attr('refX', 20)
+    .attr('refY', 0)
+    .attr('markerWidth', 6)
+    .attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M0,-4L10,0L0,4')
+    .attr('fill', t === 'data-in' ? '#3fb950' : t === 'data-out' ? '#f0883e' : t === 'process' ? '#58a6ff' : t === 'contains' ? '#30363d' : t === 'feeds' ? '#bc8cff' : '#30363d');
+});
+
+// Glow filter
+const glow = defs.append('filter').attr('id', 'glow');
+glow.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur');
+glow.append('feMerge').selectAll('feMergeNode')
+  .data(['blur', 'SourceGraphic']).enter()
+  .append('feMergeNode').attr('in', d => d);
+
+const g = svg.append('g');
+
+// Zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.3, 3])
+  .on('zoom', (e) => g.attr('transform', e.transform));
+svg.call(zoom);
+
+// Link styling
+const LINK_STYLES = {
+  'data-in': { stroke: '#3fb95066', dash: '6,3', width: 1.5 },
+  'data-out': { stroke: '#f0883e66', dash: '6,3', width: 1.5 },
+  'process': { stroke: '#58a6ff88', dash: '', width: 2.5 },
+  'contains': { stroke: '#30363d', dash: '', width: 1.5 },
+  'skill': { stroke: '#d2992266', dash: '4,4', width: 1.2 },
+  'tool': { stroke: '#30363d88', dash: '3,6', width: 1 },
+  'feeds': { stroke: '#bc8cff44', dash: '5,3', width: 1.2 },
+  'sync': { stroke: '#3fb95044', dash: '8,4', width: 1.2 }
+};
+
+const linkElements = g.append('g')
+  .selectAll('line')
+  .data(links)
+  .enter().append('line')
+  .attr('stroke', d => LINK_STYLES[d.type].stroke)
+  .attr('stroke-width', d => LINK_STYLES[d.type].width)
+  .attr('stroke-dasharray', d => LINK_STYLES[d.type].dash)
+  .attr('marker-end', d => d.type !== 'contains' && d.type !== 'tool' ? `url(#arrow-${d.type})` : '');
+
+// Node groups
+const nodeElements = g.append('g')
+  .selectAll('g')
+  .data(nodes)
+  .enter().append('g')
+  .attr('class', 'node')
+  .style('cursor', 'pointer')
+  .call(d3.drag()
+    .on('start', dragStart)
+    .on('drag', dragging)
+    .on('end', dragEnd));
+
+// Draw shapes
+nodeElements.each(function(d) {
+  const el = d3.select(this);
+  const color = STATUS_COLORS[d.status];
+  const cat = d.category;
+
+  if (cat === 'hub') {
+    el.append('circle')
+      .attr('r', 32)
+      .attr('fill', color + '22')
+      .attr('stroke', color)
+      .attr('stroke-width', 2.5)
+      .attr('filter', 'url(#glow)');
+    // Inner ring
+    el.append('circle')
+      .attr('r', 22)
+      .attr('fill', color + '44')
+      .attr('stroke', color)
+      .attr('stroke-width', 1);
+  } else if (cat === 'sub-node') {
+    el.append('circle')
+      .attr('r', 14)
+      .attr('fill', color + '33')
+      .attr('stroke', color)
+      .attr('stroke-width', 1.5);
+  } else if (cat === 'source') {
+    el.append('rect')
+      .attr('x', -16).attr('y', -16)
+      .attr('width', 32).attr('height', 32)
+      .attr('rx', 4)
+      .attr('transform', 'rotate(45)')
+      .attr('fill', color + '22')
+      .attr('stroke', color)
+      .attr('stroke-width', 1.5);
+  } else if (cat === 'output') {
+    el.append('rect')
+      .attr('x', -15).attr('y', -15)
+      .attr('width', 30).attr('height', 30)
+      .attr('rx', 6)
+      .attr('fill', color + '22')
+      .attr('stroke', color)
+      .attr('stroke-width', 1.5);
+  } else if (cat === 'processing') {
+    // Hexagon
+    const hex = d3.line()([[0,-24],[21,-12],[21,12],[0,24],[-21,12],[-21,-12],[0,-24]]);
+    el.append('path')
+      .attr('d', hex)
+      .attr('fill', color + '22')
+      .attr('stroke', color)
+      .attr('stroke-width', 2)
+      .attr('filter', 'url(#glow)');
+  } else if (cat === 'tool') {
+    el.append('circle')
+      .attr('r', 12)
+      .attr('fill', color + '22')
+      .attr('stroke', color)
+      .attr('stroke-width', 1.2);
+  }
+});
+
+// Labels
+nodeElements.append('text')
+  .text(d => d.label)
+  .attr('text-anchor', 'middle')
+  .attr('dy', d => {
+    if (d.category === 'hub') return 50;
+    if (d.category === 'processing') return 38;
+    if (d.category === 'source') return 32;
+    if (d.category === 'sub-node') return 26;
+    if (d.category === 'output') return 28;
+    return 24;
+  })
+  .attr('fill', '#fff')
+  .attr('font-size', d => d.category === 'hub' ? '13px' : d.category === 'processing' ? '12px' : '11px')
+  .attr('font-weight', d => d.category === 'hub' || d.category === 'processing' ? '600' : '400')
+  .attr('paint-order', 'stroke')
+  .attr('stroke', '#0d1117')
+  .attr('stroke-width', '3px');
+
+// Tooltip
+const tooltip = document.getElementById('tooltip');
+
+nodeElements
+  .on('mouseenter', function(event, d) {
+    const statusLabel = d.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const statusColor = STATUS_COLORS[d.status];
+    tooltip.innerHTML = `
+      <h3>${d.label}</h3>
+      <span class="status-badge" style="background:${statusColor}33;color:${statusColor}">${statusLabel}</span>
+      <p>${d.desc.substring(0, 150)}${d.desc.length > 150 ? '...' : ''}</p>
+    `;
+    tooltip.classList.add('visible');
+    // Highlight connections
+    linkElements.attr('opacity', l =>
+      (l.source.id || l.source) === d.id || (l.target.id || l.target) === d.id ? 1 : 0.1);
+    nodeElements.attr('opacity', n => {
+      if (n.id === d.id) return 1;
+      const connected = links.some(l =>
+        ((l.source.id || l.source) === d.id && (l.target.id || l.target) === n.id) ||
+        ((l.target.id || l.target) === d.id && (l.source.id || l.source) === n.id));
+      return connected ? 1 : 0.25;
+    });
+  })
+  .on('mousemove', function(event) {
+    const x = event.clientX + 15;
+    const y = event.clientY - 10;
+    tooltip.style.left = Math.min(x, window.innerWidth - 380) + 'px';
+    tooltip.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+  })
+  .on('mouseleave', function() {
+    tooltip.classList.remove('visible');
+    linkElements.attr('opacity', 1);
+    nodeElements.attr('opacity', 1);
+  })
+  .on('click', function(event, d) {
+    showDetail(d);
+  });
+
+// Detail panel
+function showDetail(d) {
+  const statusLabel = d.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const statusColor = STATUS_COLORS[d.status];
+  const catLabel = d.category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+  const connected = links.filter(l =>
+    (l.source.id || l.source) === d.id || (l.target.id || l.target) === d.id
+  ).map(l => {
+    const otherId = ((l.source.id || l.source) === d.id) ? (l.target.id || l.target) : (l.source.id || l.source);
+    const other = nodes.find(n => n.id === otherId);
+    const dir = ((l.source.id || l.source) === d.id) ? '→' : '←';
+    return other ? `<div class="conn-item">${dir} ${other.label} <span style="color:var(--text-muted);font-size:11px">(${l.type})</span></div>` : '';
+  }).join('');
+
+  document.getElementById('detail-content').innerHTML = `
+    <h2>${d.label}</h2>
+    <div class="detail-type" style="color:var(--text-muted)">${catLabel}</div>
+    <div class="detail-status" style="background:${statusColor}33;color:${statusColor}">${statusLabel}</div>
+    <div class="detail-desc">${d.desc}</div>
+    <div class="detail-connections">
+      <h4>Connections</h4>
+      ${connected}
+    </div>
+  `;
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+document.getElementById('close-panel').addEventListener('click', () => {
+  document.getElementById('detail-panel').classList.remove('open');
+});
+
+// Force simulation
+const simulation = d3.forceSimulation(nodes)
+  .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+    if (d.type === 'contains') return 80;
+    if (d.type === 'process') return 100;
+    if (d.type === 'tool') return 150;
+    return 140;
+  }))
+  .force('charge', d3.forceManyBody().strength(d => {
+    if (d.category === 'hub') return -600;
+    if (d.category === 'processing') return -400;
+    return -200;
+  }))
+  .force('center', d3.forceCenter(width / 2, height / 2))
+  .force('collision', d3.forceCollide(40))
+  .force('x', d3.forceX(width / 2).strength(0.03))
+  .force('y', d3.forceY(height / 2).strength(0.03));
+
+simulation.on('tick', () => {
+  linkElements
+    .attr('x1', d => d.source.x)
+    .attr('y1', d => d.source.y)
+    .attr('x2', d => d.target.x)
+    .attr('y2', d => d.target.y);
+  nodeElements.attr('transform', d => `translate(${d.x},${d.y})`);
+});
+
+function dragStart(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x; d.fy = d.y;
+}
+function dragging(event, d) {
+  d.fx = event.x; d.fy = event.y;
+}
+function dragEnd(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null; d.fy = null;
+}
+
+// Fit on load
+setTimeout(() => {
+  const bounds = g.node().getBBox();
+  const dx = bounds.width, dy = bounds.height;
+  const x = bounds.x + dx / 2, y = bounds.y + dy / 2;
+  const scale = 0.8 / Math.max(dx / width, dy / height);
+  const translate = [width / 2 - scale * x, height / 2 - scale * y];
+  svg.transition().duration(750)
+    .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+}, 2000);
+</script>
+</body>
+</html>

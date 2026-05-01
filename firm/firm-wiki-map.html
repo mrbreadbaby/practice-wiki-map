@@ -1,0 +1,3522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- DATA-REBUILT: 2026-04-30 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Noonan Law — Wiki Map</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{overflow:hidden;width:100%;max-width:100vw}
+  html,body{overflow-x:hidden;overscroll-behavior-x:none;padding-right:env(safe-area-inset-right,0px)}
+
+  :root{
+    --clr-matter:#60a5fa;  /* blue */
+    --clr-contact:#c084fc; /* violet */
+    --clr-court:#34d399;   /* emerald */
+    --clr-authority:#fbbf24;/* amber */
+    --clr-issue:#fb7185;   /* rose */
+    --clr-client:#e879f9;  /* fuchsia — client-flagged contacts */
+    --clr-overdue:#ef4444;
+    --clr-today:#f59e0b;
+    --clr-upcoming:#3b82f6;
+    --bg:#0a0e17;
+    --bg-panel:rgba(15,20,33,0.96);
+    --bg-bar:rgba(10,14,23,0.92);
+    --text-primary:#e2e8f0;
+    --text-heading:#f1f5f9;
+    --text-secondary:#94a3b8;
+    --text-muted:#64748b;
+    --text-bright:#f8fafc;
+    --text-detail:#cbd5e1;
+    --border-subtle:rgba(255,255,255,0.06);
+    --border-medium:rgba(255,255,255,0.08);
+    --border-strong:rgba(255,255,255,0.1);
+    --surface-dim:rgba(255,255,255,0.02);
+    --surface-low:rgba(255,255,255,0.03);
+    --surface-mid:rgba(255,255,255,0.04);
+    --surface-high:rgba(255,255,255,0.06);
+    --surface-hover:rgba(255,255,255,0.08);
+    --surface-active:rgba(255,255,255,0.1);
+    --graph-label-fill:#e2e8f0;
+    --graph-label-stroke:#0a0e17;
+    --graph-link:rgba(255,255,255,0.1);
+    --panel-hdr-bg:rgba(15,20,33,.98);
+    --legend-bg:rgba(15,20,33,.92);
+    --tooltip-bg:rgba(15,20,33,.95);
+    --hot-banner-bg:linear-gradient(180deg,rgba(15,10,5,.97),rgba(10,14,23,.95));
+    --stat-val:#e2e8f0;
+  }
+
+  html.light{
+    --clr-matter:#2563eb;
+    --clr-contact:#7c3aed;
+    --clr-court:#059669;
+    --clr-authority:#d97706;
+    --clr-issue:#e11d48;
+    --clr-client:#c026d3;
+    --clr-overdue:#dc2626;
+    --clr-today:#d97706;
+    --clr-upcoming:#2563eb;
+    --bg:#f8fafc;
+    --bg-panel:rgba(255,255,255,0.97);
+    --bg-bar:rgba(248,250,252,0.92);
+    --text-primary:#1e293b;
+    --text-heading:#0f172a;
+    --text-secondary:#475569;
+    --text-muted:#94a3b8;
+    --text-bright:#0f172a;
+    --text-detail:#334155;
+    --border-subtle:rgba(0,0,0,0.06);
+    --border-medium:rgba(0,0,0,0.08);
+    --border-strong:rgba(0,0,0,0.12);
+    --surface-dim:rgba(0,0,0,0.02);
+    --surface-low:rgba(0,0,0,0.03);
+    --surface-mid:rgba(0,0,0,0.04);
+    --surface-high:rgba(0,0,0,0.06);
+    --surface-hover:rgba(0,0,0,0.08);
+    --surface-active:rgba(0,0,0,0.12);
+    --graph-label-fill:#1e293b;
+    --graph-label-stroke:#f8fafc;
+    --graph-link:rgba(0,0,0,0.12);
+    --panel-hdr-bg:rgba(255,255,255,.98);
+    --legend-bg:rgba(255,255,255,.92);
+    --tooltip-bg:rgba(255,255,255,.95);
+    --hot-banner-bg:linear-gradient(180deg,rgba(255,245,240,.97),rgba(248,250,252,.95));
+    --stat-val:#1e293b;
+  }
+
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg);color:var(--text-primary);
+    overflow:hidden;height:100vh;width:100%;
+  }
+
+  /* ===== TOP BAR ===== */
+  #top-bar{
+    position:fixed;top:0;left:0;right:0;
+    min-height:56px;
+    background:var(--bg-bar);backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;align-items:center;
+    padding:8px 16px;z-index:100;gap:10px;flex-wrap:wrap;
+  }
+  #top-bar h1{font-size:15px;font-weight:600;color:var(--text-heading);letter-spacing:-0.3px;white-space:nowrap}
+  #top-bar .sub{font-size:12px;color:var(--text-muted);white-space:nowrap}
+
+  .view-toggles{display:flex;gap:3px;background:var(--surface-mid);border-radius:8px;padding:3px;border:1px solid var(--border-subtle);flex-shrink:0}
+  .view-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all .2s;white-space:nowrap;font-family:inherit}
+  .view-btn:hover{color:var(--text-secondary)}
+  .view-btn.active{background:rgba(99,102,241,0.2);color:#a5b4fc}
+  html.light .view-btn.active{background:rgba(99,102,241,0.12);color:#4f46e5}
+
+  /* ===== THEME TOGGLE ===== */
+  #theme-toggle{
+    width:36px;height:36px;border-radius:8px;
+    background:var(--surface-mid);border:1px solid var(--border-subtle);
+    color:var(--text-secondary);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;transition:all .2s;flex-shrink:0;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #theme-toggle:hover{background:var(--surface-hover);color:var(--text-heading)}
+  #theme-toggle:active{transform:scale(0.95)}
+
+  #filter-bar{display:flex;gap:5px;align-items:center;overflow-x:auto;flex-shrink:1;min-width:0;scrollbar-width:none}
+  #filter-bar::-webkit-scrollbar{display:none}
+  .fp{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface-mid);color:var(--text-secondary);transition:all .2s;white-space:nowrap;user-select:none;flex-shrink:0;-webkit-tap-highlight-color:transparent;min-height:30px}
+  .fp:hover{background:var(--surface-hover)}
+  .fp.active{border-color:var(--pc,#6366f1);background:var(--pb,rgba(99,102,241,0.15));color:var(--pc,#a5b4fc)}
+  html.light .fp.active{color:var(--pc,#4f46e5)}
+  .fp .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+
+  #search-box{position:relative;flex:0 1 220px;margin-left:auto;flex-shrink:0}
+  #search-box input{width:100%;padding:8px 12px 8px 32px;background:var(--surface-high);border:1px solid var(--border-medium);border-radius:8px;color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;transition:all .2s;min-height:36px}
+  #search-box input:focus{background:var(--surface-active);border-color:rgba(99,102,241,0.5);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+  #search-box input::placeholder{color:var(--text-muted)}
+  #search-box .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none}
+
+  .hot-pill{position:relative;margin-left:10px;padding:6px 12px;border-radius:14px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .hot-pill:hover{background:rgba(239,68,68,0.3);border-color:rgba(239,68,68,0.5)}
+  .hot-pill:active{transform:scale(0.98)}
+  #hot-pill-count{margin-left:4px;font-weight:700}
+
+  /* ===== HOT BANNER ===== */
+  #hot-banner{position:fixed;top:56px;left:0;right:0;background:var(--hot-banner-bg);backdrop-filter:blur(20px);border-bottom:1px solid rgba(239,68,68,0.15);z-index:95;max-height:300px;overflow:visible;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:1}
+  #hot-banner.collapsed{max-height:0;opacity:0;pointer-events:none;overflow:hidden}
+  .hb-inner{padding:12px 16px 14px;max-height:280px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .hb-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .hb-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#ef4444;flex-shrink:0}
+  .hb-count{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,0.15);color:#fca5a5;font-weight:600;flex-shrink:0}
+  .banner-close-btn{
+    display:inline-flex;align-items:center;gap:4px;
+    margin-left:auto;flex-shrink:0;
+    padding:8px 14px;
+    border-radius:6px;
+    background:rgba(239,68,68,0.3);
+    border:1px solid rgba(239,68,68,0.5);
+    color:#fca5a5;
+    font-size:13px;font-weight:700;font-family:inherit;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    min-height:36px;min-width:80px;
+    line-height:1;
+    justify-content:center;
+  }
+  .banner-close-btn:active{background:rgba(239,68,68,0.5);color:#fff}
+  .hb-grid{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .hb-grid::-webkit-scrollbar{display:none}
+  .hc{flex-shrink:0;padding:10px 14px;border-radius:10px;cursor:pointer;min-width:190px;max-width:280px;transition:all .2s;-webkit-tap-highlight-color:transparent}
+  .hc:hover{transform:translateY(-1px)}
+  .hc.overdue{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);box-shadow:0 0 20px rgba(239,68,68,.08)}
+  .hc.today{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);box-shadow:0 0 20px rgba(245,158,11,.08)}
+  .hc.upcoming{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)}
+  .hc-u{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:4px;margin-bottom:6px}
+  .hc.overdue .hc-u{background:rgba(239,68,68,.2);color:#fca5a5}
+  .hc.today .hc-u{background:rgba(245,158,11,.2);color:#fcd34d}
+  .hc.upcoming .hc-u{background:rgba(59,130,246,.2);color:#93c5fd}
+  .hc-l{font-size:13px;font-weight:600;margin-bottom:4px}
+  .hc.overdue .hc-l{color:#fca5a5}.hc.today .hc-l{color:#fcd34d}.hc.upcoming .hc-l{color:#93c5fd}
+  .hc-t{font-size:11px;color:var(--text-secondary);line-height:1.4}
+
+  /* ===== LIGHT MODE URGENCY OVERRIDES ===== */
+  html.light .hc.overdue{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.25)}
+  html.light .hc.today{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.25)}
+  html.light .hc.upcoming{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.25)}
+  html.light .hc.overdue .hc-u{background:rgba(239,68,68,.12);color:#dc2626}
+  html.light .hc.today .hc-u{background:rgba(245,158,11,.12);color:#d97706}
+  html.light .hc.upcoming .hc-u{background:rgba(59,130,246,.12);color:#2563eb}
+  html.light .hc.overdue .hc-l{color:#dc2626}
+  html.light .hc.today .hc-l{color:#d97706}
+  html.light .hc.upcoming .hc-l{color:#2563eb}
+  html.light .cal-ev.overdue{background:rgba(239,68,68,.08);color:#dc2626}
+  html.light .cal-ev.today-ev{background:rgba(245,158,11,.08);color:#d97706}
+  html.light .cal-ev.upcoming-ev{background:rgba(59,130,246,.08);color:#2563eb}
+  html.light .tl-item.overdue{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.15)}
+  html.light .tl-item.today-tl{background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.15)}
+  html.light .tl-item.upcoming-tl{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.15)}
+  html.light .tl-dt.overdue{color:#dc2626}
+  html.light .tl-dt.today-tl{color:#d97706}
+  html.light .tl-dt.upcoming-tl{color:#2563eb}
+  html.light .mob-c-hot.overdue{background:rgba(239,68,68,.08);color:#dc2626}
+  html.light .mob-c-hot.today{background:rgba(245,158,11,.08);color:#d97706}
+  html.light .mob-c-hot.upcoming{background:rgba(59,130,246,.08);color:#2563eb}
+  html.light .uf.overdue{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.15);color:#dc2626}
+  html.light .uf.today{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.15);color:#d97706}
+  html.light .uf.upcoming{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.15);color:#2563eb}
+  html.light .pipe-card-badge.open{background:rgba(37,99,235,.1);color:#2563eb}
+  html.light .pipe-card-badge.pending{background:rgba(217,119,6,.1);color:#d97706}
+  html.light .pipe-card-badge.closed{background:rgba(100,116,139,.1);color:#64748b}
+  html.light .pipe-card-hot.overdue{background:rgba(239,68,68,.08);color:#dc2626}
+  html.light .pipe-card-hot.today{background:rgba(245,158,11,.08);color:#d97706}
+  html.light .pipe-card-hot.upcoming{background:rgba(59,130,246,.08);color:#2563eb}
+  html.light .hot-pill{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#dc2626}
+  html.light .hb-count{background:rgba(239,68,68,.1);color:#dc2626}
+  html.light .banner-close-btn{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#dc2626}
+  html.light .mob-c-viewfull{background:rgba(99,102,241,.08);color:#4f46e5;border-color:rgba(99,102,241,.2)}
+  html.light .mob-c.ho{border-left-color:#dc2626}
+  html.light .p-close{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.12);color:#1e293b}
+
+  /* ===== GRAPH ===== */
+  #graph-container{width:100%;max-width:100vw;height:100vh;position:relative;overflow:hidden}
+  svg{width:100%;height:100%;display:block;max-width:100vw;overflow:hidden}
+  .link{stroke-linecap:round}
+  .node-label{font-family:'Inter',sans-serif;font-size:10px;fill:var(--graph-label-fill);pointer-events:none;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--graph-label-stroke);stroke-width:3px;stroke-linecap:round;stroke-linejoin:round}
+
+  @keyframes pulseOverdue{0%{r:0;opacity:.7}50%{opacity:.2}100%{r:40;opacity:0}}
+  @keyframes pulseToday{0%{r:0;opacity:.6}50%{opacity:.15}100%{r:36;opacity:0}}
+  @keyframes pulseUpcoming{0%{r:0;opacity:.4}50%{opacity:.1}100%{r:30;opacity:0}}
+  @keyframes ringSpin{0%{stroke-dashoffset:0}100%{stroke-dashoffset:50}}
+  .hot-ring{animation:ringSpin 4s linear infinite}
+
+  /* ===== CALENDAR ===== */
+  #cal-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #cal-view.active{display:block}
+  .cal-inner{max-width:1000px;margin:0 auto;padding:20px 20px 80px;padding-top:var(--cal-top-pad,20px)}
+  .cal-mh{font-size:20px;font-weight:700;color:var(--text-heading);margin-bottom:16px;letter-spacing:-.5px}
+  .cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:32px}
+  .cal-dh{text-align:center;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 0}
+  .cal-d{min-height:90px;background:var(--surface-dim);border:1px solid var(--surface-mid);border-radius:6px;padding:6px;transition:background .15s}
+  .cal-d:hover{background:var(--surface-mid)}
+  .cal-d.empty{background:transparent;border-color:transparent}
+  .cal-d.td{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.04)}
+  .cal-dn{font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:4px}
+  .cal-d.td .cal-dn{color:#f59e0b}
+  .cal-ev{font-size:10px;padding:3px 6px;border-radius:4px;margin-bottom:3px;cursor:pointer;line-height:1.3;transition:all .15s;min-height:22px;display:flex;align-items:center;-webkit-tap-highlight-color:transparent}
+  .cal-ev:hover{filter:brightness(1.2);transform:translateX(2px)}
+  .cal-ev.overdue{background:rgba(239,68,68,.15);color:#fca5a5;border-left:2px solid #ef4444}
+  .cal-ev.today-ev{background:rgba(245,158,11,.15);color:#fcd34d;border-left:2px solid #f59e0b}
+  .cal-ev.upcoming-ev{background:rgba(59,130,246,.12);color:#93c5fd;border-left:2px solid #3b82f6}
+
+  .tl-sec{margin-top:12px}
+  .tl-sec-t{font-size:13px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border-subtle)}
+  .tl-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+  .tl-item:hover{transform:translateX(4px)}
+  .tl-item.overdue{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.12)}
+  .tl-item.today-tl{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.12)}
+  .tl-item.upcoming-tl{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.1)}
+  .tl-dt{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;min-width:70px;flex-shrink:0}
+  .tl-dt.overdue{color:#fca5a5}.tl-dt.today-tl{color:#fcd34d}.tl-dt.upcoming-tl{color:#93c5fd}
+  .tl-c{flex:1}
+  .tl-l{font-size:13px;font-weight:600;color:var(--text-heading);margin-bottom:2px}
+  .tl-d{font-size:11px;color:var(--text-secondary);line-height:1.4}
+  .tl-b{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:4px;flex-shrink:0;align-self:center}
+
+  /* ===== MOBILE / CARDS ===== */
+  #cards-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #cards-view.active{display:block}
+  .mob-inner{max-width:600px;margin:0 auto;padding:16px 16px 80px;padding-top:var(--cards-top-pad,16px)}
+  .mob-sec{margin-bottom:24px}
+  .mob-sec-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:8px 0;margin-bottom:8px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:8px}
+  .mob-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .mob-c{background:var(--surface-low);border:1px solid var(--border-subtle);border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;min-height:48px}
+  .mob-c:hover,.mob-c:active{background:var(--surface-high);transform:translateY(-1px)}
+  .mob-c.ho{border-left:3px solid var(--clr-overdue);box-shadow:inset 0 0 20px rgba(239,68,68,.04)}
+  .mob-c.ht{border-left:3px solid var(--clr-today);box-shadow:inset 0 0 20px rgba(245,158,11,.04)}
+  .mob-c.hu{border-left:3px solid var(--clr-upcoming)}
+  .mob-c-title{font-size:14px;font-weight:600;color:var(--text-heading);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .mob-c-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+  .mob-c-sum{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-top:6px}
+  .mob-c-hot{font-size:11px;margin-top:6px;padding:6px 10px;border-radius:6px}
+  .mob-c-hot.overdue{background:rgba(239,68,68,.1);color:#fca5a5}
+  .mob-c-hot.today{background:rgba(245,158,11,.1);color:#fcd34d}
+  .mob-c-hot.upcoming{background:rgba(59,130,246,.1);color:#93c5fd}
+  .mob-c-det{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--text-secondary);line-height:1.6}
+  .mob-c.expanded .mob-c-det{display:block}
+  .mob-c-det-row{display:flex;gap:6px;margin-bottom:4px}
+  .mob-c-det-lbl{color:var(--text-muted);font-weight:600;min-width:80px;flex-shrink:0;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  .mob-c-det-val{color:var(--text-detail)}
+  .mob-c-viewfull{display:inline-block;margin-top:8px;padding:6px 14px;border-radius:6px;background:rgba(99,102,241,.15);color:#a5b4fc;font-size:11px;font-weight:600;border:1px solid rgba(99,102,241,.25);cursor:pointer}
+  .mob-c-viewfull:active{background:rgba(99,102,241,.3)}
+
+  /* ===== PIPELINE VIEW ===== */
+  #pipeline-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #pipeline-view.active{display:block}
+  .pipe-inner{padding:16px 16px 80px;padding-top:var(--pipe-top-pad,16px)}
+  .pipe-lane{margin-bottom:20px;background:var(--surface-dim);border:1px solid var(--surface-mid);border-radius:12px;overflow:hidden}
+  .pipe-lane-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface-low);border-bottom:1px solid var(--surface-mid)}
+  .pipe-lane-title{font-size:13px;font-weight:700;color:var(--text-primary);letter-spacing:-.2px}
+  .pipe-lane-count{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--surface-hover);color:var(--text-secondary);font-weight:600}
+  .pipe-lane-cards{display:flex;gap:10px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;min-height:60px}
+  .pipe-lane-cards::-webkit-scrollbar{display:none}
+  .pipe-card{flex-shrink:0;min-width:200px;max-width:280px;padding:12px 14px;border-radius:10px;background:var(--surface-mid);border:1px solid var(--border-medium);border-left:3px solid #475569;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+  .pipe-card:hover,.pipe-card:active{background:var(--surface-hover);transform:translateY(-1px)}
+  .pipe-card.urgent-overdue{border-left-color:#ef4444}
+  .pipe-card.urgent-today{border-left-color:#f59e0b}
+  .pipe-card.urgent-upcoming{border-left-color:#3b82f6}
+  .pipe-card.closed-card{opacity:.5}
+  .pipe-card-name{font-size:13px;font-weight:600;color:var(--text-heading);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+  .pipe-card-case{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+  .pipe-card-badge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:4px}
+  .pipe-card-badge.open{background:rgba(96,165,250,.15);color:#93c5fd}
+  .pipe-card-badge.pending{background:rgba(245,158,11,.15);color:#fcd34d}
+  .pipe-card-badge.closed{background:rgba(148,163,184,.15);color:#94a3b8}
+  .pipe-card-date{font-size:11px;color:var(--text-secondary);margin-top:6px}
+  .pipe-card-hot{font-size:10px;margin-top:4px;padding:4px 8px;border-radius:4px}
+  .pipe-card-hot.overdue{background:rgba(239,68,68,.1);color:#fca5a5}
+  .pipe-card-hot.today{background:rgba(245,158,11,.1);color:#fcd34d}
+  .pipe-card-hot.upcoming{background:rgba(59,130,246,.1);color:#93c5fd}
+  .pipe-empty{padding:12px 16px;font-size:12px;color:var(--text-muted);font-style:italic}
+
+  @media(min-width:901px){
+    .pipe-inner{max-width:1400px;margin:0 auto}
+  }
+  @media(max-width:600px){
+    .pipe-card{min-width:170px;max-width:240px;padding:10px 12px}
+    .pipe-lane-hdr{padding:10px 12px}
+    .pipe-lane-cards{padding:10px 12px}
+  }
+
+  /* ===== ADMIN VIEW ===== */
+  #admin-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #admin-view.active{display:block}
+  .admin-inner{padding:16px 16px 80px;padding-top:var(--admin-top-pad,16px)}
+  .admin-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .admin-title{font-size:18px;font-weight:700;color:var(--text-heading);letter-spacing:-.3px}
+  .admin-changes{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:16px;background:rgba(245,158,11,.15);color:#f59e0b;font-size:11px;font-weight:700;transition:all .2s}
+  html.light .admin-changes{background:rgba(217,119,6,.1);color:#d97706}
+  .admin-changes.hidden{display:none}
+  .admin-save-btn{padding:8px 20px;border-radius:8px;background:rgba(99,102,241,.8);color:#fff;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .2s;min-height:36px}
+  .admin-save-btn:hover{background:rgba(99,102,241,1)}
+  .admin-save-btn:active{transform:scale(.97)}
+  .admin-save-btn:disabled{opacity:.5;cursor:not-allowed}
+  .admin-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+  .admin-toast.show{opacity:1}
+  .admin-toast.success{background:#059669;color:#fff}
+  .admin-toast.error{background:#dc2626;color:#fff}
+
+  .admin-filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .admin-filter{padding:6px 10px;border-radius:6px;background:var(--surface-mid);border:1px solid var(--border-medium);color:var(--text-primary);font-size:11px;font-family:inherit;min-height:32px;cursor:pointer}
+  .admin-filter:focus{outline:none;border-color:rgba(99,102,241,.5)}
+
+  .admin-wrap{overflow-x:auto;border:1px solid var(--border-subtle);border-radius:10px;scrollbar-width:thin}
+  .admin-wrap::-webkit-scrollbar{height:6px}
+  .admin-wrap::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
+  .admin-tbl{width:100%;border-collapse:collapse;min-width:900px}
+  .admin-tbl th{position:sticky;top:0;background:var(--surface-low);padding:10px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);border-bottom:1px solid var(--border-subtle);text-align:left;cursor:pointer;white-space:nowrap;user-select:none;z-index:2}
+  .admin-tbl th:hover{color:var(--text-heading)}
+  .admin-tbl th .sort-arrow{margin-left:4px;font-size:9px;opacity:.5}
+  .admin-tbl th.sorted .sort-arrow{opacity:1;color:var(--clr-matter)}
+  .admin-tbl td{padding:8px 12px;border-bottom:1px solid var(--border-subtle);font-size:12px;color:var(--text-primary);vertical-align:middle}
+  .admin-tbl tr:hover td{background:var(--surface-mid)}
+  .admin-tbl tr.row-overdue td{background:rgba(239,68,68,.04)}
+  .admin-tbl tr.row-today td{background:rgba(245,158,11,.04)}
+  .admin-tbl tr.row-upcoming td{background:rgba(59,130,246,.03)}
+  .admin-name{font-weight:600;color:var(--text-heading);cursor:pointer;white-space:nowrap}
+  .admin-name:hover{text-decoration:underline}
+  .admin-case{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);white-space:nowrap}
+  .admin-sel{padding:5px 8px;border-radius:6px;background:var(--surface-high);border:1px solid var(--border-medium);color:var(--text-primary);font-size:11px;font-family:inherit;cursor:pointer;min-height:30px;max-width:140px}
+  .admin-sel:focus{outline:none;border-color:rgba(99,102,241,.5)}
+  .admin-sel.changed{border-color:#f59e0b;background:rgba(245,158,11,.08)}
+  .admin-urg{width:28px;height:28px;border-radius:50%;border:2px solid var(--border-medium);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+  .admin-urg:hover{transform:scale(1.1)}
+  .admin-urg.urg-none{background:var(--surface-mid)}
+  .admin-urg.urg-upcoming{background:rgba(59,130,246,.2);border-color:#3b82f6}
+  .admin-urg.urg-today{background:rgba(245,158,11,.2);border-color:#f59e0b}
+  .admin-urg.urg-overdue{background:rgba(239,68,68,.2);border-color:#ef4444}
+  html.light .admin-urg.urg-upcoming{background:rgba(37,99,235,.12);border-color:#2563eb}
+  html.light .admin-urg.urg-today{background:rgba(217,119,6,.12);border-color:#d97706}
+  html.light .admin-urg.urg-overdue{background:rgba(220,38,38,.12);border-color:#dc2626}
+  .admin-note{padding:5px 8px;border-radius:6px;background:var(--surface-high);border:1px solid var(--border-medium);color:var(--text-primary);font-size:11px;font-family:inherit;width:100%;min-width:120px;min-height:30px}
+  .admin-note:focus{outline:none;border-color:rgba(99,102,241,.5)}
+  .admin-note.changed{border-color:#f59e0b;background:rgba(245,158,11,.08)}
+  .admin-hearing{font-size:11px;color:var(--text-secondary);white-space:nowrap}
+
+  @media(max-width:600px){
+    .admin-tbl{min-width:800px}
+    .admin-tbl td:first-child,.admin-tbl th:first-child{position:sticky;left:0;z-index:3;background:var(--bg)}
+    .admin-tbl tr:hover td:first-child{background:var(--surface-mid)}
+    .admin-tbl tr.row-overdue td:first-child{background:rgba(239,68,68,.04)}
+    .admin-tbl tr.row-today td:first-child{background:rgba(245,158,11,.04)}
+    .admin-tbl tr.row-upcoming td:first-child{background:rgba(59,130,246,.03)}
+  }
+
+  /* ===== DETAIL PANEL ===== */
+  #detail-panel{
+    position:fixed;top:0;right:-110vw;width:400px;max-width:100%;
+    height:100vh;
+    background:var(--bg-panel);backdrop-filter:blur(24px);
+    border-left:1px solid var(--border-subtle);
+    z-index:200;transition:right .35s cubic-bezier(.16,1,.3,1);
+    overflow-y:auto;overflow-x:hidden;
+    visibility:hidden;
+  }
+  #detail-panel.open{right:0;visibility:visible}
+  #detail-panel::-webkit-scrollbar{width:6px}
+  #detail-panel::-webkit-scrollbar-track{background:transparent}
+  #detail-panel::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
+
+  .p-hdr{
+    padding:20px 20px 16px;
+    border-bottom:1px solid var(--border-subtle);
+    position:sticky;top:0;
+    background:var(--panel-hdr-bg);backdrop-filter:blur(24px);
+    z-index:10;
+    padding-right:64px;
+  }
+
+  .p-close{
+    position:fixed;
+    top:12px;right:12px;
+    width:48px;height:48px;
+    border-radius:10px;
+    background:rgba(239,68,68,0.3);
+    border:2px solid rgba(239,68,68,0.5);
+    color:#fff;cursor:pointer;
+    z-index:250;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:600;
+    transition:all .15s;
+    -webkit-tap-highlight-color:transparent;
+    z-index:20;
+    touch-action:manipulation;
+  }
+  .p-close:hover,.p-close:active{background:var(--surface-hover);color:var(--text-bright);transform:scale(1.05)}
+
+  .p-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  .p-title{font-size:18px;font-weight:700;color:var(--text-bright);line-height:1.3;letter-spacing:-.3px}
+  .p-status{margin-top:8px;font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:8px}
+  .sdot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .p-body{padding:20px 20px 32px}
+  .p-sec{margin-bottom:20px}
+  .p-sec-t{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px}
+  .p-sec p{font-size:13px;line-height:1.6;color:var(--text-detail)}
+  .rc{display:inline-block;padding:5px 10px;margin:3px 4px 3px 0;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid var(--border-medium);background:var(--surface-mid);-webkit-tap-highlight-color:transparent;min-height:32px}
+  .rc:hover{background:var(--surface-active);border-color:var(--border-strong)}
+  .uf{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;margin-bottom:8px;font-size:13px;line-height:1.5}
+  .uf.overdue{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+  .uf.today{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#fcd34d}
+  .uf.upcoming{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#93c5fd}
+  .uf .fi{font-size:14px;flex-shrink:0;margin-top:1px}
+
+  /* ===== LEGEND & STATS ===== */
+  #legend{position:fixed;bottom:16px;left:16px;background:var(--legend-bg);backdrop-filter:blur(16px);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 16px;z-index:80;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);white-space:nowrap}
+  .ld{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  #stats{position:fixed;bottom:16px;right:16px;background:var(--legend-bg);backdrop-filter:blur(16px);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 16px;z-index:80;font-size:11px;color:var(--text-muted);display:flex;gap:14px}
+  .sv{color:var(--stat-val);font-weight:600;font-variant-numeric:tabular-nums}
+  .node-tooltip{position:absolute;padding:8px 12px;background:var(--tooltip-bg);border:1px solid var(--border-strong);border-radius:8px;font-size:12px;color:var(--text-primary);pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:200;backdrop-filter:blur(8px)}
+  .node-tooltip.visible{opacity:1}
+
+  .client-star{color:var(--clr-client);font-size:12px}
+
+  /* ===== ZOOM CONTROLS ===== */
+  #zoom-controls{
+    position:fixed;bottom:56px;right:16px;
+    display:flex;flex-direction:column;gap:6px;
+    z-index:80;
+  }
+  .zoom-btn{
+    width:44px;height:44px;
+    border-radius:10px;
+    background:var(--legend-bg);
+    backdrop-filter:blur(16px);
+    border:1px solid var(--border-medium);
+    color:var(--text-secondary);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;font-weight:600;
+    transition:all .15s;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .zoom-btn:hover,.zoom-btn:active{background:var(--surface-active);color:var(--text-primary);border-color:var(--border-strong)}
+  .zoom-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:900px){
+    #top-bar{gap:8px;padding:6px 10px}
+    #top-bar .sub{display:none}
+    #search-box{flex:1 1 140px}
+    #legend{bottom:8px;left:8px;padding:8px 12px;gap:10px}
+    #stats{bottom:8px;right:8px;padding:8px 12px}
+    #detail-panel{width:100%;max-width:100%}
+    .cal-d{min-height:70px;padding:4px}
+    .cal-ev{font-size:9px;padding:2px 4px}
+  }
+  @media(max-width:600px){
+    .fp{padding:4px 8px;font-size:10px}
+    #search-box{flex:1 1 100px}
+    #legend{max-width:calc(100% - 100px)}
+    .cal-d{min-height:56px}.cal-dn{font-size:10px}
+    .hc{min-width:160px;padding:8px 10px}
+
+    /* MOBILE DETAIL PANEL — close button always visible */
+    #detail-panel{top:0;height:100vh;z-index:200}
+    .p-hdr{
+      padding:16px 16px 14px;padding-right:68px;
+      position:sticky;top:0;
+      z-index:10;
+    }
+    .p-close{
+      position:absolute;
+      top:12px;right:12px;
+      width:48px;height:48px;
+      border-radius:12px;
+      background:rgba(239,68,68,0.25);
+      border:2px solid rgba(239,68,68,0.4);
+      color:#ffffff;
+      font-size:24px;font-weight:700;
+      z-index:20;
+    }
+    .p-close:active{background:rgba(239,68,68,0.5)}
+    .p-title{font-size:16px}
+
+    /* MOBILE BANNER CLOSE — bigger tap target, red to match banner */
+    .banner-close-btn{padding:10px 18px;font-size:14px;min-height:48px;min-width:90px;
+      background:rgba(239,68,68,0.4);border:2px solid rgba(239,68,68,0.6);color:#fff}
+
+    /* MOBILE ZOOM CONTROLS */
+    #zoom-controls{bottom:16px;right:8px}
+    .zoom-btn{width:48px;height:48px;font-size:22px}
+  }
+
+  /* LANDSCAPE on mobile — detail panel as half-screen overlay */
+  @media(max-height:500px) and (orientation:landscape){
+    #detail-panel{width:50%;max-width:50%}
+    #detail-panel.open ~ #cards-view,
+    #detail-panel.open ~ #cal-view{padding-right:0}
+    #top-bar{min-height:44px;padding:4px 10px}
+    #top-bar h1{font-size:13px}
+    .hb-inner{padding:8px 12px 10px}
+    .hb-grid{max-height:60px}
+    .hc{min-width:140px;padding:6px 10px}
+    .hc-l{font-size:11px}
+    .hc-t{font-size:9px}
+    #hot-banner{max-height:140px}
+    .mob-inner{padding:10px 10px 60px}
+    .cal-inner{padding:10px 10px 60px}
+  }
+</style>
+</head>
+
+<body>
+
+<div id="top-bar">
+  <h1>Noonan Law — Wiki Map</h1>
+  <span class="sub">Schema v2.2 · April 17, 2026</span>
+  <div class="view-toggles">
+    <button class="view-btn active" data-view="graph" onclick="switchView('graph')">Graph</button>
+    <button class="view-btn" data-view="calendar" onclick="switchView('calendar')">Calendar</button>
+    <button class="view-btn" data-view="cards" onclick="switchView('cards')">Cards</button>
+    <button class="view-btn" data-view="pipeline" onclick="switchView('pipeline')">Pipeline</button>
+    <button class="view-btn" data-view="admin" onclick="switchView('admin')">Admin</button>
+  </div>
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle theme">&#9790;</button>
+  <div id="filter-bar">
+    <div class="fp active" data-type="all" style="--pc:#a5b4fc;--pb:rgba(99,102,241,0.15)">All</div>
+    <div class="fp" data-type="matter" style="--pc:var(--clr-matter);--pb:rgba(96,165,250,0.12)"><span class="dot" style="background:var(--clr-matter)"></span>Matter</div>
+    <div class="fp" data-type="contact" style="--pc:var(--clr-contact);--pb:rgba(192,132,252,0.12)"><span class="dot" style="background:var(--clr-contact)"></span>Contact</div>
+    <div class="fp" data-type="court" style="--pc:var(--clr-court);--pb:rgba(52,211,153,0.12)"><span class="dot" style="background:var(--clr-court)"></span>Court</div>
+    <div class="fp" data-type="authority" style="--pc:var(--clr-authority);--pb:rgba(251,191,36,0.12)"><span class="dot" style="background:var(--clr-authority)"></span>Authority</div>
+    <div class="fp" data-type="issue" style="--pc:var(--clr-issue);--pb:rgba(251,113,133,0.12)"><span class="dot" style="background:var(--clr-issue)"></span>Issue</div>
+  </div>
+  <div id="search-box">
+    <span class="si">&#128269;</span>
+    <input type="text" id="search-input" placeholder="Search... ( / )">
+  </div>
+  <div id="hot-pill" class="hot-pill" onclick="toggleBanner()" style="display:none">Action Required <span id="hot-pill-count"></span></div>
+</div>
+
+<div id="hot-banner">
+  <div class="hb-inner">
+    <div class="hb-head" onclick="toggleBanner()">
+      <span class="hb-title">Action Required</span>
+      <span class="hb-count" id="hot-count"></span>
+      <button class="banner-close-btn" onclick="event.stopPropagation();toggleBanner()">CLOSE &times;</button>
+    </div>
+    <div class="hb-grid" id="hb-grid"></div>
+  </div>
+</div>
+
+<div id="graph-container"><svg id="graph-svg"></svg></div>
+<div id="cal-view"></div>
+<div id="cards-view"></div>
+<div id="pipeline-view"></div>
+<div id="admin-view"></div>
+<div id="admin-toast" class="admin-toast"></div>
+
+<div id="detail-panel">
+  <div class="p-hdr">
+    <button class="p-close" onclick="closePanel()" aria-label="Close">&times;</button>
+    <div id="p-badge" class="p-badge"></div>
+    <div id="p-title" class="p-title"></div>
+    <div id="p-status" class="p-status"></div>
+  </div>
+  <div class="p-body" id="p-body"></div>
+</div>
+
+<div id="legend">
+  <div class="li"><div class="ld" style="background:var(--clr-matter)"></div>Matter</div>
+  <div class="li"><div class="ld" style="background:var(--clr-contact)"></div>Contact</div>
+  <div class="li"><div class="ld" style="background:var(--clr-client)"></div>Client <span class="client-star">&#9733;</span></div>
+  <div class="li"><div class="ld" style="background:var(--clr-court)"></div>Court</div>
+  <div class="li"><div class="ld" style="background:var(--clr-authority)"></div>Authority</div>
+  <div class="li"><div class="ld" style="background:var(--clr-issue)"></div>Issue</div>
+  <div class="li"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="2,2"/></svg>Urgent</div>
+</div>
+
+<div id="stats">
+  <span><span class="sv" id="sn">0</span> nodes</span>
+  <span><span class="sv" id="se">0</span> connections</span>
+  <span><span class="sv" id="sh">0</span> urgent</span>
+</div>
+
+<div id="zoom-controls">
+  <button class="zoom-btn" onclick="zoomIn()" aria-label="Zoom in" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" aria-label="Zoom out" title="Zoom out">&minus;</button>
+  <button class="zoom-btn" onclick="zoomFit()" aria-label="Fit all" title="Fit all nodes"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+</div>
+
+<div class="node-tooltip" id="tooltip"></div>
+
+<script>
+// ============================================================
+// DATA — Schema v2.2, April 16, 2026
+// ============================================================
+
+const TC = {
+  matter:'#60a5fa', contact:'#c084fc', court:'#34d399',
+  authority:'#fbbf24', issue:'#fb7185'
+};
+const TD = {
+  matter:'rgba(96,165,250,0.15)', contact:'rgba(192,132,252,0.15)',
+  court:'rgba(52,211,153,0.15)', authority:'rgba(251,191,36,0.15)',
+  issue:'rgba(251,113,133,0.15)'
+};
+const CLIENT_CLR = '#e879f9';
+
+const nodes = [
+  {
+    "id": "romero-1996",
+    "label": "Romero (1996)",
+    "type": "authority",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Romero Motion (PC 1385)",
+      "aliases": "Romero, motion to strike, strike prior, three strikes",
+      "summary": "Trial court discretion under PC 1385 to strike a strike prior; Williams three-factor test (present offense, priors, defendant's background).",
+      "keyHoldings": [
+        "Romero (1996) 13 Cal.4th 497 \u2014 courts may strike a strike prior under PC 1385",
+        "Williams (1998) 17 Cal.4th 148 \u2014 three-factor test",
+        "Carmony (2004) 33 Cal.4th 367 \u2014 abuse-of-discretion standard",
+        "PC 1385(c)(2)(H) post-2022 \u2014 great weight to priors over 5 years old"
+      ],
+      "mattersUsed": [
+        "Caldwell (CR-23-010065) \u2014 Romero reset 5/7 Dept 2 (7 days)",
+        "Brown (CR-25-003661) \u2014 motion file-ready v4 (4/7)"
+      ],
+      "pitfalls": [
+        "Client declaration critical for Factor 3",
+        "Ensure rap sheet/CLETS in record",
+        "If DA surprises with opposition at hearing, request continuance"
+      ]
+    }
+  },
+  {
+    "id": "pitchess-1974",
+    "label": "Pitchess (1974)",
+    "type": "authority",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Pitchess Motion (Evid. Code 1043-1047)",
+      "aliases": "Pitchess, peace officer personnel records",
+      "summary": "Defense access to officer personnel records under the 'plausible factual scenario' standard (Warrick); in camera review procedure.",
+      "keyHoldings": [
+        "Pitchess (1974) 11 Cal.3d 531 \u2014 foundational",
+        "Warrick (2005) 35 Cal.4th 1011 \u2014 'plausible factual scenario'",
+        "Johnson (2015) 61 Cal.4th 696 \u2014 'relatively relaxed' standard",
+        "Mooc (2001) 26 Cal.4th 1216 \u2014 in camera procedure"
+      ],
+      "mattersUsed": [
+        "Rodgers (CR-2024-001537) \u2014 Officer Solis; in camera 4/14 completed, ruling 5/26",
+        "Ruiz Salas (CR-23-009962) \u2014 Officer Gaskin; 4/10 outcome unknown 20 days"
+      ],
+      "pitfalls": [
+        "Prepare hearing binder (print & tab)",
+        "Johnson admonition / Brady letter strengthens motion",
+        "Plan dismissal motion as follow-up after winning Pitchess"
+      ]
+    }
+  },
+  {
+    "id": "pc-1001-36",
+    "label": "PC 1001.36 Diversion",
+    "type": "authority",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Mental Health Diversion (PC 1001.36)",
+      "aliases": "MH diversion, 1001.36, diversion",
+      "summary": "Pre-adjudication diversion for qualifying DSM-5 mental disorders; post-2022 presumption in defendant's favor (Doron/Harlow); successful completion = dismissal.",
+      "keyHoldings": [
+        "PC 1001.36(b) \u2014 presumption in defendant's favor post-2022",
+        "Doron (2023) / Harlow (2025) \u2014 DA bears clear-and-convincing burden to rebut",
+        "Hall (2024) \u2014 carjacking is eligible",
+        "Williams (2021) \u2014 dangerousness = super-strike standard only"
+      ],
+      "mattersUsed": [
+        "Weaver (25-CR-005354) \u2014 FSIQ 72 by Pojman; motion FINALIZED 4/9, filing status unconfirmed (21 days)",
+        "Garcia (25-CR-010940) \u2014 PC 1001.95 diversion SHELVED 4/20 (client pivoted to DOJ track); drafts preserved"
+      ],
+      "pitfalls": [
+        "Expert report must directly address every statutory criterion",
+        "File before any plea",
+        "Treatment plan should be developed before hearing"
+      ]
+    }
+  },
+  {
+    "id": "recusal-side-switch",
+    "label": "Billups Recusal / Side Switch",
+    "type": "issue",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "recusal-side-switch",
+      "label": "Billups Recusal / Side Switch",
+      "type": "issue",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Central Recusal Issue \u2014 Billups Defense-to-DA Switch",
+        "summary": "Billups side-switch \u2014 prior defense counsel now Alameda DA (Sep 2025). Bar complaint 15 DAYS OVERDUE (deferred 4/15 \u2192 4/20 \u2192 still pending 4/27; malpractice risk). Pattern implicates MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell.",
+        "affectedMatters": [
+          "MejiaMejia \u2014 recusal DENIED 1/16; writ to First DCA; trial 5/26 (26 days)",
+          "Ruiz Salas \u2014 recusal filed 2/18; hearing 4/10 outcome unknown 20 days",
+          "Rodgers \u2014 Billups overlap flagged",
+          "Rodrigues \u2014 'first defendant Billups left'; hearing 5/22 Dept 711 (23 days)",
+          "Navarro \u2014 hearing 5/22 Dept 711 (23 days)",
+          "Mitchell \u2014 bar complaint 15 DAYS OVERDUE (malpractice risk)"
+        ],
+        "timeline": [
+          "Through Aug 2025 \u2014 Billups defense counsel",
+          "Sept 15, 2025 \u2014 joined Alameda DA",
+          "Sept\u2013Dec 2025 \u2014 no ethical wall (3-month gap)",
+          "Dec 12, 2025 \u2014 ethical wall implemented"
+        ],
+        "relatedAuthorities": [
+          "Pitchess (1974)",
+          "Romero (1996)"
+        ]
+      }
+    }
+  },
+  {
+    "id": "billups-darryl",
+    "label": "Billups, Darryl",
+    "type": "contact",
+    "subtype": "person",
+    "role": "opposing-counsel",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "billups-darryl",
+      "label": "Billups, Darryl",
+      "type": "contact",
+      "subtype": "person",
+      "role": "opposing-counsel",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Darryl J. Billups",
+        "subtitle": "Contact \u00b7 Person \u00b7 Opposing Counsel (former defense)",
+        "summary": "Side-switch former-defense DA; bar complaint 15 DAYS OVERDUE (deferred 4/15 \u2192 4/20 \u2192 still pending 4/27; malpractice risk); screening gap Sept\u2013Dec 2025; implicated in MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell.",
+        "roleHistory": [
+          "Through Aug 2025 \u2014 defense counsel for Noonan clients",
+          "Aug 19, 2025 \u2014 Noonan office sent screening-obligation notice",
+          "Aug 28, 2025 \u2014 DA (Dickson) notified; no written response",
+          "Sept 15, 2025 \u2014 joined Alameda DA as Deputy DA",
+          "Sept 15 \u2013 Dec 12, 2025 \u2014 screening gap",
+          "Dec 12, 2025 \u2014 IT ethical wall implemented"
+        ],
+        "affectedMatters": [
+          "MejiaMejia \u2014 writ pending; trial 5/26 (26 days)",
+          "Ruiz Salas \u2014 recusal hearing 4/10 outcome unknown 20 days",
+          "Rodrigues \u2014 'first defendant Billups left'",
+          "Rodgers \u2014 potential overlap",
+          "Mitchell \u2014 bar complaint 15 DAYS OVERDUE"
+        ]
+      }
+    }
+  },
+  {
+    "id": "noonan-john",
+    "label": "Noonan, John W.",
+    "type": "contact",
+    "subtype": "person",
+    "role": "other",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "John W. Noonan",
+      "subtitle": "Contact \u00b7 Person \u00b7 Attorney of Record",
+      "summary": "AOR on all Noonan matters; practice owner; father of Jeremy and Christine; withdrew from Acosta 2/6/26."
+    }
+  },
+  {
+    "id": "noonan-christine",
+    "label": "Noonan, Christine",
+    "type": "contact",
+    "subtype": "person",
+    "role": "other",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Christine Noonan",
+      "subtitle": "Contact \u00b7 Person \u00b7 Office Manager",
+      "summary": "Office manager/paralegal; named defendant in Culver (CLOSED 4/20); sister of Cathy Rafanello (conflicts waiver pending); primary case-assignment coordinator."
+    }
+  },
+  {
+    "id": "fuerch-stephen",
+    "label": "Fuerch, Stephen",
+    "type": "contact",
+    "subtype": "person",
+    "role": "other",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "fuerch-stephen",
+      "label": "Fuerch, Stephen",
+      "type": "contact",
+      "subtype": "person",
+      "role": "other",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Stephen Fuerch",
+        "subtitle": "Contact \u00b7 Person \u00b7 Outside Counsel",
+        "summary": "Blackwell Hobbs drafts with him since 3/27 (34 days); role effectively superseded \u2014 Motion FINAL 4/23 now with JWN for review (awaits DA \u00a7 1054.1 discovery response). Culver 4/21 hearing covered by Fuerch as AOR (matter CLOSED 4/20); also Mitchell (Billups screen)."
+      }
+    }
+  },
+  {
+    "id": "alpers-steven",
+    "label": "Alpers, Steven",
+    "type": "contact",
+    "subtype": "person",
+    "role": "other",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Steven Alpers",
+      "subtitle": "Contact \u00b7 Person \u00b7 Appellate Counsel",
+      "summary": "Appellate counsel handling MejiaMejia writ of prohibition; also appeared on Ruiz Salas 4/10."
+    }
+  },
+  {
+    "id": "sellers-wade",
+    "label": "Sellers, Wade",
+    "type": "contact",
+    "subtype": "person",
+    "role": "expert",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Wade Sellers",
+      "subtitle": "Contact \u00b7 Person \u00b7 Private Investigator",
+      "summary": "PI working across multiple Noonan matters (Acosta, Bratcher, Hunter). Email: sellerspi@gmail.com."
+    }
+  },
+  {
+    "id": "israels-valli",
+    "label": "Israels, Valli",
+    "type": "contact",
+    "subtype": "person",
+    "role": "judge",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Hon. Valli Israels",
+      "subtitle": "Contact \u00b7 Person \u00b7 Judge",
+      "summary": "Alameda Superior Court judge presiding over Rodgers Pitchess in camera review; ruling expected 5/26 (26 days)."
+    }
+  },
+  {
+    "id": "villalobos",
+    "label": "Villalobos, Ruben A.",
+    "type": "contact",
+    "subtype": "person",
+    "role": "judge",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Hon. Ruben A. Villalobos",
+      "subtitle": "Contact \u00b7 Person \u00b7 Judge",
+      "summary": "Stanislaus Dept 2 judge; presiding over Caldwell Romero motion (reset 5/7 \u2014 10 days)."
+    }
+  },
+  {
+    "id": "pojman-andrew",
+    "label": "Pojman, Andrew P.",
+    "type": "contact",
+    "subtype": "person",
+    "role": "expert",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Andrew P. Pojman, Ph.D.",
+      "subtitle": "Contact \u00b7 Person \u00b7 Expert",
+      "summary": "Weaver evaluating expert (WAIS-5 FSIQ 72; Mild Intellectual Disability DSM-5); PC 1001.36 diversion eval."
+    }
+  },
+  {
+    "id": "rafanello-catherine",
+    "label": "Rafanello, Catherine",
+    "type": "contact",
+    "subtype": "person",
+    "role": "client",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Catherine Noonan-Rafanello",
+      "subtitle": "Contact \u00b7 Person \u00b7 Client",
+      "summary": "Client in Rafanello v. ConvergeOne; Christine's sister; v4 damages posture includes $1.8M lost-pipeline anchor (Cathy's pipeline math: $600K 2025-26 + $1.2M early 2027); severance NOT signed (Cathy verbally confirmed 4/26); 6-witness list (4 named on 4/26 call, 2 pending OCR)."
+    }
+  },
+  {
+    "id": "convergeone",
+    "label": "ConvergeOne",
+    "type": "contact",
+    "subtype": "company",
+    "role": "other",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "ConvergeOne / C1",
+      "subtitle": "Contact \u00b7 Company",
+      "summary": "Respondent in Rafanello commission dispute; applied 'blended margin' methodology not in Cathy's signed comp plan; June 2025 RIF (~249 employees, decisional unit) + post-Cathy continuing layoffs ~2,000 of 3,500; unsigned separation agreement kills release defense (Cathy confirmed 4/26 NOT signed). Manager Schaefer/Shafer conduct pattern (HR complaints) + Jeanie DeHart resignation."
+    }
+  },
+  {
+    "id": "alameda-da",
+    "label": "Alameda County DA",
+    "type": "contact",
+    "subtype": "company",
+    "role": "opposing-counsel",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Alameda County DA's Office",
+      "subtitle": "Contact \u00b7 Company \u00b7 Opposing Counsel",
+      "summary": "Prosecuting office on most Alameda matters; Billups joined as Deputy DA 9/15/25; email alcoda@acgov.org."
+    }
+  },
+  {
+    "id": "alameda-county",
+    "label": "Alameda County",
+    "type": "court",
+    "level": "county",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Alameda County Superior Court",
+      "subtitle": "Court \u00b7 County Level",
+      "summary": "Primary county for most Noonan criminal matters.",
+      "mattersHere": [
+        "Acosta",
+        "Blackwell",
+        "Culver (Dept 514 Hayward \u2014 civil)",
+        "Garcia (Dept 712)",
+        "MejiaMejia",
+        "Navarro (Dept 711)",
+        "Rodgers",
+        "Rodrigues (Dept 711)",
+        "Rodriguez",
+        "Ruiz Salas (Dept 11)",
+        "Weaver"
+      ]
+    }
+  },
+  {
+    "id": "alameda-dept-711",
+    "label": "Alameda Dept 711",
+    "type": "court",
+    "level": "department",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Alameda County \u2014 Department 711",
+      "subtitle": "Court \u00b7 Department Level",
+      "summary": "Recusal/dismissal motions; 5/22 hearings for Navarro and Rodrigues at 9am (23 days).",
+      "mattersHere": [
+        "Navarro (CR-24-001345) \u2014 5/22 at 9am",
+        "Rodrigues (CR-21-004636) \u2014 5/22 at 9am"
+      ]
+    }
+  },
+  {
+    "id": "alameda-dept-11",
+    "label": "Alameda Dept 11",
+    "type": "court",
+    "level": "department",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Alameda County \u2014 Department 11",
+      "subtitle": "Court \u00b7 Department Level",
+      "summary": "Ruiz Salas motions; hearing was 4/10 (outcome unknown 20 days).",
+      "mattersHere": [
+        "Ruiz Salas (CR-23-009962)"
+      ]
+    }
+  },
+  {
+    "id": "stan-county",
+    "label": "Stanislaus County",
+    "type": "court",
+    "level": "county",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Stanislaus County Superior Court",
+      "subtitle": "Court \u00b7 County Level",
+      "summary": "Modesto, CA. 4+ criminal matters (Brown, Caldwell, Dillard, Mitchell, Bratcher, Valenzuela).",
+      "mattersHere": [
+        "Caldwell (Dept 2)",
+        "Brown",
+        "Dillard (Dept 4)",
+        "Mitchell (Dept 9)",
+        "Bratcher (Dept 7)",
+        "Valenzuela (Dept 7)"
+      ]
+    }
+  },
+  {
+    "id": "stan-dept-2",
+    "label": "Stanislaus Dept 2",
+    "type": "court",
+    "level": "department",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "stan-dept-2",
+      "label": "Stanislaus Dept 2",
+      "type": "court",
+      "subtype": "branch",
+      "level": "branch",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Stanislaus Dept 2",
+        "subtitle": "Court \u00b7 Branch \u00b7 Hon. Ruben A. Villalobos",
+        "summary": "Caldwell Romero reset Thu 5/7 8:30 AM (8 days) after 4/14 VACATED."
+      }
+    }
+  },
+  {
+    "id": "santa-clara-county",
+    "label": "Santa Clara County",
+    "type": "court",
+    "level": "county",
+    "status": "current",
+    "hasPage": false,
+    "hot": false,
+    "detail": {
+      "title": "Santa Clara County",
+      "subtitle": "Court \u00b7 County",
+      "summary": "Venue for Wolfe (C2214071). Filing via Santa Clara Tyler eFileCA (same account as Alameda). HOJ San Jose houses Dept 33 (Wolfe PX 4/29)."
+    }
+  },
+  {
+    "id": "sacramento-county",
+    "label": "Sacramento County",
+    "type": "court",
+    "level": "county",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "sacramento-county",
+      "label": "Sacramento County",
+      "type": "court",
+      "subtype": "county",
+      "level": "county",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Sacramento County Superior Court",
+        "subtitle": "Court \u00b7 County",
+        "summary": "Hunter prelim 4/9 outcome unknown 21 days; Tyler eFile pivot pending."
+      }
+    }
+  },
+  {
+    "id": "acosta",
+    "label": "Acosta",
+    "type": "matter",
+    "matter_status": "Closed",
+    "matter_stage": "Post-Conviction",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Acosta \u2014 CR-24-012393",
+      "summary": "WITHDRAWN 2/6/26; Pitchess WON as to Stilwell; file transmitted 3/12; civil claim deadline 6/9/26 (40 days).",
+      "caseNo": "CR-24-012393"
+    }
+  },
+  {
+    "id": "adamski",
+    "label": "Adamski / Pemberton",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Post-Conviction",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "adamski",
+      "label": "Adamski / Pemberton",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Post-Conviction",
+      "status": "NOA jurisdictional filing was Mon 4/27 \u2014 Odyssey eFileCA trial-court. Filing-status confirmation pending.",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Adamski \u2014 Pemberton v AMMCG \u2014 24CV-0581 (pro per)",
+        "summary": "Jeremy's personal pro-per appeal (SLO Superior). **Jurisdictional deadline TODAY Mon 4/27** \u2014 CCP \u00a7 12a extends Saturday 4/25 forward to next business day, NOT backward. **v2 packet (4/24-dated, JC Form POS-050, no cutoffs)** is file-ready at Cases/ProPer/Pemberton-v-AMMCG/Appeal-2026/01-Notice-of-Appeal/file-ready-20260424/. v1 (4/23 packet) preserved at ../file-ready-20260423/. **Filing channel: Odyssey eFileCA trial-court** (NOT TrueFiling \u2014 appellate only).",
+        "caseNo": "24CV-0581",
+        "nextHearing": "4/27/26 \u2014 NOA FILING DEADLINE TODAY (jurisdictional) via Odyssey eFileCA"
+      }
+    }
+  },
+  {
+    "id": "adler",
+    "label": "Adler",
+    "type": "matter",
+    "matter_status": "Closed",
+    "matter_stage": "Sentencing",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Adler \u2014 Misdemeanor",
+      "summary": "RESOLVED 11/17/25 \u2014 misdemeanor, no jail time; mental health / police-misconduct related."
+    }
+  },
+  {
+    "id": "blackwell",
+    "label": "Blackwell",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "blackwell",
+      "label": "Blackwell",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Blackwell \u2014 25-CR-007675",
+        "summary": "Alameda felony (WMC Oakland, Dept 112). **NOT FILED \u2014 packet with JWN for review.** Motion FINAL 18-pp serial PDF + 162-pp Bates-stamped Westlaw bundled companion + accepted-changes .docx + Jeremy's -JEREMY-TRACKED.docx audit + README all at file-ready-FINAL-20260423/. **Sjoberg discovery received 4/17, INGESTED 4/26: 69 files (\u224891 MB, 67 HEIC + 2 PNG photos), bit-for-bit identical to 3/25 production (all 69 SHA-256 hashes match) \u2014 re-issued link, no new material. \u00a7 1054.1 demand still unanswered.** Workflow shift: packet goes to JWN FIRST (not court). **Hearing re-noticed 5/18/26 9:00 AM Dept 112 (18 days).** Pattern-learning from Jeremy's 45-min track-changes cleanup feeds pleading-template skill build.",
+        "caseNo": "25-CR-007675",
+        "nextHearing": "5/18/26 9:00 AM Dept 112 Hobbs hearing (18 days)"
+      }
+    }
+  },
+  {
+    "id": "bratcher",
+    "label": "Bratcher",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Discovery",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Bratcher \u2014 CR-25-008518 (+CR-25-012950)",
+      "summary": "Stanislaus Dept 7 felony; companion case CR-25-012950; DDA Jennifer Aleman; PI Wade Sellers working; next hearing needs-review.",
+      "caseNo": "CR-25-008518 (+CR-25-012950)"
+    }
+  },
+  {
+    "id": "brown",
+    "label": "Brown",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Brown \u2014 CR-25-003661",
+      "summary": "DUI w/ GBI; tox report MISSING; 995 + Romero motions pending; Preliminary Examination 7/14/26 8:30 AM Dept 5 (75 days).",
+      "caseNo": "CR-25-003661",
+      "nextHearing": "7/14/26 \u2014 Preliminary Examination 8:30 AM Dept 5"
+    }
+  },
+  {
+    "id": "caldwell",
+    "label": "Caldwell",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "caldwell",
+      "label": "Caldwell",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Caldwell \u2014 CR-23-010065",
+        "summary": "Stanislaus Dept 2 (Villalobos). Romero hearing 4/14 VACATED; **reset Thu 5/7/26 8:30 AM Dept 2 (7 days).** Romero motion file-ready. Client declaration critical for Factor 3.",
+        "caseNo": "CR-23-010065",
+        "nextHearing": "5/7/26 8:30 AM Dept 2 Villalobos \u2014 Romero (7 days)"
+      }
+    }
+  },
+  {
+    "id": "culver-labor",
+    "label": "Culver v. Noonan",
+    "type": "matter",
+    "matter_status": "Closed",
+    "matter_stage": "Post-Conviction",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Culver v. Noonan \u2014 26CV169360",
+      "summary": "Civil appeal from DLSE Labor Commissioner award. CLOSED 4/20/26 \u2014 Noonan declined to contest MTD after wrongful-rejection-by-clerk research. $16,544.74 undertaking forfeits per Lab. Code \u00a7 98.2(b); 10-day payment window runs from dismissal order. Fuerch covered 4/21 Dept 514 hearing as AOR.",
+      "caseNo": "26CV169360",
+      "nextHearing": "CLOSED \u2014 4/21 hearing past; 10-day payment window running"
+    }
+  },
+  {
+    "id": "dillard",
+    "label": "Dillard",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Post-Conviction",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Dillard \u2014 CR-25-010297 (+010280 +011667)",
+      "summary": "DONE 3/24/26 via VTC (PC 422 + PC 29800 noli, all other counts dismissed; probation + Veterans Treatment Court). VTC review 5/11/26 10:00 AM Dept 4 (11 days).",
+      "caseNo": "CR-25-010297; CR-25-010280; CR-25-011667",
+      "nextHearing": "5/11/26 \u2014 VTC Review 10:00 AM Dept 4"
+    }
+  },
+  {
+    "id": "garcia",
+    "label": "Garcia",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "garcia",
+      "label": "Garcia, Enrique",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Garcia \u2014 25-CR-010940",
+        "summary": "Alameda Superior \u2014 Dept 712 Dublin. 4/21 2:00 PM Dublin hearing PASSED \u2014 outcome UNKNOWN (8 days); PC 1001.95 diversion SHELVED 4/20 (client pivoted to DOJ track). Drafts preserved. PC 1001.36 drafts remain on file.",
+        "caseNo": "25-CR-010940"
+      }
+    }
+  },
+  {
+    "id": "hunter",
+    "label": "Hunter",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Discovery",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "hunter",
+      "label": "Hunter",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Preliminary Hearing",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Hunter \u2014 24FE14307",
+        "summary": "Sacramento County. Legal memo 26 DAYS OVERDUE (due 4/4); prelim 4/9 outcome unconfirmed 21 days; Tyler wrong account, eFile pivot pending.",
+        "caseNo": "24FE14307"
+      }
+    }
+  },
+  {
+    "id": "ikem",
+    "label": "Ikem",
+    "type": "matter",
+    "matter_status": "Pending",
+    "matter_stage": "Post-Conviction",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Ikem \u2014 RV68293",
+      "summary": "Alameda traffic; Application to Vacate Civil Assessment filed 12/4/25 (docket ECH0002496607); outcome pending.",
+      "caseNo": "RV68293 (docket ECH0002496607)"
+    }
+  },
+  {
+    "id": "iyengar",
+    "label": "Iyengar",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Iyengar \u2014 DUI",
+      "summary": "VC 23152 DUI; 1538.5 suppression strategy approved 5/2025; case number + venue UNRESOLVED (hunt pass 2 blocked on clerk@slo-law Chrome sign-in).",
+      "caseNo": "[UNRESOLVED]"
+    }
+  },
+  {
+    "id": "mejiamejia",
+    "label": "MejiaMejia",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Trial Prep",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "mejiamejia",
+      "label": "MejiaMejia",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Trial Prep",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "MejiaMejia \u2014 22-CR-003198",
+        "summary": "Alameda. Recusal DENIED 1/16 \u2192 writ of prohibition to First DCA (Alpers appellate). **Jury trial 5/26/26 (26 days).** Billups side-switch pattern implicated.",
+        "caseNo": "22-CR-003198",
+        "nextHearing": "5/26/26 Jury Trial (26 days)"
+      }
+    }
+  },
+  {
+    "id": "mitchell",
+    "label": "Mitchell",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "mitchell",
+      "label": "Mitchell",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "Indicated-sentence DENIED 4/27. Withdrawal + continuance packet built (file-ready-withdrawal-20260427/) \u2014 pending JWN signatures + Dept 9 clerk hearing date. NoNO + Reply FILED 4/22 CA. Trial 6/15 Dept 9 still set.",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Mitchell \u2014 CR-22-002886",
+        "summary": "Stanislaus Dept 9. **NoNO + Supplemental Reply FILED + SERVED 4/22 CA** via Tyler eFileCA Stanislaus (acceptservice@standa.org + DDA Keaton). Receipt in Bin/. **Indicated-sentence hearing TODAY Mon 4/27 8:30 AM Dept 9** \u2014 v2 hearing binder (93 pp, navy+gold) ready; JWN to podium. **JWN PODIUM SHOOTER produced 4/26** (one-page bullet sheet at 04-Hearings/2026-04-27/Mitchell_4-27-26_Hearing_JWN-Podium-Shooter.docx/.pdf \u2014 6 sections; lectern glance-tool, not filed). **Brandie Mesa clerk correction 4/24\u21924/25**: separated [Proposed] Orders per CRC 2.111 (Indicated Sentence + Continuance/Transfer) at 01-Pleadings-and-Motions/file-ready-orders-20260424/; clerk reply drafted in Gmail (admin@) in lieu of e-file per Mesa offer. Mitchell DRAFT v3 continuance .docx remains the canonical pleading-template exemplar. Jury trial 6/15 Dept 9 unchanged. Billups bar complaint 15 DAYS OVERDUE.",
+        "caseNo": "CR-22-002886",
+        "nextHearing": "4/27/26 8:30 AM Dept 9 \u2014 Indicated Sentence TODAY \u2192 6/15 jury trial"
+      },
+      "nextEvent": "Filing of withdrawal/continuance packet (date TBD \u2014 depends on JWN sigs + clerk-assigned hearing date); Trial 6/15 Dept 9"
+    }
+  },
+  {
+    "id": "navarro",
+    "label": "Navarro",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Navarro \u2014 CR-24-001345",
+      "summary": "Recusal/dismissal; reply to AG writ in progress; hearing 5/22/26 9am Dept 711 (22 days); civil claim deadline 6/9/26 (40 days).",
+      "caseNo": "CR-24-001345",
+      "nextHearing": "5/22/26 \u2014 9am Dept 711"
+    }
+  },
+  {
+    "id": "noonan-trust",
+    "label": "Noonan Trust",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Intake",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Noonan Family Trust",
+      "summary": "PRE-FILING/intake only (locked); mother's competency diagnosis pending; new conservative outside attorney engaged March 2026; properties at issue (Maui, Tahoe, Livermore)."
+    }
+  },
+  {
+    "id": "rafanello",
+    "label": "Rafanello",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-Demand Analysis Complete",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "rafanello",
+      "label": "Rafanello",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-litigation",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Rafanello v. ConvergeOne",
+        "summary": "**v4 package built 4/26** at 01-Pleadings-and-Motions/Shegerian-Delivery-20260426-v4/ (Memo 17 pp, Damages 13 pp, Supplemental 10 pp, Witness Questionnaire 11 pp incl. new 'Cathy's Personally-Identified Witness List (6 names)'). v3 preserved at Shegerian-Delivery-20260423-v3/. **Cathy intake gate CLOSED 4/26** (~30-min recorded Zoom; transcript at 09-Notes-and-Strategy/Rafanello-Call-Transcript-20260426.md). 5 of 6 gates remaining: JWN review, conflicts waiver (Cathy/Christine sisters), Westlaw v2 refresh, Gmail drafts regen, KeyCite pass. **New v4 facts:** $1.8M lost-pipeline anchor ($600K 2025-26 + $1.2M early 2027); equal-pay deltas ($85K\u2192$110K; $130K male base; $20K residual gap); Wine-Country/President's-Club incident; Jan\u2013May 2025 stipend 'averaging at 20%' methodology; Manager Schaefer/Shafer pattern + DeHart resignation; **Cathy verbally confirmed severance NOT signed**; 6 witnesses (DeHart, Cheryl, Dave, Janelle named; 2 pending OCR). Retainer 40% per call. **Noonan = HANDOFF ONLY** \u2014 Shegerian drafts + sends. Do NOT calendar 5/4."
+      }
+    }
+  },
+  {
+    "id": "rodgers",
+    "label": "Rodgers",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "rodgers",
+      "label": "Rodgers",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Rodgers \u2014 CR-2024-001537",
+        "summary": "Alameda. Dismissal motion 33 DAYS OVERDUE (since 3/28). Pitchess in camera 4/14 completed; ruling expected 5/26 (26 days) before Hon. Israels. Officer Solis.",
+        "caseNo": "CR-2024-001537"
+      }
+    }
+  },
+  {
+    "id": "rodrigues",
+    "label": "Rodrigues",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Rodrigues \u2014 CR-21-004636 / 23-CR-008755",
+      "summary": "Billups conflict ('first defendant Billups left'); reply to AG writ pending; hearing 5/22/26 9am Dept 711 (22 days); civil claim deadline 6/9 (22 days).",
+      "caseNo": "CR-21-004636 / 23-CR-008755",
+      "nextHearing": "5/22/26 \u2014 9am Dept 711"
+    }
+  },
+  {
+    "id": "rodriguez",
+    "label": "Rodriguez",
+    "type": "matter",
+    "matter_status": "Closed",
+    "matter_stage": "Post-Conviction",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Rodriguez \u2014 CR-24-010846",
+      "summary": "DISMISSED 12/5/25 (PC 288 sex sting); monitoring DA re-file threat; civil claim deadline 6/9/26 (40 days).",
+      "caseNo": "CR-24-010846"
+    }
+  },
+  {
+    "id": "ruiz-salas",
+    "label": "Ruiz Salas",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "ruiz-salas",
+      "label": "Ruiz Salas",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Ruiz Salas \u2014 CR-23-009962",
+        "summary": "Alameda Superior \u2014 Dept 11. 2/18 recusal motion filed; 4/10 hearing outcome UNKNOWN 20 days; Brady letter still missing; portal lookup pending. Officer Gaskin (Pitchess).",
+        "caseNo": "CR-23-009962"
+      }
+    }
+  },
+  {
+    "id": "schiff",
+    "label": "Schiff",
+    "type": "matter",
+    "matter_status": "Closed",
+    "matter_stage": "Post-Conviction",
+    "status": "archived",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Schiff \u2014 24M-07568",
+      "summary": "ARCHIVED 4/18 per Jeremy triage (old Mary Tatum matter, not active); folder moved to Archive/.",
+      "caseNo": "24M-07568"
+    }
+  },
+  {
+    "id": "valenzuela",
+    "label": "Valenzuela",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Preliminary Hearing",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Valenzuela \u2014 CR-24-015682",
+      "summary": "Stanislaus Dept 7 felony; CORRECTED charge is PC 311.11(A) possession of CSAM (not PC 240/243); PX held 11/21/25; offer: 240 w/ EHMMM + 2yr probation + lifetime Tier-3 registration; next hearing needs-review.",
+      "caseNo": "CR-24-015682"
+    }
+  },
+  {
+    "id": "weaver",
+    "label": "Weaver",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-trial Motions",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "weaver",
+      "label": "Weaver",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-trial Motions",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Weaver \u2014 25-CR-005354",
+        "summary": "Alameda Superior; PC 215(a) carjacking w/ strike; PC 1001.36 mental health diversion. Motion FINALIZED 4/9; filing/service status unconfirmed (21 days; blocked on eFile portal URL).",
+        "caseNo": "25-CR-005354 (court docket); 25-CR-019101 (OPD report)"
+      }
+    }
+  },
+  {
+    "id": "wells",
+    "label": "Wells",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Pre-preliminary-examination",
+    "status": "current",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "wells",
+      "label": "Wells",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Pre-preliminary-examination",
+      "status": "PX 4/27 outcome unconfirmed (Tyler continuance filed 4/22 CA). \u00a7 859b outer deadline 5/11.",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Wells \u2014 26-CR-002517",
+        "summary": "Alameda Superior \u2014 ECHOJ Dublin, Dept 705 (PX, Hon. Thomas Nixon). PC \u00a7 530.5(c)(2) fraudulent possession of personal info w/ prior + 5 aggravators + 7 priors. Client OR since 3/12/26. JWN substituted in 4/15. **Continuance motion FILED + SERVED 4/22 CA** via Tyler eFileCA Alameda (DDAs Shukla + Basurto). Receipt in Bin/. **PX TODAY Mon 4/27 Dept 705 Nixon** \u2014 JWN coverage TBC pending ruling. \u00a7 859b 60-day outer deadline = 2026-05-11 (11 days).",
+        "caseNo": "26-CR-002517",
+        "nextHearing": "4/27/26 9:00 AM Dept 705 Nixon \u2014 Preliminary Examination TODAY"
+      }
+    }
+  },
+  {
+    "id": "wolfe",
+    "label": "Wolfe",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Preliminary Hearing",
+    "status": "needs-review",
+    "hasPage": true,
+    "hot": true,
+    "detail": {
+      "id": "wolfe",
+      "label": "Wolfe",
+      "type": "matter",
+      "matter_status": "Open",
+      "matter_stage": "Preliminary Hearing",
+      "status": "current",
+      "hasPage": true,
+      "hot": true,
+      "detail": {
+        "title": "Wolfe \u2014 C2214071",
+        "summary": "Santa Clara Superior (HOJ San Jose, Dept 33). **Continuance motion FILED + SERVED 4/22 CA** via Tyler eFileCA Santa Clara (DDA Maszara). Receipt in Bin/. **PX Wed 4/29 Dept 33 (today)** \u2014 v7 prep binder = 268 pp, 40.6 MB (Wade Sellers 4/17 packet Tab 2A + Nancy Dinh 4/8 DNA Expert Report Tab 2B, expert in Korea until 5/5/26). Firm-authored title spelling = WOLFE (no u) per Jeremy 4/22; filed exhibits historically WOULFE preserved. If continuance denied, Christine covers 4/29 PX.",
+        "caseNo": "C2214071",
+        "nextHearing": "4/29/26 Preliminary Examination \u2014 Santa Clara HOJ Dept 33 (2 days; continuance filed, ruling pending)"
+      },
+      "nextEvent": "PX 4/29 Dept 33 (today) \u2014 Christine covers if continuance denied"
+    }
+  },
+  {
+    "id": "mercer",
+    "label": "Mercer (Civil Commitment)",
+    "type": "matter",
+    "matter_status": "Open",
+    "matter_stage": "Intake",
+    "status": "current",
+    "hasPage": true,
+    "hot": false,
+    "detail": {
+      "title": "Mercer \u2014 Civil Commitment Petition (Vehicle TBD)",
+      "summary": "Intake recon only (2026-04-24 CA). Christine forwarded a 'new client information' intake to the firm via clerk@slo-law.com. State seeks lifetime commitment to a mental institution; statutory vehicle (SVP / NGI ext / MDO / LPS-Murphy / IST) not yet confirmed. Defense theory = evidentiary insufficiency; intake reports state has no doctor's documentation supporting commitment. Hearing 2026-06-15 \u2014 judge 'wants to see him for a commitment for life to a institution' [CONFIRM type/dept/time]. No motion drafted, no research executed; substantive work blocked on vehicle identification.",
+      "caseNo": "[TBD]",
+      "nextHearing": "6/15/26 commitment hearing \u2014 court / dept TBD (46 days)"
+    }
+  }
+];
+
+const links = [
+  {
+    "source": "romero-1996",
+    "target": "caldwell",
+    "label": "authority used"
+  },
+  {
+    "source": "romero-1996",
+    "target": "brown",
+    "label": "authority used"
+  },
+  {
+    "source": "pitchess-1974",
+    "target": "rodgers",
+    "label": "authority used"
+  },
+  {
+    "source": "pitchess-1974",
+    "target": "ruiz-salas",
+    "label": "authority used"
+  },
+  {
+    "source": "pitchess-1974",
+    "target": "acosta",
+    "label": "Pitchess WON"
+  },
+  {
+    "source": "pc-1001-36",
+    "target": "weaver",
+    "label": "authority used"
+  },
+  {
+    "source": "pc-1001-36",
+    "target": "garcia",
+    "label": "authority used (SHELVED 4/20)"
+  },
+  {
+    "source": "recusal-side-switch",
+    "target": "mejiamejia",
+    "label": "pattern applies"
+  },
+  {
+    "source": "recusal-side-switch",
+    "target": "ruiz-salas",
+    "label": "pattern applies"
+  },
+  {
+    "source": "recusal-side-switch",
+    "target": "rodgers",
+    "label": "pattern applies"
+  },
+  {
+    "source": "recusal-side-switch",
+    "target": "rodrigues",
+    "label": "pattern applies"
+  },
+  {
+    "source": "recusal-side-switch",
+    "target": "navarro",
+    "label": "pattern applies"
+  },
+  {
+    "source": "recusal-side-switch",
+    "target": "mitchell",
+    "label": "bar complaint"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "mejiamejia",
+    "label": "former counsel"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "ruiz-salas",
+    "label": "former counsel"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "rodgers",
+    "label": "conflict"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "rodrigues",
+    "label": "former counsel"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "mitchell",
+    "label": "bar complaint"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "recusal-side-switch",
+    "label": "central figure"
+  },
+  {
+    "source": "billups-darryl",
+    "target": "alameda-da",
+    "label": "employed by"
+  },
+  {
+    "source": "noonan-john",
+    "target": "caldwell",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "rodgers",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "mejiamejia",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "weaver",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "mitchell",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "brown",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "dillard",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "hunter",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "blackwell",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "navarro",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "rodrigues",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "ruiz-salas",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "garcia",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "acosta",
+    "label": "AOR (withdrawn 2/6)"
+  },
+  {
+    "source": "noonan-john",
+    "target": "adler",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "bratcher",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "ikem",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "iyengar",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "rodriguez",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "valenzuela",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "wolfe",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-john",
+    "target": "schiff",
+    "label": "AOR"
+  },
+  {
+    "source": "noonan-christine",
+    "target": "culver-labor",
+    "label": "named defendant"
+  },
+  {
+    "source": "noonan-christine",
+    "target": "noonan-trust",
+    "label": "client"
+  },
+  {
+    "source": "noonan-christine",
+    "target": "rafanello",
+    "label": "sister of client"
+  },
+  {
+    "source": "noonan-christine",
+    "target": "garcia",
+    "label": "case assignment coordinator"
+  },
+  {
+    "source": "fuerch-stephen",
+    "target": "culver-labor",
+    "label": "AOR (outside counsel)"
+  },
+  {
+    "source": "fuerch-stephen",
+    "target": "blackwell",
+    "label": "reviewer (Hobbs drafts stuck 25d)"
+  },
+  {
+    "source": "fuerch-stephen",
+    "target": "mitchell",
+    "label": "reviewer"
+  },
+  {
+    "source": "alpers-steven",
+    "target": "mejiamejia",
+    "label": "appellate counsel"
+  },
+  {
+    "source": "alpers-steven",
+    "target": "ruiz-salas",
+    "label": "appeared 4/10"
+  },
+  {
+    "source": "sellers-wade",
+    "target": "acosta",
+    "label": "PI"
+  },
+  {
+    "source": "sellers-wade",
+    "target": "bratcher",
+    "label": "PI"
+  },
+  {
+    "source": "sellers-wade",
+    "target": "hunter",
+    "label": "PI"
+  },
+  {
+    "source": "pojman-andrew",
+    "target": "weaver",
+    "label": "evaluating expert"
+  },
+  {
+    "source": "rafanello-catherine",
+    "target": "rafanello",
+    "label": "client"
+  },
+  {
+    "source": "convergeone",
+    "target": "rafanello",
+    "label": "respondent"
+  },
+  {
+    "source": "villalobos",
+    "target": "stan-dept-2",
+    "label": "presiding judge"
+  },
+  {
+    "source": "villalobos",
+    "target": "caldwell",
+    "label": "presiding judge"
+  },
+  {
+    "source": "israels-valli",
+    "target": "rodgers",
+    "label": "presiding judge"
+  },
+  {
+    "source": "israels-valli",
+    "target": "alameda-county",
+    "label": "presiding judge"
+  },
+  {
+    "source": "stan-dept-2",
+    "target": "caldwell",
+    "label": "venue"
+  },
+  {
+    "source": "stan-county",
+    "target": "brown",
+    "label": "venue"
+  },
+  {
+    "source": "stan-county",
+    "target": "dillard",
+    "label": "venue"
+  },
+  {
+    "source": "stan-county",
+    "target": "mitchell",
+    "label": "venue"
+  },
+  {
+    "source": "stan-county",
+    "target": "bratcher",
+    "label": "venue (Dept 7)"
+  },
+  {
+    "source": "stan-county",
+    "target": "valenzuela",
+    "label": "venue (Dept 7)"
+  },
+  {
+    "source": "alameda-county",
+    "target": "blackwell",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "mejiamejia",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "rodgers",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "acosta",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "rodriguez",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "garcia",
+    "label": "venue (Dept 712)"
+  },
+  {
+    "source": "alameda-county",
+    "target": "weaver",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "ikem",
+    "label": "venue (Traffic)"
+  },
+  {
+    "source": "alameda-county",
+    "target": "culver-labor",
+    "label": "venue (Dept 514 Hayward)"
+  },
+  {
+    "source": "alameda-dept-711",
+    "target": "navarro",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-dept-711",
+    "target": "rodrigues",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-dept-11",
+    "target": "ruiz-salas",
+    "label": "venue"
+  },
+  {
+    "source": "sacramento-county",
+    "target": "hunter",
+    "label": "venue"
+  },
+  {
+    "source": "alameda-county",
+    "target": "alameda-dept-711",
+    "label": "department"
+  },
+  {
+    "source": "alameda-county",
+    "target": "alameda-dept-11",
+    "label": "department"
+  },
+  {
+    "source": "stan-county",
+    "target": "stan-dept-2",
+    "label": "department"
+  },
+  {
+    "source": "romero-1996",
+    "target": "villalobos",
+    "label": "related"
+  },
+  {
+    "source": "pitchess-1974",
+    "target": "israels-valli",
+    "label": "related"
+  },
+  {
+    "source": "pitchess-1974",
+    "target": "recusal-side-switch",
+    "label": "related issue"
+  },
+  {
+    "source": "romero-1996",
+    "target": "recusal-side-switch",
+    "label": "related issue"
+  },
+  {
+    "source": "pc-1001-36",
+    "target": "pojman-andrew",
+    "label": "evaluating expert"
+  },
+  {
+    "source": "caldwell",
+    "target": "brown",
+    "label": "same authority (Romero)"
+  },
+  {
+    "source": "rodgers",
+    "target": "ruiz-salas",
+    "label": "same authority (Pitchess)"
+  },
+  {
+    "source": "weaver",
+    "target": "garcia",
+    "label": "same authority (MH diversion)"
+  },
+  {
+    "source": "mejiamejia",
+    "target": "rodrigues",
+    "label": "same issue (Billups)"
+  },
+  {
+    "source": "navarro",
+    "target": "rodrigues",
+    "label": "same issue (Billups)"
+  },
+  {
+    "source": "navarro",
+    "target": "rodriguez",
+    "label": "civil claim cluster"
+  },
+  {
+    "source": "navarro",
+    "target": "acosta",
+    "label": "civil claim cluster"
+  },
+  {
+    "source": "rodriguez",
+    "target": "acosta",
+    "label": "civil claim cluster"
+  },
+  {
+    "source": "noonan-john",
+    "target": "noonan-christine",
+    "label": "family/firm"
+  },
+  {
+    "source": "alameda-da",
+    "target": "recusal-side-switch",
+    "label": "employing office"
+  },
+  {
+    "source": "noonan-john",
+    "target": "wells",
+    "label": "AOR (sub'd in 4/15)"
+  },
+  {
+    "source": "alameda-county",
+    "target": "wells",
+    "label": "venue (Dept 705 ECHOJ Dublin)"
+  },
+  {
+    "source": "wells",
+    "target": "mitchell",
+    "label": "calendar conflict (good-cause basis)"
+  },
+  {
+    "source": "santa-clara-county",
+    "target": "wolfe",
+    "label": "venue (HOJ San Jose, Dept 33)"
+  },
+  {
+    "source": "noonan-john",
+    "target": "adamski",
+    "label": "self-rep (pro per)"
+  },
+  {
+    "source": "noonan-john",
+    "target": "mercer",
+    "label": "AOR (intake 4/24)"
+  },
+  {
+    "source": "noonan-christine",
+    "target": "mercer",
+    "label": "intake coordinator (4/24)"
+  }
+];
+
+// Deduplicate
+const ls = new Set(), dl = [];
+links.forEach(l => {
+  const k1=`${l.source}--${l.target}`,k2=`${l.target}--${l.source}`;
+  if(!ls.has(k1)&&!ls.has(k2)){ls.add(k1);dl.push(l)}
+});
+
+const hotItems = {
+  "mitchell": {
+    "urgency": "overdue",
+    "text": "**4/27 INDICATED-SENTENCE DENIED at hearing.** Christine relayed via iMessage that the family cannot continue funding representation; firm must withdraw and continue trial. **Same-day withdrawal + continuance packet built** at 01-Pleadings-and-Motions/file-ready-withdrawal-20260427/ (22-pp combined packet \u2014 Motion to Be Relieved as Counsel + Motion for Continuance + CR-003 + two Proposed Orders + combined POS + README + two service email drafts). **Awaiting JWN signatures + Dept. 9 clerk hearing date before filing.** Trial 6/15 Dept 9 still on calendar.",
+    "date": "2026-04-27"
+  },
+  "wells": {
+    "urgency": "overdue",
+    "text": "PX 4/27 Dept 705 Nixon ECHOJ Dublin \u2014 outcome unconfirmed (2 days). Continuance motion FILED + SERVED 4/22 CA via Tyler eFileCA Alameda (DDAs Shukla + Basurto). \u00a7 859b 60-day outer deadline 2026-05-11 (11 days). Confirm ruling + JWN coverage.",
+    "date": "2026-04-27"
+  },
+  "adamski": {
+    "urgency": "overdue",
+    "text": "NOA jurisdictional filing was Mon 4/27 \u2014 Odyssey eFileCA trial-court. v2 packet (4/24-dated, JC Form POS-050, no cutoffs) at Cases/ProPer/Pemberton-v-AMMCG/Appeal-2026/01-Notice-of-Appeal/file-ready-20260424/. Filing-status confirmation pending.",
+    "date": "2026-04-27"
+  },
+  "wolfe": {
+    "urgency": "overdue",
+    "text": "PX 4/29 PASSED — outcome [CONFIRM with Christine / docket pull] — was Wed 4/29 Dept 33 Santa Clara HOJ San Jose. Continuance motion FILED + SERVED 4/22 CA via Tyler eFileCA (DDA Maszara). v7 prep binder 268 pp / 40.6 MB (Sellers Tab 2A + Dinh DNA Tab 2B; expert in Korea until 5/5). If continuance denied, Christine covers. Firm-authored title spelling = WOLFE (no u).",
+    "date": "2026-04-29"
+  },
+  "blackwell": {
+    "urgency": "upcoming",
+    "text": "**\u00a7 1054.1 deficiency notice SENT 4/28 23:30** by Jeremy from admin@ to DDA Sjoberg (cc noonanlaw33@yahoo.com). **5/5/26 5:00 PM PT response deadline (5 days).** Hobbs packet still with JWN for review (Motion FINAL 18 pp + 162-pp Westlaw bundle + accepted-changes .docx + -JEREMY-TRACKED.docx audit). Sjoberg's 4/17 production bit-for-bit identical to 3/25 (all 69 SHA-256 hashes match). Hearing re-noticed 5/18 9:00 AM Dept 112 (18 days).",
+    "date": "2026-05-18"
+  },
+  "hunter": {
+    "urgency": "overdue",
+    "text": "Legal memo 26 DAYS OVERDUE (due 4/4); prelim 4/9 outcome unconfirmed 21 days; Tyler wrong account, eFile pivot pending.",
+    "date": "2026-04-04"
+  },
+  "rodgers": {
+    "urgency": "overdue",
+    "text": "Dismissal motion 33 DAYS OVERDUE (since 3/28); Pitchess ruling 5/26 (26 days) before Hon. Israels.",
+    "date": "2026-03-28"
+  },
+  "ruiz-salas": {
+    "urgency": "overdue",
+    "text": "Hearing 4/10 outcome UNKNOWN 20 days; Brady letter still missing; portal lookup pending.",
+    "date": "2026-04-10"
+  },
+  "weaver": {
+    "urgency": "overdue",
+    "text": "PC 1001.36 motion FINALIZED 4/9 \u2014 filing + service status unconfirmed 21 days (blocked on eFile portal URL).",
+    "date": "2026-04-09"
+  },
+  "recusal-side-switch": {
+    "urgency": "overdue",
+    "text": "Billups bar complaint 15 DAYS OVERDUE (deferred 4/15 \u2192 4/20 \u2192 still pending; malpractice risk). MejiaMejia, Ruiz Salas, Rodgers, Rodrigues, Navarro, Mitchell all implicated.",
+    "date": "2026-04-15"
+  },
+  "billups-darryl": {
+    "urgency": "overdue",
+    "text": "Bar complaint 15 DAYS OVERDUE (deferred 4/15 \u2192 4/20 \u2192 still pending); screening gap Sept\u2013Dec 2025.",
+    "date": "2026-04-15"
+  },
+  "caldwell": {
+    "urgency": "upcoming",
+    "text": "Romero 4/14 VACATED; reset Thu 5/7/26 8:30 AM Dept 2 Villalobos (7 days).",
+    "date": "2026-05-07"
+  },
+  "mejiamejia": {
+    "urgency": "upcoming",
+    "text": "Jury trial 5/26/26 (26 days). Writ of prohibition pending before First DCA.",
+    "date": "2026-05-26"
+  },
+  "rafanello": {
+    "urgency": "overdue",
+    "text": "v4 package built 4/26; Cathy intake gate CLOSED 4/26 (~30-min recorded Zoom transcript at 09-Notes-and-Strategy/Rafanello-Call-Transcript-20260426.md). 5 of 6 gates remaining: JWN review, conflicts waiver, Westlaw v2 refresh, Gmail drafts regen, KeyCite pass. New v4 facts: $1.8M lost-pipeline anchor, severance NOT signed confirmed, 6 witnesses on Cathy's list, retainer 40%. **Noonan = HANDOFF ONLY** \u2014 Shegerian drafts + sends.",
+    "date": "2026-04-26"
+  },
+  "stan-dept-2": {
+    "urgency": "upcoming",
+    "text": "Caldwell Romero reset 5/7 8:30 AM (7 days) after 4/14 VACATED.",
+    "date": "2026-05-07"
+  },
+  "sacramento-county": {
+    "urgency": "overdue",
+    "text": "Hunter prelim 4/9 outcome unknown 21 days; Tyler eFile pivot pending.",
+    "date": "2026-04-09"
+  },
+  "garcia": {
+    "urgency": "overdue",
+    "text": "4/21 2:00 PM Dept 712 Dublin hearing PASSED \u2014 outcome UNKNOWN (8 days). PC 1001.95 diversion SHELVED 4/20 (client pivoted to DOJ track). Drafts preserved.",
+    "date": "2026-04-21"
+  },
+  "fuerch-stephen": {
+    "urgency": "overdue",
+    "text": "Blackwell Hobbs drafts with him since 3/27 (34 days); role effectively superseded by 4/23 Motion FINAL now with JWN. Culver 4/21 hearing covered as AOR (matter CLOSED 4/20)."
+  },
+  "dillard": {
+    "urgency": "upcoming",
+    "text": "VTC probation review Mon 5/11/26 10:00 AM Dept 4 (11 days).",
+    "date": "2026-05-11"
+  },
+  "brown": {
+    "urgency": "upcoming",
+    "text": "Preliminary hearing Tue 7/14/26 8:30 AM Dept 5 (75 days); Romero motion drafting pre-prelim.",
+    "date": "2026-07-14"
+  }
+};
+
+const calEvents = [
+  {
+    "date": "2026-04-28",
+    "label": "Blackwell",
+    "text": "§ 1054.1 deficiency notice SENT 23:30 by Jeremy from admin@ to DDA Sjoberg (5/5 response deadline)",
+    "nodeId": "blackwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-28",
+    "label": "Adamski",
+    "text": "Court of Appeal opened B354168 (2d DCA Div 6); Notice of Default re $775 fee — cure by 5/13",
+    "nodeId": "adamski",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-05-13",
+    "label": "Adamski",
+    "text": "Notice of Default cure deadline — send FW-003 to Eva McClintock CoA, CRC 8.26(b)(1) (13 days)",
+    "nodeId": "adamski",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-03-27",
+    "label": "Blackwell",
+    "text": "Hobbs drafts went to Stephen Fuerch (31 days stuck)",
+    "nodeId": "blackwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-03-28",
+    "label": "Rodgers",
+    "text": "Dismissal motion was due (30 days overdue)",
+    "nodeId": "rodgers",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-01",
+    "label": "Culver v. Noonan",
+    "text": "Reply brief was due (matter CLOSED 4/20)",
+    "nodeId": "culver-labor",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-04",
+    "label": "Hunter",
+    "text": "Legal memo was due (23 days overdue)",
+    "nodeId": "hunter",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-09",
+    "label": "Weaver",
+    "text": "PC 1001.36 motion FINALIZED (18 days; filing status still unconfirmed)",
+    "nodeId": "weaver",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-09",
+    "label": "Hunter",
+    "text": "Preliminary hearing (18 days; outcome unknown)",
+    "nodeId": "hunter",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-10",
+    "label": "Ruiz Salas",
+    "text": "Hearing (17 days; outcome unknown)",
+    "nodeId": "ruiz-salas",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-14",
+    "label": "Caldwell",
+    "text": "Romero hearing (VACATED; reset 5/7)",
+    "nodeId": "caldwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-14",
+    "label": "Rodgers",
+    "text": "Pitchess in camera completed; ruling 5/26",
+    "nodeId": "rodgers",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-15",
+    "label": "Mitchell / Billups",
+    "text": "Bar complaint first deferred deadline (12 days overdue; malpractice risk)",
+    "nodeId": "recusal-side-switch",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-17",
+    "label": "Mitchell",
+    "text": "Continuance motion filed (draft v3)",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-18",
+    "label": "Mitchell",
+    "text": "Christine confirmed NO DA opposition",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-20",
+    "label": "Garcia",
+    "text": "Diversion motion SHELVED \u2014 client pivoted to DOJ track",
+    "nodeId": "garcia",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-20",
+    "label": "Culver v. Noonan",
+    "text": "Matter CLOSED \u2014 Noonan declined to contest MTD",
+    "nodeId": "culver-labor",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-20",
+    "label": "Blackwell",
+    "text": "Hobbs-only decision (no 1538.5 bundling)",
+    "nodeId": "blackwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-20",
+    "label": "Rafanello",
+    "text": "Memo v2 delivered overnight (damages $400K\u2013$1.5M+ w/ PAGA)",
+    "nodeId": "rafanello",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-20",
+    "label": "Wolfe",
+    "text": "PX Hearing Binder DONE (267-page, 41 MB); 9 gaps flagged",
+    "nodeId": "wolfe",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-21",
+    "label": "Garcia",
+    "text": "2:00 PM Dept 712 Dublin hearing \u2014 outcome UNKNOWN (6 days)",
+    "nodeId": "garcia",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-21",
+    "label": "Culver v. Noonan",
+    "text": "Fuerch covered 4/21 Dept 514 Hayward hearing as AOR (matter CLOSED 4/20)",
+    "nodeId": "culver-labor",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-21",
+    "label": "Blackwell",
+    "text": "v2 file-ready package landed at file-ready-v2-20260421/",
+    "nodeId": "blackwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-22",
+    "label": "Wells",
+    "text": "Continuance motion FILED + SERVED (Alameda Tyler)",
+    "nodeId": "wells",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-22",
+    "label": "Wolfe",
+    "text": "Continuance motion FILED + SERVED (Santa Clara Tyler)",
+    "nodeId": "wolfe",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-22",
+    "label": "Mitchell",
+    "text": "NoNO + Supplemental Reply FILED + SERVED (Stanislaus Tyler)",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-22",
+    "label": "Rafanello",
+    "text": "RIF audio received; Supplemental Memo v2 + new Shegerian draft staged",
+    "nodeId": "rafanello",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-23",
+    "label": "Mitchell",
+    "text": "JWN handoff email sent; hearing binder v1 (101 pp) built",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-23",
+    "label": "Blackwell",
+    "text": "Motion FINAL (18-pp serial doc) \u2014 packet with JWN for review; 5 JWN handoff emails sent",
+    "nodeId": "blackwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-23",
+    "label": "Wolfe",
+    "text": "PX Binder v7 + Continuance v3 filed; JWN handoff email sent",
+    "nodeId": "wolfe",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-23",
+    "label": "Rafanello",
+    "text": "Supplemental Memo v3 delivered; Cathy 90-min recorded intake 8:00 AM PT",
+    "nodeId": "rafanello",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-23",
+    "label": "Adamski",
+    "text": "NOA packet relocated to canonical Appeal-2026/01-Notice-of-Appeal/file-ready-20260423/",
+    "nodeId": "adamski",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-24",
+    "label": "System",
+    "text": "Pre-reset consolidation; wiki-map rebuild",
+    "nodeId": "recusal-side-switch",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-24",
+    "label": "Mitchell",
+    "text": "Brandie Mesa clerk correction (4/24 \u2192 4/25): separated [Proposed] Orders per CRC 2.111",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-24",
+    "label": "Adamski",
+    "text": "v2 NOA packet built (JC Form POS-050, no cutoffs) at file-ready-20260424/; v1 4/23 preserved",
+    "nodeId": "adamski",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-24",
+    "label": "Mercer",
+    "text": "Intake recon \u2014 Christine forwarded new client info; vehicle ID pending",
+    "nodeId": "mercer",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-26",
+    "label": "Blackwell",
+    "text": "Sjoberg discovery (received 4/17) INGESTED \u2014 bit-identical to 3/25 production (all 69 SHA-256 hashes match)",
+    "nodeId": "blackwell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-26",
+    "label": "Rafanello",
+    "text": "v4 package built; Cathy intake gate CLOSED (~30-min recorded Zoom); 5 of 6 gates remaining",
+    "nodeId": "rafanello",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-26",
+    "label": "Mitchell",
+    "text": "JWN PODIUM SHOOTER produced (one-page bullet sheet, 6 sections, lectern glance-tool)",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-27",
+    "label": "Mitchell",
+    "text": "Indicated-Sentence motion DENIED at Dept 9 hearing \u2014 same-day withdrawal + continuance packet built (awaiting JWN signatures + clerk hearing date)",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-27",
+    "label": "Wells",
+    "text": "Preliminary Examination \u2014 Dept 705 ECHOJ Dublin Hon. Nixon (continuance filed; ruling pending \u2014 outcome unconfirmed)",
+    "nodeId": "wells",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-27",
+    "label": "Adamski",
+    "text": "NOA jurisdictional filing day \u2014 Odyssey eFileCA trial-court (v2 packet 4/24-dated; filing-status confirmation pending)",
+    "nodeId": "adamski",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-28",
+    "label": "Wolfe",
+    "text": "PX prep day (Christine coverage decision pending continuance ruling)",
+    "nodeId": "wolfe",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-28",
+    "label": "Mitchell",
+    "text": "Withdrawal + continuance packet awaiting JWN signatures + clerk hearing date",
+    "nodeId": "mitchell",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-04-29",
+    "label": "Wolfe",
+    "text": "Preliminary Examination TODAY \u2014 Santa Clara HOJ Dept 33 (continuance filed; Christine covers if denied)",
+    "nodeId": "wolfe",
+    "urgency": "overdue"
+  },
+  {
+    "date": "2026-05-04",
+    "label": "Rafanello",
+    "text": "Shegerian's original target demand letter date (Noonan handoff only)",
+    "nodeId": "rafanello",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-07",
+    "label": "Caldwell",
+    "text": "Romero hearing \u2014 Dept 2 Villalobos (reset from 4/14)",
+    "nodeId": "caldwell",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-11",
+    "label": "Wells",
+    "text": "\u00a7 859b 60-day outer deadline for PX (if continuance not granted)",
+    "nodeId": "wells",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-11",
+    "label": "Dillard",
+    "text": "VTC probation review \u2014 Dept 4 10:00 AM",
+    "nodeId": "dillard",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-18",
+    "label": "Blackwell",
+    "text": "Hobbs hearing \u2014 Dept 112 9:00 AM (re-noticed; awaits JWN review + DA \u00a7 1054.1)",
+    "nodeId": "blackwell",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-22",
+    "label": "Navarro",
+    "text": "Recusal hearing \u2014 Dept 711 (with Rodrigues)",
+    "nodeId": "navarro",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-22",
+    "label": "Rodrigues",
+    "text": "Recusal hearing \u2014 Dept 711 (with Navarro)",
+    "nodeId": "rodrigues",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-26",
+    "label": "MejiaMejia",
+    "text": "Jury trial \u2014 writ of prohibition pending before First DCA",
+    "nodeId": "mejiamejia",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-05-26",
+    "label": "Rodgers",
+    "text": "Pitchess ruling before Hon. Israels",
+    "nodeId": "rodgers",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-06-09",
+    "label": "Navarro/Rodriguez/Acosta",
+    "text": "Cross-matter follow-ups (Alameda cluster)",
+    "nodeId": "navarro",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-06-15",
+    "label": "Mitchell",
+    "text": "Jury trial \u2014 Dept 9",
+    "nodeId": "mitchell",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-06-15",
+    "label": "Mercer",
+    "text": "Civil commitment hearing \u2014 court/dept TBD (vehicle identification pending)",
+    "nodeId": "mercer",
+    "urgency": "upcoming"
+  },
+  {
+    "date": "2026-07-14",
+    "label": "Brown",
+    "text": "Preliminary hearing \u2014 Dept 5 8:30 AM (Romero motion drafting pre-prelim)",
+    "nodeId": "brown",
+    "urgency": "upcoming"
+  }
+];
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function nodeColor(d) {
+  if (d.type==='contact' && d.role==='client') return CLIENT_CLR;
+  return TC[d.type] || '#6366f1';
+}
+
+function nodeColorDim(d) {
+  if (d.type==='contact' && d.role==='client') return 'rgba(232,121,249,0.15)';
+  return TD[d.type] || 'rgba(99,102,241,0.15)';
+}
+
+function courtScale(d) {
+  if (d.type!=='court') return 1;
+  if (d.level==='county') return 1.3;
+  if (d.level==='branch') return 0.75;
+  return 1;
+}
+
+const cc = {};
+dl.forEach(l=>{cc[l.source]=(cc[l.source]||0)+1;cc[l.target]=(cc[l.target]||0)+1});
+
+function nodeRadius(d) {
+  const conns = cc[d.id]||1;
+  const base = d.hasPage ? 14 : 10;
+  return (base + Math.min(conns*1.5, 10)) * courtScale(d);
+}
+
+function typeLetter(d) {
+  return {matter:'M',contact:'C',court:'Ct',authority:'A',issue:'I'}[d.type]||'?';
+}
+
+// ============================================================
+// VIEW MANAGEMENT
+// ============================================================
+let currentView = 'graph';
+let bannerCollapsed = false;
+
+function switchView(v) {
+  currentView = v;
+  closePanel(); // Force-close detail panel on view switch
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  document.getElementById('graph-container').style.display = v==='graph'?'block':'none';
+  document.getElementById('cal-view').className = v==='calendar'?'active':'';
+  document.getElementById('cards-view').className = v==='cards'?'active':'';
+  document.getElementById('pipeline-view').className = v==='pipeline'?'active':'';
+  document.getElementById('admin-view').className = v==='admin'?'active':'';
+  document.getElementById('legend').style.display = v==='graph'?'flex':'none';
+  document.getElementById('stats').style.display = v==='graph'?'flex':'none';
+  document.getElementById('filter-bar').style.display = v==='graph'?'flex':'none';
+  document.getElementById('zoom-controls').style.display = v==='graph'?'flex':'none';
+  if(v==='graph') simulation.alpha(0.1).restart();
+  if(v==='calendar'){ updateContentPadding(); buildCalendar(); }
+  if(v==='cards'){ updateContentPadding(); buildCards(); }
+  if(v==='pipeline'){ updateContentPadding(); buildPipeline(); }
+  if(v==='admin'){ updateContentPadding(); buildAdmin(); }
+}
+
+function toggleBanner(){
+  bannerCollapsed=!bannerCollapsed;
+  document.getElementById('hot-banner').classList.toggle('collapsed',bannerCollapsed);
+  document.getElementById('hot-pill').style.display=bannerCollapsed?'flex':'none';
+  updateContentPadding();
+}
+
+function updateContentPadding(){
+  // Dynamically set top padding for calendar/cards/pipeline to clear the hot banner
+  const banner=document.getElementById('hot-banner');
+  const bannerH=bannerCollapsed?0:banner.offsetHeight;
+  document.documentElement.style.setProperty('--cal-top-pad',(bannerH+12)+'px');
+  document.documentElement.style.setProperty('--cards-top-pad',(bannerH+8)+'px');
+  document.documentElement.style.setProperty('--pipe-top-pad',(bannerH+8)+'px');
+  document.documentElement.style.setProperty('--admin-top-pad',(bannerH+8)+'px');
+}
+
+// ============================================================
+// HOT BANNER
+// ============================================================
+function buildHotBanner(){
+  const g=document.getElementById('hb-grid');
+  const ord={overdue:0,today:1,upcoming:2};
+  const sorted=Object.entries(hotItems).map(([id,h])=>({id,...h,node:nodes.find(n=>n.id===id)})).filter(h=>h.node).sort((a,b)=>ord[a.urgency]-ord[b.urgency]);
+  const seen=new Set(), uniq=sorted.filter(h=>{if(seen.has(h.text))return false;seen.add(h.text);return true});
+  document.getElementById('hot-count').textContent=uniq.length+' items';
+  document.getElementById('hot-pill-count').textContent=uniq.length;
+  g.innerHTML=uniq.map(h=>`<div class="hc ${h.urgency}" onclick="showDetail(nodes.find(n=>n.id==='${h.id}'))">
+    <div class="hc-u">${h.urgency==='overdue'?'OVERDUE':h.urgency==='today'?'TODAY':'UPCOMING'}</div>
+    <div class="hc-l">${h.node.label}</div>
+    <div class="hc-t">${h.text}</div></div>`).join('');
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function buildCalendar(){
+  const c=document.getElementById('cal-view');
+  let h='<div class="cal-inner">';
+  h+=buildMonth(2026,3,'April 2026');
+  h+=buildMonth(2026,4,'May 2026');
+  h+=buildMonth(2026,5,'June 2026');
+  h+=buildMonth(2026,6,'July 2026');
+  h+='<div class="tl-sec"><div class="tl-sec-t" style="color:#ef4444">Full Timeline</div>';
+  const today='2026-04-27';
+  [...calEvents].sort((a,b)=>a.date.localeCompare(b.date)).forEach(ev=>{
+    const cls=ev.urgency==='overdue'?'overdue':ev.date===today?'today-tl':'upcoming-tl';
+    const ds=new Date(ev.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    h+=`<div class="tl-item ${cls}" onclick="showDetail(nodes.find(n=>n.id==='${ev.nodeId}'))">
+      <div class="tl-dt ${cls}">${ds}</div>
+      <div class="tl-c"><div class="tl-l">${ev.label}</div><div class="tl-d">${ev.text}</div></div>
+      <div class="tl-b" style="background:${ev.urgency==='overdue'?'rgba(239,68,68,.15);color:#fca5a5':ev.urgency==='today'?'rgba(245,158,11,.15);color:#fcd34d':'rgba(59,130,246,.15);color:#93c5fd'}">${ev.urgency==='overdue'?'OVERDUE':ev.date===today?'TODAY':'UPCOMING'}</div></div>`;
+  });
+  h+='</div></div>';
+  c.innerHTML=h;
+}
+
+function buildMonth(yr,mo,title){
+  const today='2026-04-27';
+  const fd=new Date(yr,mo,1).getDay(), dim=new Date(yr,mo+1,0).getDate();
+  const dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let h=`<div class="cal-mh">${title}</div><div class="cal-g">`;
+  dn.forEach(d=>{h+=`<div class="cal-dh">${d}</div>`});
+  for(let i=0;i<fd;i++) h+='<div class="cal-d empty"></div>';
+  for(let d=1;d<=dim;d++){
+    const ds=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isT=ds===today;
+    const evs=calEvents.filter(e=>e.date===ds);
+    h+=`<div class="cal-d${isT?' td':''}"><div class="cal-dn">${d}</div>`;
+    evs.forEach(e=>{
+      const ec=e.urgency==='overdue'?'overdue':e.date===today?'today-ev':'upcoming-ev';
+      h+=`<div class="cal-ev ${ec}" onclick="showDetail(nodes.find(n=>n.id==='${e.nodeId}'))">${e.label}</div>`;
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+// ============================================================
+// CARDS VIEW
+// ============================================================
+function cardExpandOrDetail(cardEl, nodeId){
+  const nd = nodes.find(n=>n.id===nodeId);
+  if(!nd) return;
+  if(cardEl.classList.contains('expanded')){
+    // Already expanded — open detail panel
+    showDetail(nd);
+  } else {
+    // First tap — expand inline
+    document.querySelectorAll('.mob-c.expanded').forEach(c=>c.classList.remove('expanded'));
+    cardEl.classList.add('expanded');
+  }
+}
+
+function buildCards(){
+  const c=document.getElementById('cards-view');
+  const byType=(t)=>nodes.filter(n=>n.type===t).sort((a,b)=>a.label.localeCompare(b.label));
+  let h='<div class="mob-inner">';
+
+  const hotCount=Object.keys(hotItems).filter(k=>hotItems[k]).length;
+  if(hotCount>0){
+    h+=`<div class="mob-sec"><div class="mob-sec-t" style="color:#ef4444"><span class="mob-dot" style="background:#ef4444"></span>Urgent (${hotCount})</div>`;
+    Object.entries(hotItems).forEach(([id,item])=>{
+      const nd=nodes.find(n=>n.id===id);if(!nd)return;
+      h+=`<div class="mob-c ho" onclick="showDetail(nodes.find(n=>n.id==='${id}'))"><div class="mob-c-title">${nd.label}</div><div class="mob-c-sum">${item.text}</div></div>`;
+    });
+    h+='</div>';
+  }
+
+  ['matter','court','contact','authority','issue'].forEach(t=>{
+    const ns=byType(t);
+    if(ns.length===0)return;
+    const clr=TC[t];
+    h+=`<div class="mob-sec"><div class="mob-sec-t"><span class="mob-dot" style="background:${clr}"></span>${t.charAt(0).toUpperCase()+t.slice(1)}s (${ns.length})</div>`;
+    ns.forEach(nd=>{
+      const isH=hotItems[nd.id];
+      const d=nd.detail||{};
+      let detailHtml='<div class="mob-c-det">';
+      if(d.caseNo) detailHtml+=`<div class="mob-c-det-row"><span class="mob-c-det-lbl">Case #</span><span class="mob-c-det-val">${d.caseNo}</span></div>`;
+      if(d.nextHearing) detailHtml+=`<div class="mob-c-det-row"><span class="mob-c-det-lbl">Next</span><span class="mob-c-det-val">${d.nextHearing}</span></div>`;
+      if(nd.matter_stage) detailHtml+=`<div class="mob-c-det-row"><span class="mob-c-det-lbl">Stage</span><span class="mob-c-det-val">${nd.matter_stage}</span></div>`;
+      if(nd.matter_status) detailHtml+=`<div class="mob-c-det-row"><span class="mob-c-det-lbl">Status</span><span class="mob-c-det-val">${nd.matter_status}</span></div>`;
+      if(d.subtitle) detailHtml+=`<div class="mob-c-det-row"><span class="mob-c-det-lbl">Role</span><span class="mob-c-det-val">${d.subtitle}</span></div>`;
+      detailHtml+=`<div class="mob-c-viewfull" onclick="event.stopPropagation();showDetail(nodes.find(n=>n.id==='${nd.id}'))">View Full Details</div>`;
+      detailHtml+='</div>';
+      h+=`<div class="mob-c${isH?' ho':''}" onclick="cardExpandOrDetail(this,'${nd.id}')"><div class="mob-c-title">${nd.label}${nd.matter_status?` <span class="mob-c-badge" style="background:${nd.matter_status==='Open'?'rgba(96,165,250,.15);color:#93c5fd':nd.matter_status==='Closed'?'rgba(148,163,184,.15);color:#94a3b8':'rgba(245,158,11,.15);color:#fcd34d'}">${nd.matter_status}</span>`:''}</div>${d.summary?`<div class="mob-c-sum">${d.summary}</div>`:''}${isH?`<div class="mob-c-hot ${isH.urgency}">${isH.text}</div>`:''}${detailHtml}</div>`;
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+  c.innerHTML=h;
+}
+
+// ============================================================
+// DETAIL PANEL
+// ============================================================
+function showDetail(nd){
+  if(!nd)return;
+  const p=document.getElementById('detail-panel');
+  const pb=document.getElementById('p-badge');
+  const pt=document.getElementById('p-title');
+  const ps=document.getElementById('p-status');
+  const pbody=document.getElementById('p-body');
+
+  pb.innerHTML=`<span style="background:${nodeColor(nd)};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span><span>${nd.type.charAt(0).toUpperCase()+nd.type.slice(1)}</span>`;
+  pt.textContent=nd.detail?.title||nd.label;
+
+  let st='';
+  if(nd.status) st+=`<span class="sdot" style="background:${nd.status==='current'?'#60a5fa':nd.status==='needs-review'?'#f59e0b':'#94a3b8'}"></span>`;
+  st+=(nd.status||'unknown').charAt(0).toUpperCase()+(nd.status||'unknown').slice(1);
+  ps.innerHTML=st;
+
+  let body='';
+  const h=hotItems[nd.id];
+  if(h){
+    const uc=h.urgency==='overdue'?'overdue':h.urgency==='today'?'today':'upcoming';
+    body+=`<div class="uf ${uc}"><span class="fi">⚡</span>${h.text}</div>`;
+  }
+
+  if(nd.detail){
+    const d=nd.detail;
+    if(d.summary) body+=`<div class="p-sec"><div class="p-sec-t">Summary</div><p>${d.summary}</p></div>`;
+    if(d.caseNo) body+=`<div class="p-sec"><div class="p-sec-t">Case Number</div><p>${d.caseNo}</p></div>`;
+    if(d.nextHearing) body+=`<div class="p-sec"><div class="p-sec-t">Next Hearing</div><p>${d.nextHearing}</p></div>`;
+    if(d.subtitle) body+=`<div class="p-sec"><div class="p-sec-t">Subtitle</div><p>${d.subtitle}</p></div>`;
+    if(d.roleHistory){body+=`<div class="p-sec"><div class="p-sec-t">Role History</div><p>${d.roleHistory.map(rh=>`<span class="rc">${rh}</span>`).join('')}</p></div>`;}
+    if(d.affectedMatters){body+=`<div class="p-sec"><div class="p-sec-t">Affected Matters</div><p>${d.affectedMatters.map(m=>`<span class="rc">${m}</span>`).join('')}</p></div>`;}
+    if(d.keyHoldings){body+=`<div class="p-sec"><div class="p-sec-t">Key Holdings</div><p>${d.keyHoldings.map(kh=>`<span class="rc">${kh}</span>`).join('')}</p></div>`;}
+    if(d.mattersUsed){body+=`<div class="p-sec"><div class="p-sec-t">Matters Used</div><p>${d.mattersUsed.map(m=>`<span class="rc">${m}</span>`).join('')}</p></div>`;}
+    if(d.pitfalls){body+=`<div class="p-sec"><div class="p-sec-t">Pitfalls</div><p>${d.pitfalls.map(pf=>`<span class="rc">${pf}</span>`).join('')}</p></div>`;}
+    if(d.mattersHere){body+=`<div class="p-sec"><div class="p-sec-t">Matters Here</div><p>${d.mattersHere.map(m=>`<span class="rc">${m}</span>`).join('')}</p></div>`;}
+    if(d.notes){body+=`<div class="p-sec"><div class="p-sec-t">Notes</div><p>${d.notes.map(n=>`<span class="rc">${n}</span>`).join('')}</p></div>`;}
+    if(d.timeline){body+=`<div class="p-sec"><div class="p-sec-t">Timeline</div><p>${d.timeline.map(t=>`<span class="rc">${t}</span>`).join('')}</p></div>`;}
+    if(d.relatedAuthorities){body+=`<div class="p-sec"><div class="p-sec-t">Related Authorities</div><p>${d.relatedAuthorities.map(a=>`<span class="rc">${a}</span>`).join('')}</p></div>`;}
+  }
+
+  pbody.innerHTML=body;
+  p.classList.add('open');
+}
+
+function closePanel(){
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+// ============================================================
+// GRAPH RENDERING
+// ============================================================
+const svg=d3.select('#graph-svg');
+let simulation;
+let svgZoom; // D3 zoom behavior reference
+let graphContainer; // g element that gets zoomed
+
+function initGraph(){
+  const w=window.innerWidth, h=window.innerHeight;
+
+  svg.attr('width',w).attr('height',h);
+
+  // Set up D3 zoom on the SVG, transform a <g> container
+  svgZoom=d3.zoom().scaleExtent([0.15,4]).on('zoom',e=>{
+    graphContainer.attr('transform',e.transform);
+  });
+  svg.call(svgZoom);
+  graphContainer=svg.append('g').attr('id','graph-g');
+
+  const links_d=dl.map(d=>({...d}));
+  const nodes_d=nodes.map(d=>({...d}));
+
+  simulation=d3.forceSimulation(nodes_d)
+    .force('link',d3.forceLink(links_d).id(d=>d.id).distance(d=>{
+      const s=d.source.type, t=d.target.type;
+      if(s==='court'||t==='court')return 120;
+      if(s==='authority'||t==='authority')return 100;
+      if(s==='issue'||t==='issue')return 110;
+      return 80;
+    }).strength(0.3))
+    .force('charge',d3.forceManyBody().strength(-600))
+    .force('collide',d3.forceCollide(d=>nodeRadius(d)+8))
+    .force('center',d3.forceCenter(w/2,h/2).strength(0.08))
+    .on('tick',tick);
+
+  // All graph elements now go into graphContainer (so zoom transforms them)
+  const link=graphContainer.selectAll('.link').data(links_d).enter().append('line')
+    .attr('class','link').attr('stroke','rgba(255,255,255,0.1)').attr('stroke-width',1.5);
+
+  const node=graphContainer.selectAll('.node').data(nodes_d).enter().append('g')
+    .attr('class','node').call(d3.drag()
+      .on('start',(e,d)=>{e.sourceEvent.stopPropagation();if(!e.active)simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
+      .on('end',(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null}))
+    .on('click',e=>{e.stopPropagation();showDetail(e.currentTarget.__data__)})
+    .on('mouseover',nodeHover).on('mouseout',nodeUnhover);
+
+  node.append('circle').attr('r',d=>nodeRadius(d)).attr('fill',d=>nodeColor(d))
+    .attr('stroke',d=>d.hot?'#ef4444':'none').attr('stroke-width',d=>d.hot?2:0);
+
+  // Pulsing rings for hot nodes — two expanding circles
+  node.filter(d=>d.hot).each(function(d){
+    const g=d3.select(this);
+    const urgency=hotItems[d.id]?.urgency||'overdue';
+    const clr=urgency==='overdue'?'#ef4444':urgency==='today'?'#f59e0b':'#3b82f6';
+    const anim=urgency==='overdue'?'pulseOverdue':urgency==='today'?'pulseToday':'pulseUpcoming';
+    g.insert('circle',':first-child').attr('r',0).attr('fill',clr).attr('opacity',0)
+      .style('animation',anim+' 2.5s ease-out infinite');
+    g.insert('circle',':first-child').attr('r',0).attr('fill',clr).attr('opacity',0)
+      .style('animation',anim+' 2.5s ease-out infinite 1.25s');
+  });
+
+  // Spinning dashed ring for hot nodes
+  node.append('circle').attr('class','hot-ring').attr('r',d=>nodeRadius(d))
+    .attr('fill','none').attr('stroke',d=>{const u=hotItems[d.id]?.urgency;return u==='today'?'#f59e0b':u==='upcoming'?'#3b82f6':'#ef4444'})
+    .attr('stroke-width',1).attr('stroke-dasharray','2,2')
+    .style('opacity',d=>d.hot?1:0)
+    .style('animation',d=>d.hot?'ringSpin 4s linear infinite':'none');
+
+  node.append('text').attr('class','node-label').text(d=>d.label).attr('font-size',d=>nodeRadius(d)*0.7+'px');
+
+  svg.on('click',()=>closePanel());
+
+  // Store nodes_d reference for zoomFit
+  window._graphNodes=nodes_d;
+
+  function tick(){
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  }
+
+  window.addEventListener('resize',()=>{
+    const nw=window.innerWidth, nh=window.innerHeight;
+    svg.attr('width',nw).attr('height',nh);
+    simulation.force('center',d3.forceCenter(nw/2,nh/2).strength(0.08));
+  });
+
+  // Auto-fit after simulation settles
+  setTimeout(zoomFit, 2500);
+
+  updateStats();
+  updateFilters();
+  buildHotBanner();
+  setTimeout(updateContentPadding, 100);
+  document.getElementById('search-input').addEventListener('keyup',search);
+  document.querySelectorAll('.fp').forEach(f=>f.addEventListener('click',filter));
+}
+
+// === ZOOM CONTROLS ===
+function zoomIn(){
+  svg.transition().duration(300).call(svgZoom.scaleBy, 1.4);
+}
+function zoomOut(){
+  svg.transition().duration(300).call(svgZoom.scaleBy, 0.7);
+}
+function zoomFit(){
+  const gNode=document.getElementById('graph-g');
+  if(!gNode)return;
+  const bbox=gNode.getBBox();
+  if(bbox.width===0||bbox.height===0)return;
+  const w=window.innerWidth, h=window.innerHeight;
+  const pad=60;
+  const scale=Math.min((w-pad*2)/(bbox.width),(h-pad*2)/(bbox.height),1.5)*0.85;
+  const tx=w/2-(bbox.x+bbox.width/2)*scale;
+  const ty=h/2-(bbox.y+bbox.height/2)*scale;
+  svg.transition().duration(600).ease(d3.easeCubicOut)
+    .call(svgZoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
+}
+
+function nodeHover(e,d){
+  const t=document.getElementById('tooltip');
+  t.textContent=`${d.label} (${d.type})`;
+  t.style.left=(e.pageX+10)+'px';
+  t.style.top=(e.pageY+10)+'px';
+  t.classList.add('visible');
+}
+
+function nodeUnhover(){
+  document.getElementById('tooltip').classList.remove('visible');
+}
+
+function updateStats(){
+  document.getElementById('sn').textContent=nodes.length;
+  document.getElementById('se').textContent=dl.length;
+  document.getElementById('sh').textContent=Object.keys(hotItems).length;
+}
+
+function updateFilters(){
+  const typed=document.querySelectorAll('.fp[data-type]');
+  typed.forEach(f=>{
+    const t=f.dataset.type;
+    const count=t==='all'?nodes.length:nodes.filter(n=>n.type===t).length;
+    f.textContent=(t==='all'?'All':t.charAt(0).toUpperCase()+t.slice(1))+` (${count})`;
+    if(t!=='all') f.insertAdjacentHTML('afterbegin','<span class="dot" style="background:var(--clr-'+t+')"></span>');
+  });
+}
+
+function filter(e){
+  const t=e.currentTarget.dataset.type;
+  document.querySelectorAll('.fp').forEach(f=>f.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  svg.selectAll('.node').style('opacity',d=>t==='all'||d.type===t?1:0.15).style('pointer-events',d=>t==='all'||d.type===t?'auto':'none');
+  svg.selectAll('.link').style('opacity',d=>{
+    if(t==='all')return 0.1;
+    return(d.source.type===t||d.target.type===t)?0.3:0.02;
+  });
+}
+
+function search(e){
+  const q=e.target.value.toLowerCase();
+  svg.selectAll('.node').style('opacity',d=>d.label.toLowerCase().includes(q)||d.id.includes(q)?1:0.15)
+    .style('pointer-events',d=>d.label.toLowerCase().includes(q)||d.id.includes(q)?'auto':'none');
+}
+
+// ============================================================
+// PIPELINE VIEW
+// ============================================================
+function buildPipeline(){
+  const c=document.getElementById('pipeline-view');
+  const stages=['Intake','Arraignment','Discovery','Preliminary Hearing','Pre-trial Motions','Trial Prep','Trial','Sentencing','Post-Conviction','Closed/Resolved'];
+  const matters=nodes.filter(n=>n.type==='matter');
+
+  let h='<div class="pipe-inner">';
+  stages.forEach(stage=>{
+    let stageMatters;
+    if(stage==='Closed/Resolved'){
+      stageMatters=matters.filter(m=>m.matter_status==='Closed');
+    } else {
+      stageMatters=matters.filter(m=>m.matter_stage===stage && m.matter_status!=='Closed');
+    }
+
+    h+=`<div class="pipe-lane">`;
+    h+=`<div class="pipe-lane-hdr"><span class="pipe-lane-title">${stage}</span><span class="pipe-lane-count">${stageMatters.length}</span></div>`;
+    if(stageMatters.length===0){
+      h+=`<div class="pipe-empty">No matters</div>`;
+    } else {
+      h+=`<div class="pipe-lane-cards">`;
+      stageMatters.forEach(m=>{
+        const hot=hotItems[m.id];
+        let urgClass='';
+        if(hot){
+          if(hot.urgency==='overdue') urgClass='urgent-overdue';
+          else if(hot.urgency==='today') urgClass='urgent-today';
+          else urgClass='urgent-upcoming';
+        }
+        if(m.matter_status==='Closed') urgClass+=' closed-card';
+        const d=m.detail||{};
+        const statusBadge=m.matter_status||'Open';
+        const badgeCls=statusBadge.toLowerCase();
+        h+=`<div class="pipe-card ${urgClass}" onclick="showDetail(nodes.find(n=>n.id==='${m.id}'))">`;
+        h+=`<div class="pipe-card-name">${m.label}${m.hot?' <span style="color:#ef4444;font-size:11px">&#9679;</span>':''}</div>`;
+        if(d.caseNo) h+=`<div class="pipe-card-case">${d.caseNo}</div>`;
+        h+=`<span class="pipe-card-badge ${badgeCls}">${statusBadge}</span>`;
+        if(d.nextHearing) h+=`<div class="pipe-card-date">${d.nextHearing}</div>`;
+        if(hot) h+=`<div class="pipe-card-hot ${hot.urgency}">${hot.text}</div>`;
+        h+=`</div>`;
+      });
+      h+=`</div>`;
+    }
+    h+=`</div>`;
+  });
+  h+='</div>';
+  c.innerHTML=h;
+}
+
+// ============================================================
+// ADMIN VIEW
+// ============================================================
+const STAGES=['Intake','Arraignment','Discovery','Preliminary Hearing','Pre-trial Motions','Trial Prep','Trial','Sentencing','Post-Conviction'];
+const STATUSES=['Open','Pending','Closed'];
+const URG_CYCLE=['none','upcoming','today','overdue'];
+let adminEdits={};  // {nodeId: {field:newVal, ...}}
+let adminSort={col:'label',dir:'asc'};
+let adminFilters={status:'all',stage:'all',urgency:'all'};
+
+function adminChangeCount(){return Object.keys(adminEdits).length}
+
+function getNodeUrgency(id){
+  if(adminEdits[id]&&adminEdits[id].urgency!==undefined) return adminEdits[id].urgency;
+  const h=hotItems[id];
+  if(!h) return 'none';
+  return h.urgency;
+}
+
+function getNodeField(nd, field){
+  if(adminEdits[nd.id]&&adminEdits[nd.id][field]!==undefined) return adminEdits[nd.id][field];
+  if(field==='matter_status') return nd.matter_status||'Open';
+  if(field==='matter_stage') return nd.matter_stage||'Intake';
+  if(field==='note') return nd._adminNote||'';
+  return nd[field]||'';
+}
+
+function setAdminEdit(id, field, val){
+  if(!adminEdits[id]) adminEdits[id]={};
+  adminEdits[id][field]=val;
+  updateAdminBadge();
+}
+
+function updateAdminBadge(){
+  const ct=adminChangeCount();
+  const badge=document.getElementById('admin-change-badge');
+  if(badge){badge.textContent=ct+' change'+(ct!==1?'s':'');badge.classList.toggle('hidden',ct===0)}
+  const btn=document.getElementById('admin-save-btn');
+  if(btn) btn.disabled=ct===0;
+}
+
+function cycleUrgency(id){
+  const cur=getNodeUrgency(id);
+  const idx=URG_CYCLE.indexOf(cur);
+  const next=URG_CYCLE[(idx+1)%URG_CYCLE.length];
+  setAdminEdit(id,'urgency',next);
+  buildAdmin();
+}
+
+function buildAdmin(){
+  const c=document.getElementById('admin-view');
+  const matters=nodes.filter(n=>n.type==='matter');
+
+  // Apply filters
+  let filtered=matters.filter(m=>{
+    if(adminFilters.status!=='all'&&getNodeField(m,'matter_status')!==adminFilters.status) return false;
+    if(adminFilters.stage!=='all'&&getNodeField(m,'matter_stage')!==adminFilters.stage) return false;
+    if(adminFilters.urgency!=='all'){
+      const u=getNodeUrgency(m.id);
+      if(adminFilters.urgency==='none'&&u!=='none') return false;
+      if(adminFilters.urgency!=='none'&&u!==adminFilters.urgency) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a,b)=>{
+    let va,vb;
+    const col=adminSort.col;
+    if(col==='label'){va=a.label;vb=b.label}
+    else if(col==='case'){va=(a.detail?.caseNo||'');vb=(b.detail?.caseNo||'')}
+    else if(col==='status'){va=getNodeField(a,'matter_status');vb=getNodeField(b,'matter_status')}
+    else if(col==='stage'){va=STAGES.indexOf(getNodeField(a,'matter_stage'));vb=STAGES.indexOf(getNodeField(b,'matter_stage'))}
+    else if(col==='urgency'){const o={overdue:0,today:1,upcoming:2,none:3};va=o[getNodeUrgency(a.id)]??3;vb=o[getNodeUrgency(b.id)]??3}
+    else if(col==='hearing'){va=(a.detail?.nextHearing||'zzz');vb=(b.detail?.nextHearing||'zzz')}
+    else{va=a.label;vb=b.label}
+    if(typeof va==='number'&&typeof vb==='number') return adminSort.dir==='asc'?va-vb:vb-va;
+    return adminSort.dir==='asc'?String(va).localeCompare(String(vb)):String(vb).localeCompare(String(va));
+  });
+
+  const chg=adminChangeCount();
+  const arrow=(col)=>adminSort.col===col?`<span class="sort-arrow">${adminSort.dir==='asc'?'▲':'▼'}</span>`:'<span class="sort-arrow">⇅</span>';
+  const thCls=(col)=>adminSort.col===col?' sorted':'';
+
+  let h='<div class="admin-inner">';
+  h+=`<div class="admin-hdr">
+    <span class="admin-title">Admin — Matters (${filtered.length})</span>
+    <span id="admin-change-badge" class="admin-changes${chg===0?' hidden':''}">${chg} change${chg!==1?'s':''}</span>
+    <button id="admin-save-btn" class="admin-save-btn" onclick="adminSave()"${chg===0?' disabled':''}>Save Changes</button>
+  </div>`;
+
+  // Filters
+  h+=`<div class="admin-filters">
+    <select class="admin-filter" onchange="adminFilters.status=this.value;buildAdmin()">
+      <option value="all"${adminFilters.status==='all'?' selected':''}>All Status</option>
+      ${STATUSES.map(s=>`<option value="${s}"${adminFilters.status===s?' selected':''}>${s}</option>`).join('')}
+    </select>
+    <select class="admin-filter" onchange="adminFilters.stage=this.value;buildAdmin()">
+      <option value="all"${adminFilters.stage==='all'?' selected':''}>All Stages</option>
+      ${STAGES.map(s=>`<option value="${s}"${adminFilters.stage===s?' selected':''}>${s}</option>`).join('')}
+    </select>
+    <select class="admin-filter" onchange="adminFilters.urgency=this.value;buildAdmin()">
+      <option value="all"${adminFilters.urgency==='all'?' selected':''}>All Urgency</option>
+      <option value="overdue"${adminFilters.urgency==='overdue'?' selected':''}>Overdue</option>
+      <option value="today"${adminFilters.urgency==='today'?' selected':''}>Today</option>
+      <option value="upcoming"${adminFilters.urgency==='upcoming'?' selected':''}>Upcoming</option>
+      <option value="none"${adminFilters.urgency==='none'?' selected':''}>None</option>
+    </select>
+  </div>`;
+
+  h+=`<div class="admin-wrap"><table class="admin-tbl">
+    <thead><tr>
+      <th class="${thCls('label')}" onclick="adminSortBy('label')">Matter ${arrow('label')}</th>
+      <th class="${thCls('case')}" onclick="adminSortBy('case')">Case # ${arrow('case')}</th>
+      <th class="${thCls('status')}" onclick="adminSortBy('status')">Status ${arrow('status')}</th>
+      <th class="${thCls('stage')}" onclick="adminSortBy('stage')">Stage ${arrow('stage')}</th>
+      <th class="${thCls('urgency')}" onclick="adminSortBy('urgency')">Urg ${arrow('urgency')}</th>
+      <th class="${thCls('hearing')}" onclick="adminSortBy('hearing')">Next Hearing ${arrow('hearing')}</th>
+      <th>Notes</th>
+    </tr></thead><tbody>`;
+
+  filtered.forEach(m=>{
+    const urg=getNodeUrgency(m.id);
+    const status=getNodeField(m,'matter_status');
+    const stage=getNodeField(m,'matter_stage');
+    const note=getNodeField(m,'note');
+    const rowCls=urg==='overdue'?' row-overdue':urg==='today'?' row-today':urg==='upcoming'?' row-upcoming':'';
+    const urgCls='urg-'+urg;
+    const urgDot=urg==='overdue'?'●':urg==='today'?'●':urg==='upcoming'?'●':'';
+    const urgColor=urg==='overdue'?'#ef4444':urg==='today'?'#f59e0b':urg==='upcoming'?'#3b82f6':'';
+    const statusChanged=adminEdits[m.id]?.matter_status!==undefined?' changed':'';
+    const stageChanged=adminEdits[m.id]?.matter_stage!==undefined?' changed':'';
+    const noteChanged=adminEdits[m.id]?.note!==undefined?' changed':'';
+
+    h+=`<tr class="${rowCls}">
+      <td><span class="admin-name" onclick="showDetail(nodes.find(n=>n.id==='${m.id}'))">${m.label}</span></td>
+      <td><span class="admin-case">${m.detail?.caseNo||'—'}</span></td>
+      <td><select class="admin-sel${statusChanged}" data-id="${m.id}" data-field="matter_status" onchange="setAdminEdit('${m.id}','matter_status',this.value);this.classList.add('changed')">
+        ${STATUSES.map(s=>`<option value="${s}"${status===s?' selected':''}>${s}</option>`).join('')}
+      </select></td>
+      <td><select class="admin-sel${stageChanged}" data-id="${m.id}" data-field="matter_stage" onchange="setAdminEdit('${m.id}','matter_stage',this.value);this.classList.add('changed')">
+        ${STAGES.map(s=>`<option value="${s}"${stage===s?' selected':''}>${s}</option>`).join('')}
+      </select></td>
+      <td><div class="admin-urg ${urgCls}" onclick="cycleUrgency('${m.id}')" title="Click to cycle urgency">${urgDot?`<span style="color:${urgColor}">${urgDot}</span>`:''}</div></td>
+      <td><span class="admin-hearing">${m.detail?.nextHearing||'—'}</span></td>
+      <td><input type="text" class="admin-note${noteChanged}" value="${note.replace(/"/g,'&quot;')}" placeholder="Quick note..." onchange="setAdminEdit('${m.id}','note',this.value);this.classList.add('changed')" /></td>
+    </tr>`;
+  });
+
+  h+='</tbody></table></div></div>';
+  c.innerHTML=h;
+}
+
+function adminSortBy(col){
+  if(adminSort.col===col) adminSort.dir=adminSort.dir==='asc'?'desc':'asc';
+  else{adminSort.col=col;adminSort.dir='asc'}
+  buildAdmin();
+}
+
+async function adminSave(){
+  const btn=document.getElementById('admin-save-btn');
+  btn.textContent='Saving...';btn.disabled=true;
+
+  // Apply edits to nodes
+  Object.entries(adminEdits).forEach(([id,edits])=>{
+    const nd=nodes.find(n=>n.id===id);
+    if(!nd) return;
+    if(edits.matter_status!==undefined) nd.matter_status=edits.matter_status;
+    if(edits.matter_stage!==undefined) nd.matter_stage=edits.matter_stage;
+    if(edits.note!==undefined) nd._adminNote=edits.note;
+    if(edits.urgency!==undefined){
+      if(edits.urgency==='none'){
+        delete hotItems[id];
+        nd.hot=false;
+      } else {
+        hotItems[id]={urgency:edits.urgency, text:hotItems[id]?.text||'Updated via Admin', date:hotItems[id]?.date||'2026-04-15'};
+        nd.hot=true;
+      }
+    }
+  });
+
+  // Push to GitHub — token loaded at runtime via prompt or pre-set
+  try {
+    const token=window._ghToken||prompt('GitHub token (from .github-token):');
+    if(!token){showToast('Save cancelled — no token','error');btn.textContent='Save Changes';btn.disabled=false;return}
+    window._ghToken=token;
+    // Get current SHA
+    const shaResp=await fetch('https://api.github.com/repos/mrbreadbaby/practice-wiki-map/contents/index.html',{
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}
+    });
+    const shaData=await shaResp.json();
+    const sha=shaData.sha;
+
+    // Serialize updated nodes back into the HTML source
+    // Find the script containing nodes definition and replace with current state
+    const fullHtml=document.documentElement.outerHTML;
+    // Regex to find and replace the nodes array in the source
+    const nodesJson=JSON.stringify(nodes.map(n=>{
+      const o={id:n.id,label:n.label,type:n.type};
+      if(n.subtype) o.subtype=n.subtype;
+      if(n.role) o.role=n.role;
+      if(n.level) o.level=n.level;
+      o.matter_status=n.matter_status||'';
+      o.matter_stage=n.matter_stage||'';
+      o.status=n.status||'current';
+      o.hasPage=!!n.hasPage;
+      o.hot=n.hot||false;
+      if(n._adminNote) o.admin_notes=n._adminNote;
+      if(n.detail) o.detail=n.detail;
+      return o;
+    }),null,2);
+    // Replace the nodes array in source (between "const nodes = [" and the matching "];\n")
+    const nodesStart=fullHtml.indexOf('const nodes = [');
+    const nodesSearchFrom=nodesStart+'const nodes = ['.length;
+    // Find the closing ]; by counting bracket depth
+    let depth=1,i=nodesSearchFrom;
+    while(depth>0 && i<fullHtml.length){
+      if(fullHtml[i]==='[') depth++;
+      if(fullHtml[i]===']') depth--;
+      i++;
+    }
+    const nodesEnd=i;
+    const updatedHtml=fullHtml.substring(0,nodesStart)+'const nodes = '+nodesJson+';'+fullHtml.substring(nodesEnd);
+    const b64=btoa(unescape(encodeURIComponent('<!DOCTYPE html>\n'+updatedHtml)));
+
+    const pushResp=await fetch('https://api.github.com/repos/mrbreadbaby/practice-wiki-map/contents/index.html',{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'Admin: update matter data',content:b64,sha:sha,committer:{name:'Jeremy Pemberton',email:'jerwalter@gmail.com'}})
+    });
+
+    if(pushResp.ok){
+      adminEdits={};
+      showToast('Saved & pushed to GitHub','success');
+      buildAdmin();
+      buildHotBanner();
+    } else {
+      const err=await pushResp.json();
+      showToast('Push failed: '+(err.message||'unknown'),'error');
+    }
+  } catch(e){
+    showToast('Error: '+e.message,'error');
+  }
+  btn.textContent='Save Changes';btn.disabled=adminChangeCount()===0;
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('admin-toast');
+  t.textContent=msg;t.className='admin-toast show '+type;
+  setTimeout(()=>{t.classList.remove('show')},3000);
+}
+
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+let isDark = true;
+
+function toggleTheme(){
+  isDark = !isDark;
+  document.documentElement.classList.toggle('light', !isDark);
+  document.getElementById('theme-toggle').innerHTML = isDark ? '&#9790;' : '&#9728;';
+  updateGraphTheme();
+}
+
+function updateGraphTheme(){
+  // Update link colors
+  const linkColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
+  d3.selectAll('.link').attr('stroke', linkColor);
+
+  // Update node colors to match new CSS vars
+  const lightTC = {matter:'#2563eb',contact:'#7c3aed',court:'#059669',authority:'#d97706',issue:'#e11d48'};
+  const darkTC = {matter:'#60a5fa',contact:'#c084fc',court:'#34d399',authority:'#fbbf24',issue:'#fb7185'};
+  const lightClient = '#c026d3';
+  const darkClient = '#e879f9';
+  const curTC = isDark ? darkTC : lightTC;
+  const curClient = isDark ? darkClient : lightClient;
+
+  // Update global TC and CLIENT_CLR for future renders
+  Object.assign(TC, curTC);
+  window.CLIENT_CLR_CUR = curClient;
+
+  d3.selectAll('.node circle:first-child').attr('fill', d => {
+    if(d.type==='contact' && d.role==='client') return curClient;
+    return curTC[d.type] || '#6366f1';
+  });
+
+  // SVG background
+  d3.select('#graph-svg').style('background', isDark ? '#0a0e17' : '#f8fafc');
+
+  // Rebuild dynamic views if visible
+  if(currentView==='calendar') buildCalendar();
+  if(currentView==='cards') buildCards();
+  if(currentView==='pipeline') buildPipeline();
+  if(currentView==='admin') buildAdmin();
+  buildHotBanner();
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'){e.preventDefault();document.getElementById('search-input').focus()}
+  if(e.key==='Escape'){closePanel()}
+  if(e.key==='1') switchView('graph');
+  if(e.key==='2') switchView('calendar');
+  if(e.key==='3') switchView('cards');
+  if(e.key==='4') switchView('pipeline');
+  if(e.key==='5') switchView('admin');
+});
+
+initGraph();
+
+// Auto-switch to cards on mobile
+if(window.innerWidth<=600){ switchView('cards'); }
+</script>
+</body>
+</html>
