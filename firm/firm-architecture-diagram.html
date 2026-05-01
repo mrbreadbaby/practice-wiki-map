@@ -622,16 +622,23 @@ function dragEnd(event, d) {
   d.fx = null; d.fy = null;
 }
 
-// Fit on load
-setTimeout(() => {
+// Fit on load — wait for the force simulation to actually settle, then
+// clamp the computed scale so a small early bbox can't zoom us off-screen.
+let didFit = false;
+function fitOnce(){
+  if(didFit) return; didFit = true;
   const bounds = g.node().getBBox();
   const dx = bounds.width, dy = bounds.height;
+  if(dx === 0 || dy === 0) return;
   const x = bounds.x + dx / 2, y = bounds.y + dy / 2;
-  const scale = 0.8 / Math.max(dx / width, dy / height);
+  const rawScale = 0.8 / Math.max(dx / width, dy / height);
+  const scale = Math.min(1.5, Math.max(0.4, rawScale));
   const translate = [width / 2 - scale * x, height / 2 - scale * y];
-  svg.transition().duration(750)
+  svg.transition().duration(600)
     .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
-}, 2000);
+}
+simulation.on('end', fitOnce);
+setTimeout(fitOnce, 4000); // Safety net if 'end' never fires
 </script>
 </body>
 </html>
