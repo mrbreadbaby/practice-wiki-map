@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Time — Project Plan</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2129;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --amber: #d29922;
+    --blue: #58a6ff;
+    --gray: #484f58;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --orange: #f0883e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header h1 { font-size: 20px; font-weight: 600; }
+  .header h1 span { color: var(--accent); }
+  .track-toggles {
+    display: flex;
+    gap: 8px;
+  }
+  .track-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .track-btn.active { border-color: var(--accent); background: #58a6ff22; color: var(--accent); }
+  .track-btn:hover { border-color: var(--accent); }
+
+  /* Progress bars */
+  .progress-section {
+    padding: 16px 24px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .progress-card {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+  }
+  .progress-card h3 {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .progress-bar-bg {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .progress-pct {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  /* Gantt area */
+  .gantt-container {
+    padding: 20px 24px;
+    overflow-x: auto;
+  }
+  .gantt-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+  }
+  .gantt-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+  }
+  .gantt-row {
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .gantt-row:hover { background: var(--surface); }
+  .gantt-row td {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid #21262d;
+    vertical-align: middle;
+  }
+  .gantt-row.milestone td {
+    background: #58a6ff08;
+    border-bottom: 1px solid #58a6ff33;
+  }
+  .task-name {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .task-name .milestone-icon {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .track-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .track-a { background: #bc8cff22; color: var(--purple); }
+  .track-b { background: #f0883e22; color: var(--orange); }
+  .track-skill { background: #3fb95022; color: var(--green); }
+  .track-milestone { background: #58a6ff22; color: var(--accent); }
+
+  .status-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-complete { background: #3fb95022; color: var(--green); }
+  .status-in-progress { background: #d2992222; color: var(--amber); }
+  .status-not-started { background: #484f5822; color: var(--gray); }
+  .status-blocked { background: #f8514922; color: var(--red); }
+
+  /* Gantt bars */
+  .gantt-bar-cell {
+    position: relative;
+    min-width: 300px;
+  }
+  .gantt-timeline {
+    position: relative;
+    height: 24px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .gantt-bar {
+    position: absolute;
+    height: 100%;
+    border-radius: 4px;
+    min-width: 4px;
+    transition: all 0.3s;
+  }
+  .gantt-bar-progress {
+    position: absolute;
+    height: 100%;
+    border-radius: 4px;
+    opacity: 0.7;
+  }
+
+  /* Week labels */
+  .week-markers {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 10px;
+    color: var(--text-muted);
+    min-width: 300px;
+  }
+
+  /* Detail expand */
+  .task-detail {
+    display: none;
+    padding: 12px 12px 12px 40px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .task-detail.open { display: table-row; }
+  .task-detail td {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .task-detail .deps {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+  .task-detail .deps span {
+    display: inline-block;
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 2px 4px 2px 0;
+  }
+
+  /* Milestone marker in gantt */
+  .milestone-diamond {
+    position: absolute;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    transform: rotate(45deg);
+    top: 6px;
+    border: 2px solid var(--bg);
+    z-index: 2;
+  }
+
+  @media (max-width: 768px) {
+    .header { padding: 12px 16px; }
+    .header h1 { font-size: 16px; }
+    .gantt-container { padding: 12px 16px; }
+    .progress-section { padding: 12px 16px; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1><span>Law Time</span> — Project Plan</h1>
+    <div class="track-toggles">
+      <button class="track-btn active" data-track="all" onclick="filterTrack('all')">All</button>
+      <button class="track-btn" data-track="A" onclick="filterTrack('A')">Track A</button>
+      <button class="track-btn" data-track="B" onclick="filterTrack('B')">Track B</button>
+      <button class="track-btn" data-track="Skill" onclick="filterTrack('Skill')">Skills</button>
+      <button class="track-btn" data-track="Milestone" onclick="filterTrack('Milestone')">Milestones</button>
+    </div>
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-card">
+    <h3>Track A — Wiki Completion</h3>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="trackA-bar" style="width:0%;background:var(--purple)"></div></div>
+    <span class="progress-pct" id="trackA-pct">0%</span>
+  </div>
+  <div class="progress-card">
+    <h3>Track B — Practice Automation</h3>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="trackB-bar" style="width:0%;background:var(--orange)"></div></div>
+    <span class="progress-pct" id="trackB-pct">0%</span>
+  </div>
+  <div class="progress-card">
+    <h3>Skills</h3>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="skill-bar" style="width:0%;background:var(--green)"></div></div>
+    <span class="progress-pct" id="skill-pct">0%</span>
+  </div>
+  <div class="progress-card">
+    <h3>Overall</h3>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="overall-bar" style="width:0%;background:var(--accent)"></div></div>
+    <span class="progress-pct" id="overall-pct">0%</span>
+  </div>
+</div>
+
+<div class="gantt-container">
+  <table class="gantt-table">
+    <thead>
+      <tr>
+        <th style="width:260px">Task</th>
+        <th style="width:70px">Track</th>
+        <th style="width:80px">Status</th>
+        <th style="width:60px">Week</th>
+        <th>Timeline (Weeks 1–6)</th>
+      </tr>
+    </thead>
+    <tbody id="gantt-body"></tbody>
+  </table>
+</div>
+
+<script>
+const TASKS = [
+  // Track A — Wiki Completion
+  { id: 'a1', name: 'Admin View', track: 'A', status: 'complete', week: '0', startW: 0, endW: 0.5, progress: 100,
+    desc: 'Administrative view for the wiki map showing system health, page counts, and management tools.', deps: [] },
+  { id: 'a2', name: 'Pipeline View', track: 'A', status: 'complete', week: '0', startW: 0, endW: 0.5, progress: 100,
+    desc: 'Pipeline view showing data flow through the intake/ingest system.', deps: [] },
+  { id: 'a3', name: 'Light/Dark Mode', track: 'A', status: 'complete', week: '0', startW: 0, endW: 0.5, progress: 100,
+    desc: 'Theme toggle for the wiki map. Dark theme is default, matching practice aesthetic.', deps: [] },
+  { id: 'a4', name: 'Drive Sync Pipeline', track: 'A', status: 'not-started', week: '1', startW: 1, endW: 2, progress: 0,
+    desc: 'Twice-daily iCloud to Drive sync. On-demand trigger. Drive link capture back into wiki pages. Drive for Desktop installed as Finder interface only (no folder mirroring). One direction: iCloud push to Drive API.', deps: [] },
+  { id: 'a5', name: 'Hot Cache Verification', track: 'A', status: 'not-started', week: '1', startW: 1, endW: 1.5, progress: 0,
+    desc: 'Auto-load hot.md + confirmation message wired into project instructions. Every session starts with: "Spec loaded. Hot cache loaded, last updated [timestamp]. Diary reviewed."', deps: [] },
+  { id: 'a6', name: 'Credential Cleanup', track: 'A', status: 'not-started', week: '1', startW: 1, endW: 1.5, progress: 0,
+    desc: 'Move portal credentials out of Stanislaus Dept 2 court page into password manager (Keychain/1Password). Wiki pages reference location only, never contain actual credential values.', deps: [] },
+  { id: 'a7', name: 'Wiki Map GitHub Push Automation', track: 'A', status: 'in-progress', week: '2', startW: 1.5, endW: 2.5, progress: 40,
+    desc: 'Wire the daily rebuild scheduled task to include the GitHub push step. Currently: daily rebuild runs at 7:45 AM but push step not automated. Token-based API via Chrome file_upload to base64 to GitHub Contents API PUT.', deps: ['a5'] },
+  { id: 'a8', name: 'Stale Page Detection', track: 'A', status: 'not-started', week: '3', startW: 3, endW: 4, progress: 0,
+    desc: 'Flag wiki pages where status has not been updated in 30+ days or where matter posture may have changed. Integrates with hot cache to surface stale items.', deps: ['a7'] },
+  { id: 'a9', name: 'Duplicate Cleanup', track: 'A', status: 'not-started', week: '3', startW: 3, endW: 3.5, progress: 0,
+    desc: 'Remove old people/ folder with duplicate Billups file. Audit for other orphaned pages. Clean up legacy clients/ directory.', deps: [] },
+  { id: 'a10', name: 'Deadline View', track: 'A', status: 'not-started', week: '4', startW: 4, endW: 5, progress: 0,
+    desc: 'New wiki map view showing upcoming court deadlines, filing deadlines, and statutory deadlines. Powered by court page deadline rules engine. Calendar-style layout.', deps: ['a8'] },
+  { id: 'a11', name: 'Contacts View', track: 'A', status: 'not-started', week: '4', startW: 4, endW: 5, progress: 0,
+    desc: 'New wiki map view for browsing contacts — attorneys, judges, clients, witnesses — with cross-matter relationship visualization.', deps: ['a9'] },
+
+  // Track B — Practice Automation
+  { id: 'b1', name: 'Intake/Ingest Pipeline', track: 'B', status: 'in-progress', week: '1-2', startW: 1, endW: 3, progress: 20,
+    desc: 'The core automation. Ralph monitors intake@ via MCP. On arrival: identify content, match to matter, OCR/cleanup if needed, file to correct iCloud folder, sync to Drive, run wiki ingest (extract entities, update pages, log), flag anything needing attention. Universal drop box — anyone can email anything.', deps: ['a4'] },
+  { id: 'b2', name: 'Cowork Project Builder', track: 'B', status: 'not-started', week: '2', startW: 2, endW: 3, progress: 0,
+    desc: 'Assembles context package from matter folder for AI-assisted drafting. Pulls from wiki (authority pages, issue pages, contact pages) as part of context. Enables multi-AI adversarial review workflow.', deps: ['b1'] },
+  { id: 'b3', name: 'Westlaw Research Relay', track: 'B', status: 'not-started', week: '3', startW: 3, endW: 4, progress: 0,
+    desc: 'Batches AI-generated legal questions, tracks research cycles, integrates downloaded results. Feeds new authorities into wiki authority pages. Chrome automation (no API). Two workflows: Research Relay + Quick Check.', deps: ['b2'] },
+  { id: 'b4', name: 'ResearchCA Scraper', track: 'B', status: 'not-started', week: '3', startW: 3, endW: 4, progress: 0,
+    desc: 'Chrome automation to pull case status from ResearchCA (Tyler host). Updates wiki matter pages with hearing dates, filings, case status. Same automation pattern as Westlaw.', deps: [] },
+  { id: 'b5', name: 'Service & eFiling Co-pilot', track: 'B', status: 'blocked', week: '4', startW: 4, endW: 5.5, progress: 0,
+    desc: 'Gmail MCP assembles service email from admin@noonanlawoffices.com with approval gate. Tyler efile checklist with Chrome automation (fill fields, save draft, Jeremy submits). BLOCKED: Tyler portal Chrome profile caching issue needs resolution first.', deps: ['b3', 'b4'] },
+
+  // Skills
+  { id: 's1', name: 'Intake/Ingest Skill', track: 'Skill', status: 'in-progress', week: '1-2', startW: 1, endW: 3, progress: 15,
+    desc: 'Full triage pipeline skill: monitor intake@, identify, match to matter, OCR/cleanup, file to iCloud, sync to Drive, wiki ingest (extract entities, update pages, log), flag for attention. Test before starting next skill.', deps: ['b1'] },
+  { id: 's2', name: 'Research Skill', track: 'Skill', status: 'not-started', week: '3', startW: 3, endW: 4, progress: 0,
+    desc: 'Westlaw Research Relay + ResearchCA scraper procedures. Ensures Ralph executes research workflow the same way every time.', deps: ['b3', 'b4'] },
+  { id: 's3', name: 'eFiling Skill', track: 'Skill', status: 'not-started', week: '4', startW: 4, endW: 5, progress: 0,
+    desc: 'Service email assembly + Tyler efile checklist procedures. Gmail MCP for service emails, Chrome automation for Tyler portal.', deps: ['b5'] },
+  { id: 's4', name: 'Drafting Skill', track: 'Skill', status: 'not-started', week: '5+', startW: 5, endW: 6, progress: 0,
+    desc: 'Project Builder context assembly from wiki + Quick Check verification. Word templates for California court filings (28-line numbered pages, proper margins, caption block). Multi-AI adversarial review as QC. Built after Track B is complete.', deps: ['b2', 'b3'] },
+
+  // Milestones
+  { id: 'm1', name: 'Wiki Map v3 Deployed', track: 'Milestone', status: 'complete', week: '0', startW: 0.3, endW: 0.3, progress: 100, milestone: true,
+    desc: 'Interactive D3.js wiki map with 47 nodes, 3 views (force graph, calendar timeline, mobile cards), deployed to GitHub Pages. Dark theme, search, filter pills.', deps: [] },
+  { id: 'm2', name: 'Schema v2.1 Complete', track: 'Milestone', status: 'complete', week: '0', startW: 0.5, endW: 0.5, progress: 100, milestone: true,
+    desc: 'Schema updated with matter statuses (Open/Pending/Closed), criminal defense stages, structured charges, legacy folder cleanup. Clio-compatible naming throughout.', deps: [] },
+  { id: 'm3', name: 'Intake Pipeline Operational', track: 'Milestone', status: 'not-started', week: '3', startW: 3, endW: 3, progress: 0, milestone: true,
+    desc: 'Intake/ingest pipeline fully operational: intake@ monitored hourly, documents auto-filed, wiki auto-updated, triage queue working.', deps: ['b1', 's1'] },
+  { id: 'm4', name: 'First Automated Filing', track: 'Milestone', status: 'not-started', week: '5', startW: 5, endW: 5, progress: 0, milestone: true,
+    desc: 'First court filing completed through the eFiling Co-pilot workflow: document drafted, service email sent, Tyler efile form filled, Jeremy reviewed and submitted.', deps: ['b5', 's3'] },
+  { id: 'm5', name: 'Full Dashboard with Admin Controls', track: 'Milestone', status: 'not-started', week: '6', startW: 6, endW: 6, progress: 0, milestone: true,
+    desc: 'Complete practice dashboard with all views (admin, pipeline, deadline, contacts), full automation suite, and admin controls for Christine/John access.', deps: ['a10', 'a11', 's4'] },
+];
+
+const TRACK_COLORS = {
+  A: { bg: '#bc8cff22', color: '#bc8cff', bar: '#bc8cff' },
+  B: { bg: '#f0883e22', color: '#f0883e', bar: '#f0883e' },
+  Skill: { bg: '#3fb95022', color: '#3fb950', bar: '#3fb950' },
+  Milestone: { bg: '#58a6ff22', color: '#58a6ff', bar: '#58a6ff' },
+};
+const STATUS_CLASSES = {
+  complete: 'status-complete',
+  'in-progress': 'status-in-progress',
+  'not-started': 'status-not-started',
+  blocked: 'status-blocked'
+};
+const STATUS_LABELS = {
+  complete: 'Complete',
+  'in-progress': 'In Progress',
+  'not-started': 'Not Started',
+  blocked: 'Blocked'
+};
+
+let currentFilter = 'all';
+const TOTAL_WEEKS = 6;
+
+function renderGantt() {
+  const tbody = document.getElementById('gantt-body');
+  tbody.innerHTML = '';
+
+  const filtered = currentFilter === 'all' ? TASKS : TASKS.filter(t => t.track === currentFilter);
+
+  filtered.forEach(task => {
+    const tc = TRACK_COLORS[task.track];
+    const isMilestone = task.milestone;
+
+    // Main row
+    const tr = document.createElement('tr');
+    tr.className = `gantt-row${isMilestone ? ' milestone' : ''}`;
+    tr.dataset.id = task.id;
+
+    const barLeft = (task.startW / TOTAL_WEEKS) * 100;
+    const barWidth = Math.max(((task.endW - task.startW) / TOTAL_WEEKS) * 100, 1);
+    const progressWidth = (task.progress / 100) * barWidth;
+
+    tr.innerHTML = `
+      <td>
+        <div class="task-name">
+          ${isMilestone ? '<div class="milestone-icon"></div>' : ''}
+          ${task.name}
+        </div>
+      </td>
+      <td><span class="track-badge track-${task.track.toLowerCase()}">${task.track === 'Skill' ? 'Skill' : task.track === 'Milestone' ? 'MS' : 'Track ' + task.track}</span></td>
+      <td><span class="status-pill ${STATUS_CLASSES[task.status]}">${STATUS_LABELS[task.status]}</span></td>
+      <td style="color:var(--text-muted);font-size:12px">${task.week}</td>
+      <td class="gantt-bar-cell">
+        <div class="gantt-timeline">
+          ${isMilestone ? `
+            <div class="milestone-diamond" style="left:calc(${barLeft}% - 6px)"></div>
+          ` : `
+            <div class="gantt-bar" style="left:${barLeft}%;width:${barWidth}%;background:${tc.bar}33"></div>
+            <div class="gantt-bar gantt-bar-progress" style="left:${barLeft}%;width:${progressWidth}%;background:${tc.bar}"></div>
+          `}
+        </div>
+      </td>
+    `;
+
+    tr.addEventListener('click', () => toggleDetail(task.id));
+    tbody.appendChild(tr);
+
+    // Detail row
+    const detailTr = document.createElement('tr');
+    detailTr.className = 'task-detail';
+    detailTr.id = `detail-${task.id}`;
+    const depsHtml = task.deps.length > 0 ?
+      `<div class="deps"><strong>Dependencies:</strong> ${task.deps.map(d => {
+        const dep = TASKS.find(t => t.id === d);
+        return dep ? `<span>${dep.name}</span>` : '';
+      }).join(' ')}</div>` : '';
+
+    detailTr.innerHTML = `<td colspan="5">
+      <div style="max-width:700px">
+        <p>${task.desc}</p>
+        ${depsHtml}
+        <div style="margin-top:8px;font-size:12px;color:var(--text-muted)">
+          Progress: <strong style="color:${tc.color}">${task.progress}%</strong>
+        </div>
+      </div>
+    </td>`;
+    tbody.appendChild(detailTr);
+  });
+}
+
+function toggleDetail(id) {
+  const el = document.getElementById(`detail-${id}`);
+  if (el) el.classList.toggle('open');
+}
+
+function filterTrack(track) {
+  currentFilter = track;
+  document.querySelectorAll('.track-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.track === track);
+  });
+  renderGantt();
+}
+
+function updateProgress() {
+  const trackA = TASKS.filter(t => t.track === 'A');
+  const trackB = TASKS.filter(t => t.track === 'B');
+  const skills = TASKS.filter(t => t.track === 'Skill');
+  const all = TASKS.filter(t => t.track !== 'Milestone');
+
+  const avg = arr => arr.length ? Math.round(arr.reduce((s, t) => s + t.progress, 0) / arr.length) : 0;
+
+  const aP = avg(trackA), bP = avg(trackB), sP = avg(skills), oP = avg(all);
+
+  document.getElementById('trackA-bar').style.width = aP + '%';
+  document.getElementById('trackA-pct').textContent = aP + '%';
+  document.getElementById('trackB-bar').style.width = bP + '%';
+  document.getElementById('trackB-pct').textContent = bP + '%';
+  document.getElementById('skill-bar').style.width = sP + '%';
+  document.getElementById('skill-pct').textContent = sP + '%';
+  document.getElementById('overall-bar').style.width = oP + '%';
+  document.getElementById('overall-pct').textContent = oP + '%';
+}
+
+renderGantt();
+updateProgress();
+</script>
+</body>
+</html>

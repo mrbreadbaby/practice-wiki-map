@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2026-04-30" />
+  <title>Firm Brief — 2026-04-30</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>:root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+    line-height: 1.55;
+    color: #1a1a1a;
+    background: #fafaf7;
+  }
+  h1, h2, h3, h4 { line-height: 1.25; margin-top: 2em; }
+  h1 { font-size: 1.85rem; border-bottom: 2px solid #c9a227; padding-bottom: .3em; }
+  h2 { font-size: 1.4rem; border-bottom: 1px solid #d8d8d8; padding-bottom: .2em; }
+  h3 { font-size: 1.15rem; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  pre { background: #f0ede3; padding: .9em 1em; border-radius: 6px; overflow-x: auto; font-size: .9em; }
+  code { background: #f0ede3; padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+  blockquote { border-left: 4px solid #c9a227; margin: 1em 0; padding: .25em 1em; background: #fff8e1; color: #444; }
+  table { border-collapse: collapse; margin: 1em 0; width: 100%; font-size: .92em; }
+  th, td { border: 1px solid #d4d4d4; padding: .45em .65em; text-align: left; vertical-align: top; }
+  th { background: #efeadb; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: .15em 0; }
+  hr { border: none; border-top: 1px solid #d4d4d4; margin: 2em 0; }
+  a { color: #1f5fbf; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .banner {
+    background: #fff3c4; border: 1px solid #c9a227; border-radius: 6px;
+    padding: .65em 1em; font-size: .9em; margin-bottom: 1.5em; color: #5a4500;
+  }
+  @media (max-width: 600px) {
+    body { padding: 1rem .85rem 3rem; font-size: 15px; }
+    h1 { font-size: 1.5rem; }
+    table { font-size: .85em; }
+  }</style>
+</head>
+<body>
+<div class="banner"><strong>Internal demo &mdash; not for distribution.</strong> Last updated: 2026-04-30.</div>
+<header id="title-block-header">
+<h1 class="title">Firm Brief — 2026-04-30</h1>
+<p class="date">2026-04-30</p>
+</header>
+<h1 id="noonan-firm-brief-april-30-2026">Noonan Firm Brief — April 30, 2026</h1>
+<blockquote>
+<p>Personal items live in the parallel personal brief. The Adamski appeal track (NOA filed CA 4/27 18:16 PT via Odyssey eFileCA SLO; Notice of Default issued by Court of Appeal Div 6 same day; APP-003 + APP-004 due Thu 5/7) remains personal pro per — surfaced here only because the same 5/7 deadline shares calendar real estate with Caldwell Romero. Pivot to the personal brief for FBI fingerprints, AMMCG record-on-appeal logistics, and other non-firm items.</p>
+</blockquote>
+<h2 id="executive-summary">Executive summary</h2>
+<p><strong>4/30 evening update:</strong> Major operational day completed since the 7:50 AM PT brief. <strong>(1) Stanislaus portal smoke-test sweep COMPLETE</strong> via the new portal-status-sweep skill — 5 matters surveyed live: Valenzuela 4/30 VOP hearing held (outcome unknown — needs Jeremy’s eye); Bratcher pleas entered 4/24 on both companion cases (in custody, pending sentencing); Dillard 5/11 VTC confirmed; Brown Romero NOT efiled per portal (confirms Pacheco co-counsel review hold); Caldwell 5/7 reset confirmed. Pattern observed: Stanislaus felonies migrating Dept 7 → 9. <strong>(2) Alameda criminal-portal coverage CRACKED OPEN</strong> — public Odyssey CalendarSearch (<code>publicrecords.alameda.courts.ca.gov/CalendarSearch/</code>) discovered as the autonomous-friendly path for criminal/juvenile/traffic with no auth (full hearing histories on 8/9 matters; sibling-subdomain to the auth-walled <code>eportal.alameda.courts.ca.gov</code>). <strong>(3) Alameda 50-case attorney-portfolio crawl</strong> via Smart Search (logged in as JWN, after Jeremy cleared reCAPTCHA) — 49/50 cases extracted (Gupta sealed); 14 hearings within 30 days surfaced; ~12 NEW active cases discovered that were not in our matter wiki. <strong>(4) Iyengar (Adarsh) case # RESOLVED to 25-CR-000998 (Alameda Dept 702)</strong> via Yahoo IMAP mirror — <strong>next hearing 5/11/26 PTH (T+11 days)</strong>; new canonical matter page at <code>wiki/matters/Iyengar - 25-CR-000998.md</code>. <strong>(5) Two new skills published</strong> — <code>portal-status-sweep</code> (v0.2 update with slower pacing rules, Tyler IDP human-verification gate workaround, cookie-clear procedure) and <code>attorney-portfolio-crawl</code> (v0.1 NEW — full-portfolio audit pattern, sister to portal-status-sweep). Backups in <code>wiki/memory-backup/</code> and <code>wiki/runbooks/skill-snapshots/</code>. <strong>(6) Two scheduled tasks now live</strong> — <code>weekly-portal-sweep</code> (Mondays 02:00 Madrid) and <code>monthly-portfolio-crawl</code> (first Sunday 02:30 Madrid). <strong>(7) Memory consolidation pass</strong> — retired 4 stale memory files, slimmed Weaver + Hunter project memories, added portal-sweep skill memory; MEMORY.md restructured to 78 active entries / 123 lines; backups synced. <strong>(8) Cost analysis published</strong> at <code>~/Documents/Products/Noonan-Voice-Agent/marketing/cost-savings-analysis-2026-04-30.md</code> (sales collateral; positions Sam at $30-45/mo vs incumbent ~$500-700/mo, <strong>90-94% cost reduction, $5,500-8,000/yr savings</strong>; incumbent vendor identified as <code>no.reply@yourmessageservice.com</code>, account 3911, white-label, ~134 calls/mo). <strong>(9) Stanislaus + Alameda matter-wiki refresh COMPLETE</strong> — 5 Stanislaus pages updated, 9 existing Alameda pages updated, <strong>12 NEW Alameda matter pages created</strong> (Olson, Hahn, Serrano, Castanedamorillo, Craig — Jarmell, Fuentes, Fink, Howard, Garcia — Christina, Guerratiffe, Madrigalreyes, Bernal, Sharma). <strong>🚨 Discrepancy worth Jeremy’s eye: Blackwell — wiki anchored to 5/18 Hobbs hearing, but Alameda CalendarSearch shows next is 6/9 PTH at WMC-Oakland. Hobbs may have been continued or vacated; verify with WMC-Oakland clerk before relying on either date.</strong> <strong>🚨 Also unknown: Valenzuela 4/30 VOP hearing outcome</strong> — confirm whether the firm calendared/appeared and pull the Stanislaus docket.</p>
+<p>Two of three calendared hearings since the 4/27 brief landed; Wells 4/27 PX outcome still unconfirmed and is the loudest open status flag. <strong>Mitchell Indicated Sentence DENIED 4/27 8:30 a.m. Dept 9</strong> (Christine relayed the loss at 10:58 a.m. PT). Christine first directed an emergency withdrawal; built and shelved a same-day 22-pp withdrawal/CR-003 packet; <strong>REVERSED at 15:39 PT — Chuck Pacheco takes over as trial counsel for the 6/15 Dept 9 jury trial; Mr. Mitchell’s family to pay Pacheco upfront.</strong> <strong>Wolfe PX 4/29 was effectively a date-picking appearance — DDA Maszara stipulated to the continuance (Dinh-in-Korea grounds); 6/10/26 confirmed for the People; court (Hon. Sevely, Dept 34) calendared as the future PX date subject to Court adoption. Maszara’s 4/28 reply also formally re-demanded Dinh expert reciprocal discovery (CV, reports, materials relied upon) — open obligation on us.</strong> <strong>Blackwell § 1054.1 deficiency notice SENT to DDA Sjoberg CA 4/28 16:06 PT</strong> from <code>admin@noonanlawoffices.com</code> (cc Quinn, alcoda; cc’d <code>noonanlaw33@yahoo.com</code>); the resend at 16:28 PT picked up the missing PDF attachment. <strong>5/5/26 5:00 p.m. PT</strong> is the response deadline (preserves § 1054.5 motion runway to the 5/18 Hobbs hearing). <strong>Mercer SVP matter unblocked CA 4/28</strong> — Yahoo IMAP mirror (deployed 4/28) surfaced the 33-pp Christine intake PDF Gmail couldn’t reach; case now docketed as <strong>CR-19-004683 + CR-19-004770 + 1416636 (consolidated), Stanislaus Dept 3 Hon. Mangar, hearing 6/15/26</strong>, with mother (Tammi Marlene Tatum) on file pro per MTD (procedurally invalid — § 6602.5 right to counsel). <strong>Abbott retention letter staged in admin@ Drafts CA 4/28; awaits JWN approval before Jeremy sends from Yahoo.</strong> Two other firm-systems items deserve same-week attention: (i) <strong>State Bar disciplinary matter Zamora v. Noonan (CNA file LWA57602)</strong> — MPBF (Peter Weber / Joan Soares) submitted the firm’s grievance response to CNA on 4/29; carrier’s claims rep Megan Daly requested a copy for her file; this is the formal firm-side ethics file we have not been actively tracking in this brief; flagging now for visibility. (ii) <strong>Workspace credential remediation continued through 4/27–4/29</strong> — Christine confirmed by iMessage 4/29 PT that Kellie’s role going forward is “coordination only” with no admin access, and that Jeremy is the firm administrator; Kellie reset firm passwords again over the 4/24–4/27 weekend after Jeremy’s earlier rotation, prompting another rotation. Active matter index regenerated 4/29 (25 matters; canonical 11-folder schema). <strong>Billingsley, Kyle — 25CV-0668</strong> appears as a new active case folder (plaintiffs’ Opposition to Demurrer + MTS landed in intake@ 4/29 21:29 UTC; no wiki page yet). <strong>Caldwell Romero (reset) 5/7 8:30 a.m. Dept 2</strong> is the next hearing on calendar.</p>
+<h2 id="deadlines-this-week">Deadlines this week</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Case</th>
+<th>Item</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Thu 4/30 2:00 p.m. PT</strong></td>
+<td>Orlando (DSS Notice of Defense — non-active-index)</td>
+<td>DSS analyst Lisa Wiggins’s deadline for signed withdrawal of Notice of Defense; otherwise hearing request goes in</td>
+<td>JWN / Christine (signature)</td>
+</tr>
+<tr class="even">
+<td>Tue 5/5 5:00 p.m. PT</td>
+<td>Blackwell (25-CR-007675)</td>
+<td>DDA Sjoberg’s deadline to respond to PC § 1054.1 deficiency notice (sent 4/28). § 1054.5 motion runway preserved if non-compliance</td>
+<td>DDA Sjoberg → us to follow up</td>
+</tr>
+<tr class="odd">
+<td><strong>Thu 5/7 8:30 a.m.</strong></td>
+<td>Caldwell (CR-23-010065)</td>
+<td><strong>Hearing — Romero motion (reset from vacated 4/14)</strong>, Stanislaus Dept 2</td>
+<td>JWN</td>
+</tr>
+<tr class="even">
+<td>Thu 5/7</td>
+<td>(Adamski personal, pro per)</td>
+<td>APP-003 (Notice Designating Record on Appeal) + APP-004 (Designation of Reporter’s Transcript) — 10-day jurisdictional clock from 4/27 NOA filing per CRC 8.121</td>
+<td>Jeremy</td>
+</tr>
+<tr class="odd">
+<td>Mon 5/11</td>
+<td>Wells (26-CR-002517)</td>
+<td>§ 859b 60-day outer deadline (PX backstop; client OR so § 859b(b) custody track inapplicable)</td>
+<td>calendar carry</td>
+</tr>
+<tr class="even">
+<td>Mon 5/11 10:00 a.m.</td>
+<td>Dillard (CR-25-010297 + 010280 + 011667)</td>
+<td>VTC probation review hearing, Stanislaus Dept 4</td>
+<td>JWN</td>
+</tr>
+<tr class="odd">
+<td>Mon 5/18 9:00 a.m.</td>
+<td>Blackwell (25-CR-007675)</td>
+<td>Hobbs motion hearing, Alameda WMC Oakland Dept 112</td>
+<td>JWN (binder TBD) — <strong>⚠️ 4/30 evening: portal shows 6/9 PTH as next; verify</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Tue 5/5</strong></td>
+<td><strong>Olson (26-CR-003040)</strong></td>
+<td><strong>PTH — Alameda (NEW from 4/30 portfolio crawl)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Tue 5/5</strong></td>
+<td><strong>Hahn (24-CR-013246)</strong></td>
+<td><strong>MTD — brandishing firearm; Alameda (NEW from 4/30 portfolio crawl)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Tue 5/5</strong></td>
+<td><strong>Serrano (25-CR-013271)</strong></td>
+<td><strong>PTH — Alameda (NEW from 4/30 portfolio crawl)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Mon 5/11</strong></td>
+<td><strong>Castanedamorillo (25-CR-014932)</strong></td>
+<td><strong>Disposition — Alameda (NEW from 4/30 portfolio crawl)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Mon 5/11</strong></td>
+<td><strong>Craig — Jarmell (25-CR-007463)</strong></td>
+<td><strong>Disposition — Alameda (NEW from 4/30 portfolio crawl)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Mon 5/11</strong></td>
+<td><strong>Fuentes (25-CR-001474)</strong></td>
+<td><strong>Disposition — Alameda (NEW from 4/30 portfolio crawl)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Mon 5/11</strong></td>
+<td><strong>Iyengar (25-CR-000998)</strong></td>
+<td><strong>PTH — Alameda Dept 702 (NEW — case # resolved 4/30 via Yahoo IMAP mirror)</strong></td>
+<td><strong>JWN</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="hearings-this-week">Hearings this week</h2>
+<ul>
+<li><strong>Thu 5/7 8:30 a.m. — Caldwell, Justin (CR-23-010065)</strong> — Stanislaus Dept 2, Law &amp; Motion (Romero motion). Reset from 4/14 vacatur. Third-strike filing on docket; bail $150K surety posted. On admin@ calendar (event id <code>mg973uqunttq0m9ftfeja6e0bk</code>). 4/14 outcome remains unconfirmed and feeds into 5/7 prep posture. JWN to argue. <strong>Confirmed via Stanislaus portal 4/30.</strong></li>
+<li><strong>Tue 5/5 — Olson (26-CR-003040)</strong> — Alameda PTH. Surfaced via 4/30 portfolio crawl (was not previously in matter wiki). Page intake/discovery/strategy placeholders only.</li>
+<li><strong>Tue 5/5 — Hahn (24-CR-013246)</strong> — Alameda MTD (brandishing firearm). Surfaced via 4/30 portfolio crawl. Same posture.</li>
+<li><strong>Tue 5/5 — Serrano (25-CR-013271)</strong> — Alameda PTH. Surfaced via 4/30 portfolio crawl. Same posture.</li>
+</ul>
+<p><em>(Mon 5/4, Wed 5/6, Fri 5/8 still empty on admin@ Calendar. The three Tuesday 5/5 Alameda events surfaced via the 4/30 portfolio crawl — they are NOT yet on admin@ Calendar; needs calendaring action.)</em></p>
+<h2 id="todays-automation-deliveries">Today’s automation deliveries</h2>
+<ul>
+<li><strong>Skills published (2):</strong> <code>portal-status-sweep</code> v0.2 (slower pacing rules; Tyler IDP human-verification gate workaround; cookie-clear procedure) and <code>attorney-portfolio-crawl</code> v0.1 (NEW — full-portfolio audit pattern; sister to portal-status-sweep). Both backed up to <code>wiki/memory-backup/</code> and <code>wiki/runbooks/skill-snapshots/</code>.</li>
+<li><strong>Scheduled tasks created (2):</strong> <code>weekly-portal-sweep</code> (Mondays 02:00 Madrid — runs portal-status-sweep skill weekly) and <code>monthly-portfolio-crawl</code> (first Sunday of each month 02:30 Madrid — runs attorney-portfolio-crawl skill monthly).</li>
+<li><strong>Portal sweeps logged (4 attempts → 2 successes):</strong> Stanislaus smoke-test (5 matters surveyed live); Alameda final attempt (4) succeeded after three blocked starts (VPN false-positive; Chrome MCP regression; Tyler classifier-block via child task). Outputs at <code>~/Cowork/triage/portal-sweep-2026-04-30*.md</code>.</li>
+<li><strong>Alameda 50-case attorney-portfolio crawl:</strong> 49/50 cases extracted (Gupta sealed). 14 hearings within 30 days surfaced. Output at <code>~/Cowork/triage/alameda-50-case-crawl-2026-04-30.md</code>.</li>
+<li><strong>Cost analysis published:</strong> <code>~/Documents/Products/Noonan-Voice-Agent/marketing/cost-savings-analysis-2026-04-30.md</code> — sales collateral positioning Sam at $30-45/mo vs incumbent ~$500-700/mo (90-94% cost reduction; $5,500-8,000/yr savings). Incumbent vendor identified as <code>no.reply@yourmessageservice.com</code> (account 3911, white-label, ~134 calls/mo).</li>
+<li><strong>Memory consolidation pass:</strong> retired 4 stale memory files; slimmed Weaver + Hunter project memories; added portal-sweep skill memory. MEMORY.md restructured to 78 active entries / 123 lines; backups synced.</li>
+<li><strong>Matter wiki refresh</strong> (parallel sister task, completing alongside this brief): 5 Stanislaus pages updated (Valenzuela, Bratcher, Dillard, Brown, Caldwell); 9 existing Alameda pages updated (Iyengar, Rodrigues, Navarro, MejiaMejia, Weaver, Ruiz Salas, Garcia — Enrique, Blackwell, Wells); <strong>12 NEW Alameda matter pages created</strong> (Olson, Hahn, Serrano, Castanedamorillo, Craig — Jarmell, Fuentes, Fink, Howard, Garcia — Christina, Guerratiffe, Madrigalreyes, Bernal, Sharma; Sharma defendant in custody as of 4/20). Estimated active-matter total now ~37-40 (up from 25 at the 4/29 regen).</li>
+</ul>
+<h2 id="filings-motions-in-flight">Filings / Motions in flight</h2>
+<p><strong>Blackwell — § 1054.1 deficiency notice to DDA Sjoberg (25-CR-007675).</strong> <strong>SENT CA 4/28 16:06 PT</strong> from <code>admin@noonanlawoffices.com</code> to <code>jason.sjoberg@acgov.org</code>, cc <code>jason.quinn@acgov.org</code>, <code>alcoda@acgov.org</code>, <code>noonanlaw33@yahoo.com</code> — Gmail thread <code>19dd6478b3b37917</code>. The first send went without the PDF attachment; corrected resend at 16:28 PT (thread <code>19dd65ae8a3916d0</code>) included the 4-pp signed letter. Letter anchors at the 1/29/26 ECHOJ outbound, surfaces the 21-day pre-production gap, lists every § 1054.1 category still outstanding (police report, PC declaration, charging doc, defendant statements, witness statements, BWC, in-car/dashcam, audio interviews, lab/forensic + chain-of-custody, RAP, Singh search-warrant affidavit + return + inventory, prelim transcript if held, 911/CAD logs, Brady/Giglio), quotes Sjoberg back to himself (“Try 653645. I am still figuring out the file sharing over NICE…”) to foreclose any “supplemental production” framing, and demands written response by <strong>Tuesday 5/5/26 at 5:00 p.m. PT</strong>. SHA-256 verification (3/3, 3/25, 4/17 transmissions all bit-identical 69-file content) carried through. § 1054.5 motion is the contingency if Sjoberg defaults; 9 court days of runway remain to the 5/18 Hobbs hearing.</p>
+<p><strong>Blackwell — Hobbs motion + Westlaw companion (25-CR-007675) — JWN-REVIEW PACKAGE; not filed.</strong> Hearing remains 5/18/26 9:00 a.m. Dept 112. The 18-pp combined motion + 162-pp Bates-stamped Westlaw research bundle remain at <code>01-Pleadings-and-Motions/file-ready-FINAL-20260423/</code>. JWN review still pending; once signed, file via Tyler eFileCA Alameda → WMC-Oakland envelope.</p>
+<p><strong>Mercer — Abbott retention email (CR-19-004683 / CR-19-004770 / 1416636).</strong> <strong>STAGED in admin@ Drafts CA 4/28 07:18 PT</strong> — Gmail thread <code>19dd474b4d49570c</code> (To: <code>noonanlaw33@yahoo.com</code>, subject: “Mercer SVP — Dr. Abbott retention letter ready for your approval (6/15 hearing)”). <strong>Awaits JWN approval before Jeremy sends from Yahoo.</strong> Defense psych evaluator is the long pole — 4–8 week turnaround at $15K–$25K — with 46 days to the 6/15 hearing the retention has to start this week. Abbott first; Donaldson backup; Fisher third.</p>
+<p><strong>Mercer — firm Notice of Appearance / Substitution (CR-19-004683).</strong> Drafting on deck. Mother Tammi Marlene Tatum filed pro per Motion to Dismiss (14 pp + 9 exhibits A–I); she has no authority to represent under W&amp;I § 6602.5 (right to counsel attaches at probable-cause stage). Firm must formally appear and re-file. Lead theory: <strong>WIC § 6601 facial failure</strong> — State substituted statistical SVRAT score for the two § 6601(c)–(d) qualified-clinician evaluations. Secondary: § 6600(b) qualifying-offense analysis (PC 311.11(a) is NOT independently qualifying). Tertiary: pretextual-transfer due-process challenge (2/3/26 transfer 16 days before scheduled 2/19/26 release). Records-pulls plan and Westlaw research in flight. Westlaw lead authorities: <em>People v. Reilly</em> (2010) 195 Cal.App.4th 1437; <em>Ronje</em>; <em>Medina</em>; KeyCite refresh.</p>
+<p><strong>Wolfe — reciprocal expert discovery to DDA Maszara (C2214071).</strong> <strong>NEW open obligation since 4/27 brief.</strong> DDA Maia Maszara emailed the court (Hon. Cynthia A. Sevely, Dept 34) and counsel CA 4/28 16:44 PT (Gmail thread <code>19dd6b2d233e9d99</code>) stipulating to the continuance and asking again for “all materials related to this expert’s testimony at preliminary hearing, including CV, any reports, and materials relied upon.” Defense response is owed before the new 6/10/26 PX. Dinh’s CV, FACL Case 20250204 expert review (24 pp, Kelly-Frye anchor), and any underlying materials are the package; 4/8/26 report is the principal report. Wade Sellers PI packet (six work-products) is separately discoverable to the extent relied on.</p>
+<p><strong>Wells — Motion to Continue PX (26-CR-002517) — STATUS UNCONFIRMED.</strong> Filed + served 4/22 via Tyler eFileCA Alameda (envelope 23461283); PX was set 4/27 9:00 a.m. Dept 705 (Hon. Nixon). <strong>No 4/27 outcome captured in dispatch diary, hot.md, or admin@ inbound.</strong> § 859b 60-day outer deadline 5/11/26. Defendant OR since 3/12/26 — § 1050(e)/§ 859b(b) custody track inapplicable. Action this week: docket pull (VPN Proxy Master past Alameda firewall) or Christine confirmation.</p>
+<p><strong>Mitchell — Pacheco file-transfer / association paperwork (CR-22-002886).</strong> <strong>Pacheco (Chuck) is trial counsel of record going forward; family pays upfront.</strong> Withdrawal-of-counsel pivot REVERSED 4/27 15:39 PT after the 11:28 a.m. emergency-withdrawal directive. Same-day file-ready packet (Motion to Withdraw + CR-003 + Motion for Continuance + two standalone Proposed Orders + combined POS = 22 pp combined binder) preserved at <code>01-Pleadings-and-Motions/file-ready-withdrawal-20260427/</code> for audit; <strong>NOT filed</strong>. Open: associating-vs-substituting paperwork for Pacheco; physical/digital file transfer to Pacheco’s office; whether Noonan stays AOR or signs off via MC-050. Mr. Mitchell’s father stated 4/28 he wants to sue Darryl Billups — separate civil/ethics-complaint track to coordinate with Christine.</p>
+<p><strong>Brown — Romero motion (CR-25-003661).</strong> Drafting continues. Cliff Brown’s factual review now <strong>23 days</strong> out (started 4/7); hearing 7/14 Dept 5. Decision still unanswered: ping Cliff one more time vs. file without sign-off. Cliff has continued sending AA-meeting verifications (most recent 4/29) — engagement is healthy on the substance side; the motion-review loop is the only stale item.</p>
+<p><strong>Weaver — PC 1001.36 mental-health diversion motion (25-CR-005354).</strong> Finalized 4/9; filing + service status <strong>remains unconfirmed for 21 days</strong>. Carry-forward red flag.</p>
+<p><strong>Rodgers — Dismissal motion (CR-2024-001537) (Officer Solis dishonesty grounds).</strong> Originally drafted ~3/28; <strong>~32 days overdue</strong>; decision still pending on whether to file now or wait for Pitchess ruling 5/26.</p>
+<p><strong>Rafanello — Shegerian handoff package (Rafanello v. ConvergeOne).</strong> No new firm-side movement since v4 transmittal-ready posture on 4/26. Five gates still open (JWN review v4, conflicts waiver Cathy/Christine, Westlaw v2 refresh, Gmail drafts regen against v4 once JWN-final, full KeyCite pass by credentialed user). <strong>Noonan role HANDOFF ONLY</strong> — Shegerian drives the demand letter on their timeline.</p>
+<p><strong>Adamski (Pemberton v. AMMCG, 24CV-0581 SLO; B354168 Court of Appeal Div 6) — personal pro per, surfaced for firm-week visibility.</strong> NOA FILED CA <strong>4/27/26 6:16 p.m. PT</strong> via Odyssey eFileCA SLO trial-court (envelope 23512785, $0 fee waiver, Joshua Pemberton TN-address POS-050 replaced Seth Williams). Two clerk-side acknowledgments hit intake@ on 4/28: SLO Superior (Linda McGuirk) acknowledged “NEW APPEAL” on the trial-court file (thread <code>19dd63afb5960473</code>); Court of Appeal Div 6 (Jasmin Duran) issued a <strong>Notice of Default in B354168</strong> (thread <code>19dd63abac0e2021</code>) — content not yet reviewed; could be a designation-of-record technicality or a more substantive cure-by-date. Worth a 5-minute read this AM to make sure it doesn’t pull APP-003/APP-004 forward of 5/7. <strong>Excluded from any JWN handoff</strong> — pure personal track.</p>
+<h2 id="case-updates-by-case">Case updates (by case)</h2>
+<p><strong>Mitchell, DeAndre (CR-22-002886 — Stanislaus Dept 9)</strong> — <strong>Indicated-Sentence motion DENIED 4/27 8:30 a.m. Dept 9</strong> (Christine 10:58 a.m. PT: “Lost the motion.”). JWN argued from v2 binder (93 pp navy+gold) + 1-page podium shooter. Withdrawal pivot ordered 11:28 a.m. PT, same-day packet built, then <strong>REVERSED 15:39 PT — Pacheco does trial; family pays upfront.</strong> Withdrawal binder preserved at <code>01-Pleadings-and-Motions/file-ready-withdrawal-20260427/</code> for audit; not filed. Trial proceeds 6/15/26 9:00 a.m. Dept 9 with Pacheco at counsel table. Standalone proposed orders thread (Brandie Mesa, Dept 9 clerk II) closed cleanly 4/27: orders received and printed; criminal does not issue tentatives, hearing went straight to open court. <strong>Family civil-track signal</strong> (4/28 iMessage from Christine: “He’s to happy. He wants to sue Darry / Darryl”) — coordinate with the family-pattern question (multiple Billups clients with potential professional-discipline complaints). Bar complaint against Billups still <strong>15 days unconfirmed</strong> (carry-forward).</p>
+<p><strong>Wolfe, John (C2214071 — Santa Clara HOJ Dept 34, Hon. Cynthia A. Sevely)</strong> — <strong>Continuance effectively granted by stipulation; new PX date 6/10/26 confirmed for the People; subject to Court adoption per Hon. Sevely’s directive (“appear to address” 4/29 8:30 a.m.).</strong> DDA Maszara emailed 4/24 17:04 PT formally not opposing the continuance (Dinh-in-Korea grounds), and 4/28 16:44 PT (after the 4/27 court directive that counsel appear) confirmed June 10 works for the People. Court is <strong>Dept 34, Hon. Cynthia A. Sevely</strong> — note this differs from the wiki’s Dept 33; either reassignment occurred or earlier intel was off. <strong>Reciprocal-discovery demand on Dinh expert is now formal and unmet</strong> — Maszara: “I’m asking again for all materials related to this expert’s testimony at preliminary hearing, including CV, any reports, and materials relied upon.” Pre-6/10 deliverable. Dinh returns 5/5; first available 5/6 PM US time. v7 PX prep binder (268 pp, 40.6 MB) shipped 4/23; not used 4/29 because the appearance was a date-picker. <strong>LawPay payment received 4/29 16:27 PT — Rebecca Woulfe $5,125.00</strong> (account holder, ZIP 94545 — east-bay address). Apply to trust per firm protocol; nature of charge (PX appearance, trial retainer toward 6/10, or continuing-services credit) is JWN/Christine to characterize for invoicing.</p>
+<p><strong>Wells, January (26-CR-002517 — Alameda ECHOJ Dublin Dept 705, Hon. Thomas Nixon)</strong> — <strong>4/27 PX outcome remains unconfirmed.</strong> Continuance was filed + served 4/22 via Tyler eFileCA Alameda. § 859b 60-day outer deadline 5/11/26. Defendant OR; no custody-track urgency. Christine has not relayed the ruling via iMessage and no inbound from court or DA has been observed in admin@ since 4/27. <strong>This is the single biggest information gap of the cycle</strong> — clearing it determines whether 5/11 is a hearing day or a no-op deadline. Action: Christine or docket pull this morning.</p>
+<p><strong>Blackwell, Reginal (25-CR-007675 — Alameda WMC Oakland Dept 112)</strong> — <strong>§ 1054.1 deficiency notice to DDA Sjoberg SENT CA 4/28 16:06 PT.</strong> Cleanly went out from <code>admin@noonanlawoffices.com</code> per the prepared transmittal email. Initial 16:06 send missed the PDF attachment; resend at 16:28 PT carried the signed 4-pp letter. Christine prior-approval thread (<code>19dd00e77516fe9c</code> from 4/27 17:57 UTC) closed the JWN-approval gate. Response window: <strong>5/5/26 5:00 p.m. PT</strong>. Hobbs motion still in JWN review queue at <code>01-Pleadings-and-Motions/file-ready-FINAL-20260423/</code> — 17 court days to the 5/18 hearing. § 1054.5 motion is the contingency if Sjoberg defaults; 9 court days of runway from 5/5 to 5/18.</p>
+<p><strong>Mercer, Nicholas Andrew aka Tatum (CR-19-004683 + CR-19-004770 + 1416636 — Stanislaus Dept 3, Hon. Jeff Mangar — NEW MATTER 4/24, unblocked 4/28)</strong> — Identifiers, court, and hearing all confirmed. Folder renamed <code>Mercer, Nicholas Andrew - CR-19-004683/</code> and standardized to the canonical 11-folder schema. Defendant DOB 5/23/1987; CDC BX7582 (also AP6242 prior); SID/CII AZ3716484; PID 11711219. Underlying convictions 5/6/2024 — PC 243.4(a) (sexual battery — qualifying SVP offense per § 6600(b)) + PC 311.11(a) (child pornography — NOT independently qualifying). Mother Tammi Marlene Tatum filed pro per MTD (14 pp + 9 exhibits A–I); procedurally invalid under § 6602.5. Hearing <strong>6/15/26 Dept 3</strong>. <strong>Defense theory: WIC § 6601 facial failure</strong> — State substituted statistical SVRAT score for the two § 6601(c)–(d) qualified-clinician evaluations. Pre-appearance posture; firm Notice of Appearance + firm-name Motion to Dismiss to supersede mother’s filing. <strong>Records-pulls plan and Abbott retention letter both queued; retention email staged in admin@ Drafts awaiting JWN approval.</strong></p>
+<p><strong>Adamski (Pemberton v. AMMCG — 24CV-0581 SLO; B354168 Div 6) — personal pro per, firm-week visibility only.</strong> NOA FILED 4/27 18:16 PT via Odyssey eFileCA SLO. Two acknowledgments hit intake@ 4/28: SLO Superior NEW APPEAL letter (Linda McGuirk) and Court of Appeal Div 6 Notice of Default in B354168 (Jasmin Duran). Notice of Default needs a 5-minute read this morning to confirm it doesn’t move APP-003/APP-004 forward of the 10-day 5/7 statutory deadline.</p>
+<p><strong>Rafanello v. ConvergeOne</strong> — No new firm-side movement since the v4 package on 4/26. Five gates still open. Noonan role remains HANDOFF ONLY.</p>
+<p><strong>Brown, Clifford (CR-25-003661 — Stanislaus Dept 5)</strong> — Romero motion drafting continues; Cliff’s factual review now 23 days out. Cliff continues sending AA-meeting verifications (most recent 4/29) — substantive engagement healthy; only the motion-review loop is stale. Hearing 7/14.</p>
+<p><strong>Caldwell (CR-23-010065 — Stanislaus Dept 2)</strong> — Romero hearing <strong>5/7 8:30 a.m. Dept 2</strong> (reset from 4/14 vacatur). Bail $150K surety posted; third-strike filing on docket. 4/14 outcome still unconfirmed.</p>
+<p><strong>Dillard, John (CR-25-010297 + 010280 + 011667 — Stanislaus)</strong> — Disposition entered 3/24/26 via VTC. VTC probation-review hearing <strong>5/11 10:00 a.m. Dept 4</strong>. No new activity.</p>
+<p><strong>Hunter, Artis (24FE14307 — Sacramento)</strong> — <strong>4/9 prelim outcome still unknown — 21 days now.</strong> Case-analysis memo OVERDUE 26 days. Life-sentence case. Court Clerk Minute Order Request drafted 4/17. Tyler portal still shows wrong attorney for the account. Carry-forward red flag.</p>
+<p><strong>Weaver, Jeremiah (25-CR-005354 — Alameda)</strong> — PC 1001.36 motion finalized 4/9; filing/service still unconfirmed (21 days). Dual-case-number consolidation question still open. Carry-forward red flag.</p>
+<p><strong>Mejiamejia, Yurandi (CR-22-003198 — Alameda)</strong> — Writ of prohibition pending; jury trial 5/26. No new activity.</p>
+<p><strong>Rodgers, Sarah (CR-2024-001537 — Alameda)</strong> — Pitchess in-camera 4/14 outcome still unconfirmed. Pitchess ruling due 5/26. Dismissal motion file-vs-wait question unresolved (32 days).</p>
+<p><strong>Rodrigues, Derek (CR-21-004636 — Alameda Dept 711)</strong> — Recusal hearing 5/22 (on calendar). No new activity.</p>
+<p><strong>Navarro, Isaiah (CR-24-001345 — Alameda Dept 711)</strong> — Recusal hearing 5/22 (on calendar). No new activity.</p>
+<p><strong>Ruiz Salas, Raul (CR-23-009962 — Alameda Dept 115)</strong> — 4/10 hearing outcome still pending follow-up with Steve Alpers. Carry-forward.</p>
+<p><strong>Garcia, Enrique (25-CR-010940 — Alameda Dept 712)</strong> — Diversion SHELVED 4/20 (DOJ deferred-judgment track). No new activity.</p>
+<p><strong>Bratcher, Justin (CR-25-008518 — Stanislaus Dept 7)</strong> — Discovery; PI Wade Sellers engaged. No new activity since prior briefs.</p>
+<p><strong>Acosta, Mariano (CR-24-012393 — Alameda)</strong> — Firm withdrew 2/6/26. Civil claim deadline 6/9. Carry-forward.</p>
+<p><strong>Rodriguez, Jhonathan (CR-24-010846 — Alameda)</strong> — Closed 12/5/25 (PC 1385 dismissal). Civil claim deadline 6/9. Monitor for re-file.</p>
+<p><strong>Ikem, Leonard (RV68293 — Alameda Traffic)</strong> — Application to Vacate filed 12/4/25; outcome unconfirmed.</p>
+<p><strong>Iyengar, Adarsh (25-CR-000998 — Alameda Dept 702)</strong> — <strong>RESOLVED CA 4/30 evening via Yahoo IMAP mirror search.</strong> Earlier clerk@slo-law Chrome MCP hunt was blocked; Yahoo mirror surfaced the case # and assignment. <strong>Next hearing 5/11/26 PTH (T+11 days), Dept 702.</strong> Canonical wiki page at <code>wiki/matters/Iyengar - 25-CR-000998.md</code>. Old <code>wiki/matters/Iyengar - DUI.md</code> superseded but retained as historical breadcrumb.</p>
+<p><strong>Valenzuela, Angel (CR-24-015682 — Stanislaus Dept 7)</strong> — PX held 11/21/25; offer received. No new activity.</p>
+<p><strong>Adler, Randi</strong> — Closed 11/17/25 (misdemeanor, no jail). No activity.</p>
+<p><strong>Noonan Family Trust</strong> — Pre-filing; new attorney engaged March 2026; mother’s competency diagnosis. 4/27–4/29 file activity is administrative archive (2024 1099s, Kahana HOA statements, JBC Construction Tahoe expense, MPS Maui statement) — Bin/archive folder built out.</p>
+<p><strong>Billingsley, Kyle (25CV-0668) — NEW ON DISK, NOT YET INDEXED IN WIKI.</strong> Active case folder appeared on disk (canonical 11-folder schema; OCR’d full-text of “Plaintiffs’ Opposition to Demurrer and MTS, Silva v. Billingsley, 25CV-0668, 4/15 FILED-OPPOSING”) and intake@ received the same opposition pleading 4/29 21:29 UTC (thread <code>19ddb2714b0505ba</code>). Looks like a civil/cross-defense matter. <strong>Wiki page does not yet exist</strong> — <code>wiki/matters/Billingsley...</code> missing. Action: build out matter page (court, dept, party alignment, hearing date) when next-session bandwidth allows.</p>
+<h2 id="overnight-since-last-brief-imessage-email">Overnight / since last brief (iMessage + email)</h2>
+<ul>
+<li><strong>CA 4/27 ~10:58 PT — Christine: “Lost the motion.”</strong> Mitchell Indicated Sentence DENIED at 4/27 8:30 a.m. Dept 9 hearing.</li>
+<li><strong>CA 4/27 ~11:00 PT — Brandie Mesa thread closes</strong> (“I have received and printed for the Court 😊”). Criminal does not issue tentatives; matter heard in open court.</li>
+<li><strong>CA 4/27 11:28 PT — Christine directs emergency withdrawal on Mitchell</strong> (financial hardship to family). Same-day file-ready packet built (22 pp combined; Motion to Withdraw + CR-003 + Motion for Continuance + 2 standalone Proposed Orders + combined POS).</li>
+<li><strong>CA 4/27 15:39 PT — Christine REVERSES.</strong> “We are not withdrawing. Chuck will be doing trial. But my dad has to pay for it upfront.” Pacheco trial counsel; withdrawal packet shelved.</li>
+<li><strong>CA 4/27 17:24 PT — Wolfe v7 PX binder Drive link sent</strong> to Christine via iMessage (same packet shipped 4/23). Christine: “Thank you.”</li>
+<li><strong>CA 4/27 17:57 PT — Sjoberg deficiency-notice approval thread to JWN+Christine</strong> (thread <code>19dd00e77516fe9c</code>).</li>
+<li><strong>CA 4/27 18:16 PT — Adamski NOA FILED</strong> via Odyssey eFileCA SLO (envelope 23512785). Personal pro per.</li>
+<li><strong>CA 4/27 evening — Court of Appeal Div 6 Notice of Default in B354168</strong> (Jasmin Duran). Forwarded to intake@ 4/28 22:34 UTC (thread <code>19dd63abac0e2021</code>).</li>
+<li><strong>CA 4/27 evening — SLO Superior NEW APPEAL acknowledgment</strong> (Linda McGuirk). Forwarded to intake@ 4/28 22:34 UTC (thread <code>19dd63afb5960473</code>).</li>
+<li><strong>CA 4/28 07:18 PT — Mercer Abbott retention email staged</strong> in admin@ Drafts (thread <code>19dd474b4d49570c</code>). Awaiting JWN approval.</li>
+<li><strong>CA 4/28 ~mid-day — Yahoo IMAP read-only mirror deployed.</strong> Apple Mail wired to noonanlaw33@yahoo.com via “Other Mail Account” / manual IMAP. Initial 12-mo sync 14:40–15:06 PT: 21 folders, 4,350+ msgs, 1.6 GB.</li>
+<li><strong>CA 4/28 — Mercer 33-pp intake PDF retrieved</strong> via Yahoo IMAP mirror; saved to <code>Active/Mercer, Nicholas Andrew - CR-19-004683/00-Intake-Materials/1423_001.pdf</code> (2.3 MB). Identifiers, court, cases, hearing all confirmed.</li>
+<li><strong>CA 4/28 16:06 PT — Blackwell § 1054.1 deficiency notice SENT</strong> (thread <code>19dd6478b3b37917</code>); resend with PDF attached at 16:28 PT (thread <code>19dd65ae8a3916d0</code>).</li>
+<li><strong>CA 4/28 17:04 PT — Maszara on Wolfe</strong> (thread <code>19dd6b2d233e9d99</code>): formally not opposing continuance (“hardship portion of trial”); asks Court whether to appear 4/29 a.m. or set date by minute order. 4/27 a.m. — Hon. Sevely directed counsel to “appear to address.”</li>
+<li><strong>CA 4/28 evening — Christine: He wants to sue Darryl</strong> (Mitchell family civil-track signal).</li>
+<li><strong>CA 4/29 8:30 a.m. — Wolfe PX (date-picker only).</strong> Continuance effectively in; Maszara confirms 6/10 works for the People; Court adoption pending.</li>
+<li><strong>CA 4/29 09:21 a.m. PT — DDA Maszara reciprocal expert-discovery demand</strong> (“CV, any reports, and materials relied upon”).</li>
+<li><strong>CA 4/29 09:24 a.m. PT — DSS Lisa Wiggins ultimatum (Orlando)</strong>: signed Notice of Defense withdrawal due <strong>4/30 2:00 p.m. PT</strong> or hearing request goes in (thread <code>19ddb6f5c66728fe</code>). Non-active-index matter; surfaced for owner clarity.</li>
+<li><strong>CA 4/29 09:27 a.m. PT — LawPay receipt: Rebecca Woulfe $5,125.00</strong> to John W. Noonan, Professional Corporation (Wolfe family).</li>
+<li><strong>CA 4/29 09:39 a.m. PT — State Bar Zamora response submitted</strong> by MPBF (Joan Soares) to CNA’s Megan Daly (CNA file LWA57602; thread <code>19dda21a43274b29</code>). Response itself is the attachment; we have Daly’s 4/29 5:23 a.m. CT request.</li>
+<li><strong>CA 4/29 09:51 a.m. PT — Valdovinos DMV hearing held.</strong> DMV’s Giovanny Haros sent discovery + new notice of hearing same day (thread <code>19dda1086dc17a3e</code>). Routine continuance touchpoint.</li>
+<li><strong>CA 4/29 evening (T-1 to today) — Iterative Christine/Jeremy iMessage exchange on Workspace credentials.</strong> Headlines: (1) Christine confirmed 4/29 PT that Kellie reset firm passwords AGAIN 4/24–4/27 weekend (after the 4/26 rotation Jeremy installed); (2) Christine’s directive: <strong>“You [Jeremy] are going to be the administrator going forward.”</strong> Kellie’s role going forward is “coordination only,” limited to file opening; no admin access; (3) Christine confirmed Yahoo password was reset within the 12-hour window before the conversation; she affirmed Kellie does not have the Yahoo verification-code email; (4) Christine asked Jeremy to “be patient” and reach out to Kellie to set the new admin baseline; (5) admin@ password Christine shared in the exchange should be rotated again at next admin@ session opportunity (it’s been transmitted in plaintext over an unencrypted channel).</li>
+<li><strong>CA 4/29 — Active matter index regenerated</strong> (<code>Active/INDEX.md</code>). 25 active matters; canonical 11-folder schema migrated; per-matter <code>09-Notes-and-Strategy/MIGRATION-2026-04-29.md</code> audit logs in place. Schema spec at <code>wiki/runbooks/active-folder-schema-proposal-20260428.md</code>; file naming convention spec at <code>wiki/runbooks/file-naming-convention.md</code>.</li>
+<li><strong>CA 4/29 14:29 PT — Cliff Brown forwarded MMER AA verification.</strong> Continuing engagement on the substance side.</li>
+</ul>
+<h2 id="red-flags">Red flags</h2>
+<ul>
+<li>🔴🔴 <strong>Blackwell 5/18 Hobbs hearing date in question (4/30 evening).</strong> Wiki + brief both anchor 5/18 9 a.m. Dept 112; Alameda public Odyssey CalendarSearch shows next hearing is <strong>6/9 PTH at WMC-Oakland</strong>. Hobbs may have been continued or vacated. Verify with WMC-Oakland clerk before relying on either date — drives all § 1054.5 timing and Hobbs binder finalization urgency.</li>
+<li>🔴🔴 <strong>Valenzuela (CR-24-015682) 4/30 8:30 a.m. VOP hearing — outcome unknown.</strong> Stanislaus Dept 9. Confirm whether the firm calendared/appeared and pull docket for outcome. Case is post-conviction VOP (corrected this session — was previously tracked as pre-prelim).</li>
+<li>🔴🔴 <strong>State Bar disciplinary matter — Zamora v. Noonan (CNA file LWA57602).</strong> Externally-handled by MPBF (Peter Weber, Joan Soares); insurance carrier CNA (Megan Daly). Response submitted to CNA 4/29; underlying allegation is a 2/18/26 email (per LPLNewClaims thread). <strong>Not currently tracked in the firm’s wiki or hot.md.</strong> Surfacing now for visibility and to make sure JWN’s communications about it are routed through the firm-side system going forward (file at <code>wiki/matters/firm-disciplinary/Zamora-v-Noonan.md</code> or equivalent). No same-day action; persistent firm-risk track.</li>
+<li>🔴 <strong>Wells 4/27 PX outcome unknown — 3 days now.</strong> § 859b 5/11 backstop. Must clear today.</li>
+<li>🔴 <strong>Workspace credential remediation — Kellie reset firm passwords AGAIN 4/24–4/27 weekend</strong> (after Jeremy’s 4/26 rotation), prompting another rotation 4/29. Christine has confirmed by iMessage that Kellie’s role going forward is “coordination only” with no admin privileges. Action: (a) once today, run a 12-priority audit recheck against the 4/28 forensic plan (sign-in cookie reset on email@ + kells@; suspend kells@; revoke Media News Group OAuth; revoke 4/22 iOS T-Mobile OAuth; verify (925) 876-8402; rotate recovery email off Yahoo; enroll email@ in 2SV with hardware key/passkey; verify discovery@ alias routing; verify jwn@ name fields; export audit logs); (b) treat the admin@ password Christine shared in iMessage as compromised and rotate again at next admin@ session.</li>
+<li>🔴 <strong>DSS Orlando — 4/30 2:00 p.m. PT signed-withdrawal-of-Notice-of-Defense deadline.</strong> Otherwise hearing request goes in. Non-active-index matter — JWN/Christine to confirm signature path.</li>
+<li>🔴 <strong>Maszara reciprocal-discovery demand on Dinh expert (Wolfe).</strong> Open since 4/29; CV + reports + materials relied upon owed before 6/10 PX.</li>
+<li>🔴 <strong>Mitchell Pacheco file-transfer + sub paperwork.</strong> With trial 6/15 Dept 9, the ministerial work needs to move this week.</li>
+<li>🔴 <strong>Mitchell Billups bar complaint</strong> — originally due 4/15. Status STILL unverified (now 15 days overdue). The 4/28 “we want to sue Darryl” signal makes this hotter, not colder. Carry-forward malpractice-risk red flag.</li>
+<li>🔴 <strong>Hunter case-analysis memo</strong> — OVERDUE 26 days. 4/9 prelim outcome STILL unknown (21 days). Life-sentence case. Carry-forward.</li>
+<li>🔴 <strong>Weaver PC 1001.36 motion</strong> — finalized 4/9; filing/service unconfirmed for 21 days.</li>
+<li>🔴 <strong>Rodgers dismissal motion</strong> — 32 days past target; file-now-vs-wait-for-Pitchess decision still pending.</li>
+<li>🔴 <strong>Brown Cliff factual review</strong> — 23 days no response on the motion review (substantive engagement healthy via AA-verification cadence).</li>
+<li>🔴 <strong>Caldwell Romero (4/14) outcome</strong> — still unconfirmed; affects 5/7 reset prep.</li>
+<li>🔴 <strong>Rodgers Pitchess in-camera (4/14) outcome</strong> — still unconfirmed.</li>
+<li>🔴 <strong>Ruiz hearing outcome (4/10)</strong> — pending Steve Alpers follow-up.</li>
+<li>🟡 <strong>Adamski Court of Appeal Notice of Default in B354168</strong> — needs 5-minute read to confirm it doesn’t move APP-003/APP-004 forward of 5/7. (Personal track but on the firm-week calendar real estate.)</li>
+<li>🟡 <strong>Wolfe court assignment</strong> — wiki shows Dept 33; emails show Dept 34 (Hon. Cynthia A. Sevely). Update wiki on next-session bandwidth.</li>
+<li>🟡 <strong>Billingsley wiki page missing.</strong> New active matter on disk; opposition pleading in intake@; no <code>wiki/matters/Billingsley...</code> yet. Index regen 4/29 didn’t flag it.</li>
+<li>🟡 <strong>Calendar coverage gaps</strong> — admin@ Calendar for the 4/30 → 5/8 window contains only Caldwell 5/7 (the personal item is non-firm). Wells 5/11 § 859b backstop, Dillard 5/11 VTC review, Blackwell 5/18 Hobbs, and Mejiamejia 5/26 trial are NOT calendar events. The firm calendar continues to lag the matter pages and hot.md.</li>
+<li>🟡 <strong>Rafanello supplemental Gmail draft <code>19db74518a2eade4</code></strong> — body still references “transcript pending” / v3.</li>
+<li>🟡 <strong>Rafanello v3 Gmail draft <code>r-3474554514027648478</code></strong> — primary draft still references v2/v3.</li>
+<li>🟡 <strong>Pacheco AOR framing (Mitchell)</strong> — associating vs. substituting still ambiguous; with Pacheco now lead, the question is no longer hypothetical.</li>
+<li>🟡 <strong>Noonan calendar primary TZ</strong> — still Europe/Madrid; manual flip to America/Los_Angeles outstanding. All scheduled-task timestamps (this brief included) continue to display in Madrid TZ until flipped.</li>
+<li>🟡 <strong>4 orphaned Cliffroom calendar events</strong> — Jeremy to manually delete; carry-forward from 4/20.</li>
+</ul>
+<h2 id="billing-ops">Billing / Ops</h2>
+<p><code>~/Documents/Cases/Noonan/Admin/Billing/</code> is still empty — no firm-issued invoices this cycle. <strong>LawPay payment 4/29 — Rebecca Woulfe $5,125.00</strong> to John W. Noonan, Professional Corporation (Wolfe family). Trust-allocation entry to be made; characterization (PX-appearance retainer, trial-prep retainer toward 6/10 PX, or services-rendered credit) is JWN/Christine to call before invoice generation. Christine’s prior 4/24 cadence call ($1,000/week) remains the standing firm understanding.</p>
+<p>Intake routing is healthy — <code>clerk@slo-law.com</code> → <code>intake@noonanlawoffices.com</code> continues to surface forwards (Adamski 4/28; Billingsley opposition 4/29). <strong>Yahoo IMAP read-only mirror at <code>Admin/wiki/yahoo-mirror/tools/yahoo_mirror.py</code></strong> is the breakthrough infrastructure of this cycle — Mercer intake (Gmail-MCP-blind because of <code>download_attachment</code> gap) was retrieved via the mirror’s email-parser path 4/28. App password held in macOS Keychain (service <code>yahoo-imap-mirror</code>); <code>select(readonly=True)</code> + <code>BODY.PEEK[]</code> semantics; launchd 15-min cron. Apple Mail is now Jeremy’s working environment for noonanlaw33@yahoo.com; the IMAP mirror is the silent monitor for context queries.</p>
+<p>ExpressVPN LA-3 continues to be required for CA portals. VPN Proxy Master holds the Alameda County firewall bypass for docket pulls. Tyler eFileCA primary on <code>noonanlaw33@yahoo.com</code> (NOT the Tyler re:SearchCA wrong-attorney account); Odyssey eFileCA SLO is the parallel portal used for the Adamski personal NOA.</p>
+<p><strong>Active matter index regenerated 4/29.</strong> 25 active matters; canonical 11-folder Pattern C schema. Per-matter <code>09-Notes-and-Strategy/MIGRATION-2026-04-29.md</code> audit log. Schema spec at <code>wiki/runbooks/active-folder-schema-proposal-20260428.md</code>; file-naming convention at <code>wiki/runbooks/file-naming-convention.md</code>.</p>
+<p><strong>Workspace remediation (open from 4/28 forensic audit, with 4/27–4/29 deltas)</strong> — see Red flags. Christine confirmed Kellie’s role going forward is “coordination only” with no admin access. Treat the admin@ plaintext password shared via iMessage 4/29 07:39 UTC as compromised; rotate at next admin@ session. The 4/28 12-priority list (sign-in cookie reset email@/kells@; suspend kells@; revoke Media News Group OAuth; revoke 4/22 iOS T-Mobile OAuth; verify (925) 876-8402; rotate recovery email off Yahoo; enroll email@ in 2SV with hardware key/passkey; verify discovery@ alias routing; verify jwn@ name fields; export audit logs) now needs a delta-recheck.</p>
+<p>Scheduled-task inventory (UPDATED 4/30 evening — two new tasks): <code>dispatch-overnight-resume</code> (4:05 Madrid daily), <code>daily-personal-brief</code> (7:55 Madrid daily), <strong>this brief — <code>noonan-firm-brief</code> (Mon+Thu 7:50 Madrid)</strong>, <code>daily-wiki-map-rebuild</code> (7:45 Madrid daily), <code>weekly-memory-review</code> (Sundays 8 PM Madrid), <strong><code>weekly-portal-sweep</code> (Mondays 02:00 Madrid — NEW 4/30, runs portal-status-sweep skill)</strong>, <strong><code>monthly-portfolio-crawl</code> (first Sunday 02:30 Madrid — NEW 4/30, runs attorney-portfolio-crawl skill)</strong>.</p>
+<h2 id="triage-queue-noonan-specific">Triage queue (Noonan-specific)</h2>
+<p>Pulled from <code>~/Documents/wiki/triage/OPEN_QUESTIONS.md</code>. New since 4/27 + carry-forward weight:</p>
+<ol type="1">
+<li><strong>Wells 4/27 PX outcome</strong> — granted, denied, or held? (NEW — clears 5/11 § 859b posture.)</li>
+<li><strong>Mitchell Pacheco — associating counsel only or full sub of AOR?</strong> (NEW priority — Pacheco now lead; ministerial paperwork has to land before 6/15 trial. MC-050 vs. MC-070.)</li>
+<li><strong>Mitchell — coordinate Billups civil/ethics-complaint track</strong> with the family pattern (multiple Billups clients). Mitchell father wants to sue 4/28. (NEW.)</li>
+<li><strong>Dinh expert reciprocal discovery (Wolfe)</strong> — what gets produced and when? CV + 4/8/26 FACL Case 20250204 report + materials relied upon. Pre-6/10 PX. (NEW.)</li>
+<li><strong>Wolfe court assignment Dept 33 vs. Dept 34</strong> — wiki vs. emails disagreement. (NEW administrative.)</li>
+<li><strong>Mercer Abbott retention email</strong> — JWN approval + send. (Carried from 4/27.)</li>
+<li><strong>Blackwell § 1054.1 deficiency notice — Sjoberg response by 5/5 5pm PT.</strong> Build § 1054.5 motion if non-compliance. (Carried.)</li>
+<li><strong>Adamski Notice of Default in B354168</strong> — what’s the cure-by-date? Does it move APP-003/APP-004 forward of 5/7? (NEW personal-track flag with firm-calendar adjacency.)</li>
+<li><strong>State Bar Zamora v. Noonan tracking</strong> — start a <code>wiki/matters/firm-disciplinary/Zamora-v-Noonan.md</code> with the CNA file number, MPBF contacts, response submission date, and any timeline ahead. (NEW.)</li>
+<li><strong>DSS Orlando 4/30 2pm signed-withdrawal deadline</strong> — does JWN have the executed Notice of Defense withdrawal in hand? (NEW.)</li>
+<li><strong>Workspace credential delta-recheck</strong> — has the 4/28 12-priority list been re-audited after Kellie’s 4/24–4/27 weekend rotations? (Carried + escalated.)</li>
+<li><strong>Rotate admin@ password again</strong> — the iMessage-shared plaintext is compromised. (NEW.)</li>
+<li><strong>Migrate noonanlaw33@yahoo.com to Google Workspace</strong> — Yahoo IMAP mirror is now in place; Phase 2 plan in hot.md. (Carried.)</li>
+<li><strong>Rodgers dismissal motion — file now or wait for 5/26 Pitchess?</strong> (Carried, 32 days.)</li>
+<li><strong>Brown Romero — follow up Cliff one more time, or file without his sign-off?</strong> (Carried, 23 days.)</li>
+<li><strong>Weaver PC 1001.36</strong> — was the motion actually filed + served after 4/9 finalization? (Carried, 21 days.)</li>
+<li><strong>Hunter 4/9 prelim outcome</strong> — held to answer / reduced / dismissed / continued? (Carried, 21 days; case-analysis memo 26 days overdue.)</li>
+<li><strong>Caldwell Romero 4/14 ruling</strong> — affects 5/7 reset prep. (Carried.)</li>
+<li><strong>Rodgers Pitchess 4/14 in-camera outcome</strong> — blocks 5/26 posture. (Carried.)</li>
+<li><strong>Mitchell Billups bar complaint</strong> — filed or still outstanding? (Carried, 15 days past deadline.)</li>
+<li><strong>Cowork permission <code>defaultMode</code></strong> — <code>acceptEdits</code> vs. <code>bypassPermissions</code>? (Carried systems item.)</li>
+<li><strong>LawTime spec</strong> — promote audit’s proposed canonical / dictate fresh / confirm parked. (Carried from 4/29 deferral.)</li>
+<li><strong>Billingsley wiki page</strong> — build it out; index regen 4/29 didn’t flag the new active folder. (NEW.)</li>
+<li><strong>Blackwell 5/18 vs. 6/9 hearing-date reconciliation</strong> — call WMC-Oakland clerk to confirm whether Hobbs was continued/vacated or whether the portal is showing a separate downstream PTH. (NEW 4/30 evening.)</li>
+<li><strong>Valenzuela 4/30 VOP hearing outcome</strong> — pull Stanislaus Dept 9 docket; confirm whether the firm appeared. (NEW 4/30 evening.)</li>
+<li><strong>~12 NEW Alameda matters surfaced 4/30</strong> — for each (Olson, Hahn, Serrano, Castanedamorillo, Craig — Jarmell, Fuentes, Fink, Howard, Garcia — Christina, Guerratiffe, Madrigalreyes, Bernal, Sharma): confirm Noonan is attorney-of-record vs. court-appointed-only-on-portal; flesh out intake/discovery/strategy placeholders; calendar the 5/5–5/27 hearings on admin@. (NEW 4/30 evening.)</li>
+<li><strong>Active-matter index regen</strong> — 4/29 INDEX.md says 25; today’s new pages bring effective total to ~37-40. Re-regen INDEX.md to reflect. (NEW 4/30 evening.)</li>
+</ol>
+<p>Say <code>run the queue</code> to walk these via AskUserQuestion popups.</p>
+<h2 id="team-notes">Team notes</h2>
+<p>For when distribution opens to John, Christine, Kellie:</p>
+<ul>
+<li><strong>John (JWN):</strong> Three approval/send gates ready for you this morning. (1) <strong>Mercer Abbott retention email</strong> is staged in admin@ Drafts — 4–8 week turnaround at $15K–$25K means the 6/15 hearing clock starts the day this goes out, so this is the highest-leverage item on your desk. (2) <strong>Wolfe Dinh expert reciprocal discovery</strong> — DDA Maszara (Santa Clara DA’s Office) has now formally re-asked twice for Dinh’s CV, the 4/8/26 FACL Case 20250204 expert review, and underlying materials relied upon. The continuance is in (6/10 confirmed for the People; Court adoption pending) so we have runway, but reciprocal discovery before the new PX is the path of least friction. Christine and Jeremy can package Dinh’s CV + 4/8 report + Wade Sellers PI work-products to the extent relied on. (3) <strong>Blackwell § 1054.1 deficiency notice was SENT 4/28</strong> to DDA Sjoberg per your prior approval; the 5/5 5pm response deadline is the trigger for the § 1054.5 motion contingency — 9 court days of runway to your 5/18 Hobbs hearing. <strong>One civil-track signal worth a note:</strong> Mr. Mitchell’s father told Christine 4/28 he wants to sue Darryl Billups. With multiple Billups-trail clients and the bar-complaint deadline still hanging from 4/15, a coordinated complaint+civil-claims posture would be cleaner than individual one-offs. <strong>And a heads-up on the firm-disciplinary track</strong> — the Zamora v. Noonan State Bar response went out from MPBF to CNA on 4/29; we don’t currently track this matter in the wiki and will fix that this cycle.</li>
+<li><strong>Christine:</strong> Three filings shipped 4/22 (Wolfe, Wells, Mitchell); the Wolfe continuance is in (6/10 PX); the Mitchell motion didn’t, and Pacheco now has the trial; the Wells outcome is the one piece of news we don’t have. If you have the 4/27 Dept 705 ruling, please pop it back. <strong>On the Mitchell handoff to Pacheco</strong> — we need to land the file transfer + the associating-vs-substituting paperwork (MC-050 vs. MC-070) before the 6/15 trial. Your call on whether Noonan stays signed in or signs off. <strong>On Mr. Mitchell’s interest in suing Darryl Billups</strong> — let’s coordinate that with the Billups bar complaint that’s been sitting since 4/15 and any other Billups clients we have. <strong>Sjoberg got the deficiency notice 4/28 — 5/5 5pm is the response deadline.</strong> <strong>Workspace/Yahoo credentials</strong> — your message that Kellie’s role going forward is coordination-only and Jeremy is the admin lands cleanly; Jeremy will rotate admin@ again at his next session because the password we shared by iMessage should be considered compromised, and re-run the 12-priority audit list against this week’s deltas. <strong>Mercer Abbott retention email</strong> is in JWN’s Drafts; the moment he says go, it goes.</li>
+<li><strong>Kellie:</strong> Jeremy is now firm administrator on the Workspace + Yahoo side per Christine’s 4/29 directive. Going forward your access is coordination-only; please don’t reset firm passwords or touch admin settings. On the case side, <strong>the Hunter 24FE14307 4/9 prelim outcome</strong> (Sacramento) and <strong>the Weaver 25-CR-005354 PC 1001.36 filing/service status</strong> (Alameda) are the two information gaps that have been open the longest — closing either one would clear a meaningful red flag.</li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://mrbreadbaby.github.io/command-center/">Practice Wiki Map</a></li>
+<li><a href="https://mrbreadbaby.github.io/command-center/audit.html">System Audit</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/hot.md">Hot Cache</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/Noonan_Practice_Dashboard.md">Practice Dashboard</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/wiki/triage/OPEN_QUESTIONS.md">Triage Queue</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/INDEX.md">Active Matter Index (regen 4/29)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/runbooks/active-folder-schema-proposal-20260428.md">Active Folder Schema Spec</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/runbooks/file-naming-convention.md">File Naming Convention</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/matters/Mercer%20-%20CR-19-004683.md">Mercer wiki page</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/Mercer,%20Nicholas%20Andrew%20-%20CR-19-004683/00-Intake-Materials/1423_001.pdf">Mercer 33-pp intake PDF (Yahoo IMAP retrieval 4/28)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/Blackwell,%20Reginal%20-%2025-CR-007675/02-Discovery/Discovery-Correspondence/2026-04-26_Noonan_PC1054.1_Deficiency_Notice_to_DDA_Sjoberg_DRAFT.pdf">Blackwell § 1054.1 deficiency notice (sent 4/28)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/Blackwell,%20Reginal%20-%2025-CR-007675/01-Pleadings-and-Motions/file-ready-FINAL-20260423/">Blackwell Hobbs JWN-review package</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/Mitchell,%20DeAndre%20-%20CR-22-002886/01-Pleadings-and-Motions/file-ready-withdrawal-20260427/">Mitchell shelved withdrawal packet (4/27, audit only)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/Wolfe,%20John%20-%20C2214071/01-Pleadings-and-Motions/">Wolfe v7 PX prep binder</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Active/Rafanello,%20Catherine%20-%20Rafanello%20v%20Converge/01-Pleadings-and-Motions/Shegerian-Delivery-20260426-v4/">Rafanello v4 Shegerian-Delivery package</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/briefings/2026-04-30.md">This brief file</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/matters/Iyengar%20-%2025-CR-000998.md">Iyengar 25-CR-000998 wiki page (NEW 4/30)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/skills/portal-status-sweep/SKILL.md">portal-status-sweep skill</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/skills/attorney-portfolio-crawl/SKILL.md">attorney-portfolio-crawl skill (NEW 4/30)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Cowork/triage/portal-sweep-2026-04-30.md">Stanislaus 4/30 portal-sweep output</a></li>
+<li><a href="computer:///Users/jeremypemberton/Cowork/triage/portal-sweep-2026-04-30-alameda.md">Alameda 4/30 portal-sweep output (final)</a></li>
+<li><a href="computer:///Users/jeremypemberton/Cowork/triage/alameda-50-case-crawl-2026-04-30.md">Alameda 50-case portfolio crawl output</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Products/Noonan-Voice-Agent/marketing/cost-savings-analysis-2026-04-30.md">Voice-agent cost-savings analysis (NEW 4/30)</a></li>
+</ul>
+</body>
+</html>
