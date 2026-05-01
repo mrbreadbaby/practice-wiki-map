@@ -96,9 +96,40 @@
     overflow:hidden;height:100vh;width:100%;
   }
 
+  /* Firm dashboards nav */
+  .firm-nav{
+    position:fixed;top:0;left:0;right:0;z-index:110;
+    height:30px;
+    background:rgba(13,17,23,0.92);backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    padding:4px 16px;
+    font-size:12.5px;letter-spacing:0.01em;
+    display:flex;gap:4px;align-items:center;flex-wrap:nowrap;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .firm-nav::-webkit-scrollbar{display:none}
+  .firm-nav a{color:var(--text-muted);text-decoration:none;padding:3px 9px;border-radius:4px;white-space:nowrap;font-family:inherit}
+  .firm-nav a:hover{background:rgba(99,102,241,.12);color:var(--text-secondary)}
+  .firm-nav a.current{font-weight:600;color:var(--text-bright);background:rgba(255,255,255,0.05)}
+  html.light .firm-nav{background:rgba(248,250,252,0.94);border-bottom-color:rgba(0,0,0,0.08)}
+  html.light .firm-nav a{color:#64748b}
+  html.light .firm-nav a:hover{background:rgba(99,102,241,.08);color:#4f46e5}
+  html.light .firm-nav a.current{color:#0f172a;background:rgba(0,0,0,0.04)}
+
+  /* Read-only banner */
+  .ro-banner{
+    position:fixed;top:30px;left:0;right:0;z-index:99;
+    height:24px;line-height:24px;
+    text-align:center;font-size:11.5px;letter-spacing:0.02em;
+    background:rgba(217,119,6,0.12);color:#fcd34d;
+    border-bottom:1px solid rgba(217,119,6,0.2);
+    pointer-events:none;
+  }
+  html.light .ro-banner{background:rgba(217,119,6,0.08);color:#92400e;border-bottom-color:rgba(217,119,6,0.18)}
+
   /* ===== TOP BAR ===== */
   #top-bar{
-    position:fixed;top:0;left:0;right:0;
+    position:fixed;top:54px;left:0;right:0;
     min-height:56px;
     background:var(--bg-bar);backdrop-filter:blur(20px);
     border-bottom:1px solid var(--border-subtle);
@@ -146,7 +177,7 @@
   #hot-pill-count{margin-left:4px;font-weight:700}
 
   /* ===== HOT BANNER ===== */
-  #hot-banner{position:fixed;top:56px;left:0;right:0;background:var(--hot-banner-bg);backdrop-filter:blur(20px);border-bottom:1px solid rgba(239,68,68,0.15);z-index:95;max-height:300px;overflow:visible;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:1}
+  #hot-banner{display:none !important;position:fixed;top:110px;left:0;right:0;background:var(--hot-banner-bg);backdrop-filter:blur(20px);border-bottom:1px solid rgba(239,68,68,0.15);z-index:95;max-height:300px;overflow:visible;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:1}
   #hot-banner.collapsed{max-height:0;opacity:0;pointer-events:none;overflow:hidden}
   .hb-inner{padding:12px 16px 14px;max-height:280px;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .hb-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -235,7 +266,7 @@
   .hot-ring{animation:ringSpin 4s linear infinite}
 
   /* ===== CALENDAR ===== */
-  #cal-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #cal-view{display:none;position:fixed;top:110px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #cal-view.active{display:block}
   .cal-inner{max-width:1000px;margin:0 auto;padding:20px 20px 80px;padding-top:var(--cal-top-pad,20px)}
   .cal-mh{font-size:20px;font-weight:700;color:var(--text-heading);margin-bottom:16px;letter-spacing:-.5px}
@@ -268,7 +299,7 @@
   .tl-b{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:4px;flex-shrink:0;align-self:center}
 
   /* ===== MOBILE / CARDS ===== */
-  #cards-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #cards-view{display:none;position:fixed;top:110px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #cards-view.active{display:block}
   .mob-inner{max-width:600px;margin:0 auto;padding:16px 16px 80px;padding-top:var(--cards-top-pad,16px)}
   .mob-sec{margin-bottom:24px}
@@ -295,7 +326,7 @@
   .mob-c-viewfull:active{background:rgba(99,102,241,.3)}
 
   /* ===== PIPELINE VIEW ===== */
-  #pipeline-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #pipeline-view{display:none;position:fixed;top:110px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #pipeline-view.active{display:block}
   .pipe-inner{padding:16px 16px 80px;padding-top:var(--pipe-top-pad,16px)}
   .pipe-lane{margin-bottom:20px;background:var(--surface-dim);border:1px solid var(--surface-mid);border-radius:12px;overflow:hidden}
@@ -333,7 +364,7 @@
   }
 
   /* ===== ADMIN VIEW ===== */
-  #admin-view{display:none;position:fixed;top:56px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #admin-view{display:none;position:fixed;top:110px;left:0;right:0;bottom:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #admin-view.active{display:block}
   .admin-inner{padding:16px 16px 80px;padding-top:var(--admin-top-pad,16px)}
   .admin-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -557,9 +588,18 @@
 
 <body>
 
+<nav class="firm-nav">
+  <a href="./">← Back to Noonan Law Dashboards</a>
+  <a href="./firm-brief-2026-04-30.html">Brief</a>
+  <a href="./firm-system-audit.html">System Audit</a>
+  <a href="./firm-architecture-diagram.html">Architecture</a>
+  <a class="current" href="./firm-wiki-map.html">Wiki Map</a>
+</nav>
+<div class="ro-banner">Read-only view — edits are not saved.</div>
+
 <div id="top-bar">
   <h1>Noonan Law — Wiki Map</h1>
-  <span class="sub">Schema v2.2 · April 17, 2026</span>
+  <span class="sub" id="last-updated">Last updated: 2026-05-01</span>
   <div class="view-toggles">
     <button class="view-btn active" data-view="graph" onclick="switchView('graph')">Graph</button>
     <button class="view-btn" data-view="calendar" onclick="switchView('calendar')">Calendar</button>
@@ -637,8 +677,10 @@
 
 <script>
 // ============================================================
-// DATA — Schema v2.2, April 16, 2026
+// DATA
 // ============================================================
+// Feature flags for the firm view
+const featureFlag = { overdueBanner: false, persistEdits: false };
 
 const TC = {
   matter:'#60a5fa', contact:'#c084fc', court:'#34d399',
@@ -1151,32 +1193,6 @@ const nodes = [
     }
   },
   {
-    "id": "adamski",
-    "label": "Adamski / Pemberton",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Post-Conviction",
-    "status": "current",
-    "hasPage": true,
-    "hot": true,
-    "detail": {
-      "id": "adamski",
-      "label": "Adamski / Pemberton",
-      "type": "matter",
-      "matter_status": "Open",
-      "matter_stage": "Post-Conviction",
-      "status": "NOA jurisdictional filing was Mon 4/27 \u2014 Odyssey eFileCA trial-court. Filing-status confirmation pending.",
-      "hasPage": true,
-      "hot": true,
-      "detail": {
-        "title": "Adamski \u2014 Pemberton v AMMCG \u2014 24CV-0581 (pro per)",
-        "summary": "Jeremy's personal pro-per appeal (SLO Superior). **Jurisdictional deadline TODAY Mon 4/27** \u2014 CCP \u00a7 12a extends Saturday 4/25 forward to next business day, NOT backward. **v2 packet (4/24-dated, JC Form POS-050, no cutoffs)** is file-ready at Cases/ProPer/Pemberton-v-AMMCG/Appeal-2026/01-Notice-of-Appeal/file-ready-20260424/. v1 (4/23 packet) preserved at ../file-ready-20260423/. **Filing channel: Odyssey eFileCA trial-court** (NOT TrueFiling \u2014 appellate only).",
-        "caseNo": "24CV-0581",
-        "nextHearing": "4/27/26 \u2014 NOA FILING DEADLINE TODAY (jurisdictional) via Odyssey eFileCA"
-      }
-    }
-  },
-  {
     "id": "adler",
     "label": "Adler",
     "type": "matter",
@@ -1452,20 +1468,6 @@ const nodes = [
       "summary": "Recusal/dismissal; reply to AG writ in progress; hearing 5/22/26 9am Dept 711 (22 days); civil claim deadline 6/9/26 (40 days).",
       "caseNo": "CR-24-001345",
       "nextHearing": "5/22/26 \u2014 9am Dept 711"
-    }
-  },
-  {
-    "id": "noonan-trust",
-    "label": "Noonan Trust",
-    "type": "matter",
-    "matter_status": "Open",
-    "matter_stage": "Intake",
-    "status": "current",
-    "hasPage": true,
-    "hot": false,
-    "detail": {
-      "title": "Noonan Family Trust",
-      "summary": "PRE-FILING/intake only (locked); mother's competency diagnosis pending; new conservative outside attorney engaged March 2026; properties at issue (Maui, Tahoe, Livermore)."
     }
   },
   {
@@ -2098,11 +2100,6 @@ const links = [
   },
   {
     "source": "noonan-christine",
-    "target": "noonan-trust",
-    "label": "client"
-  },
-  {
-    "source": "noonan-christine",
     "target": "rafanello",
     "label": "sister of client"
   },
@@ -2393,11 +2390,6 @@ const links = [
   },
   {
     "source": "noonan-john",
-    "target": "adamski",
-    "label": "self-rep (pro per)"
-  },
-  {
-    "source": "noonan-john",
     "target": "mercer",
     "label": "AOR (intake 4/24)"
   },
@@ -2424,11 +2416,6 @@ const hotItems = {
   "wells": {
     "urgency": "overdue",
     "text": "PX 4/27 Dept 705 Nixon ECHOJ Dublin \u2014 outcome unconfirmed (2 days). Continuance motion FILED + SERVED 4/22 CA via Tyler eFileCA Alameda (DDAs Shukla + Basurto). \u00a7 859b 60-day outer deadline 2026-05-11 (11 days). Confirm ruling + JWN coverage.",
-    "date": "2026-04-27"
-  },
-  "adamski": {
-    "urgency": "overdue",
-    "text": "NOA jurisdictional filing was Mon 4/27 \u2014 Odyssey eFileCA trial-court. v2 packet (4/24-dated, JC Form POS-050, no cutoffs) at Cases/ProPer/Pemberton-v-AMMCG/Appeal-2026/01-Notice-of-Appeal/file-ready-20260424/. Filing-status confirmation pending.",
     "date": "2026-04-27"
   },
   "wolfe": {
@@ -2524,20 +2511,6 @@ const calEvents = [
     "text": "§ 1054.1 deficiency notice SENT 23:30 by Jeremy from admin@ to DDA Sjoberg (5/5 response deadline)",
     "nodeId": "blackwell",
     "urgency": "overdue"
-  },
-  {
-    "date": "2026-04-28",
-    "label": "Adamski",
-    "text": "Court of Appeal opened B354168 (2d DCA Div 6); Notice of Default re $775 fee — cure by 5/13",
-    "nodeId": "adamski",
-    "urgency": "overdue"
-  },
-  {
-    "date": "2026-05-13",
-    "label": "Adamski",
-    "text": "Notice of Default cure deadline — send FW-003 to Eva McClintock CoA, CRC 8.26(b)(1) (13 days)",
-    "nodeId": "adamski",
-    "urgency": "upcoming"
   },
   {
     "date": "2026-03-27",
@@ -2736,13 +2709,6 @@ const calEvents = [
     "urgency": "overdue"
   },
   {
-    "date": "2026-04-23",
-    "label": "Adamski",
-    "text": "NOA packet relocated to canonical Appeal-2026/01-Notice-of-Appeal/file-ready-20260423/",
-    "nodeId": "adamski",
-    "urgency": "overdue"
-  },
-  {
     "date": "2026-04-24",
     "label": "System",
     "text": "Pre-reset consolidation; wiki-map rebuild",
@@ -2754,13 +2720,6 @@ const calEvents = [
     "label": "Mitchell",
     "text": "Brandie Mesa clerk correction (4/24 \u2192 4/25): separated [Proposed] Orders per CRC 2.111",
     "nodeId": "mitchell",
-    "urgency": "overdue"
-  },
-  {
-    "date": "2026-04-24",
-    "label": "Adamski",
-    "text": "v2 NOA packet built (JC Form POS-050, no cutoffs) at file-ready-20260424/; v1 4/23 preserved",
-    "nodeId": "adamski",
     "urgency": "overdue"
   },
   {
@@ -2803,13 +2762,6 @@ const calEvents = [
     "label": "Wells",
     "text": "Preliminary Examination \u2014 Dept 705 ECHOJ Dublin Hon. Nixon (continuance filed; ruling pending \u2014 outcome unconfirmed)",
     "nodeId": "wells",
-    "urgency": "overdue"
-  },
-  {
-    "date": "2026-04-27",
-    "label": "Adamski",
-    "text": "NOA jurisdictional filing day \u2014 Odyssey eFileCA trial-court (v2 packet 4/24-dated; filing-status confirmation pending)",
-    "nodeId": "adamski",
     "urgency": "overdue"
   },
   {
@@ -3007,6 +2959,13 @@ function updateContentPadding(){
 // HOT BANNER
 // ============================================================
 function buildHotBanner(){
+  // DORMANT in firm view: data is currently inaccurate and reads as noise.
+  // Re-enable later by setting featureFlag.overdueBanner = true.
+  if(!featureFlag.overdueBanner){
+    const banner=document.getElementById('hot-banner'); if(banner) banner.style.display='none';
+    const pill=document.getElementById('hot-pill'); if(pill) pill.style.display='none';
+    return;
+  }
   const g=document.getElementById('hb-grid');
   const ord={overdue:0,today:1,upcoming:2};
   const sorted=Object.entries(hotItems).map(([id,h])=>({id,...h,node:nodes.find(n=>n.id===id)})).filter(h=>h.node).sort((a,b)=>ord[a.urgency]-ord[b.urgency]);
@@ -3568,68 +3527,22 @@ async function adminSave(){
     }
   });
 
-  // Push to GitHub — token loaded at runtime via prompt or pre-set
-  try {
-    const token=window._ghToken||prompt('GitHub token (from .github-token):');
-    if(!token){showToast('Save cancelled — no token','error');btn.textContent='Save Changes';btn.disabled=false;return}
-    window._ghToken=token;
-    // Get current SHA
-    const shaResp=await fetch('https://api.github.com/repos/mrbreadbaby/practice-wiki-map/contents/index.html',{
-      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}
-    });
-    const shaData=await shaResp.json();
-    const sha=shaData.sha;
-
-    // Serialize updated nodes back into the HTML source
-    // Find the script containing nodes definition and replace with current state
-    const fullHtml=document.documentElement.outerHTML;
-    // Regex to find and replace the nodes array in the source
-    const nodesJson=JSON.stringify(nodes.map(n=>{
-      const o={id:n.id,label:n.label,type:n.type};
-      if(n.subtype) o.subtype=n.subtype;
-      if(n.role) o.role=n.role;
-      if(n.level) o.level=n.level;
-      o.matter_status=n.matter_status||'';
-      o.matter_stage=n.matter_stage||'';
-      o.status=n.status||'current';
-      o.hasPage=!!n.hasPage;
-      o.hot=n.hot||false;
-      if(n._adminNote) o.admin_notes=n._adminNote;
-      if(n.detail) o.detail=n.detail;
-      return o;
-    }),null,2);
-    // Replace the nodes array in source (between "const nodes = [" and the matching "];\n")
-    const nodesStart=fullHtml.indexOf('const nodes = [');
-    const nodesSearchFrom=nodesStart+'const nodes = ['.length;
-    // Find the closing ]; by counting bracket depth
-    let depth=1,i=nodesSearchFrom;
-    while(depth>0 && i<fullHtml.length){
-      if(fullHtml[i]==='[') depth++;
-      if(fullHtml[i]===']') depth--;
-      i++;
-    }
-    const nodesEnd=i;
-    const updatedHtml=fullHtml.substring(0,nodesStart)+'const nodes = '+nodesJson+';'+fullHtml.substring(nodesEnd);
-    const b64=btoa(unescape(encodeURIComponent('<!DOCTYPE html>\n'+updatedHtml)));
-
-    const pushResp=await fetch('https://api.github.com/repos/mrbreadbaby/practice-wiki-map/contents/index.html',{
-      method:'PUT',
-      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify({message:'Admin: update matter data',content:b64,sha:sha,committer:{name:'Jeremy Pemberton',email:'jerwalter@gmail.com'}})
-    });
-
-    if(pushResp.ok){
-      adminEdits={};
-      showToast('Saved & pushed to GitHub','success');
-      buildAdmin();
-      buildHotBanner();
-    } else {
-      const err=await pushResp.json();
-      showToast('Push failed: '+(err.message||'unknown'),'error');
-    }
-  } catch(e){
-    showToast('Error: '+e.message,'error');
+  // Read-only firm view: edits applied above update in-memory state so the
+  // diagram visually responds, but the GitHub Contents API write path is
+  // stubbed. Re-enable by setting featureFlag.persistEdits = true and
+  // restoring the fetch() PATCH/PUT block (preserved in the personal
+  // dashboard at /dashboards/wiki-map.html).
+  if(!featureFlag.persistEdits){
+    console.log('write disabled in firm view — edits applied to in-memory state only');
+    adminEdits={};
+    showToast('Saved to draft (read-only mode)','success');
+    buildAdmin();
+    buildHotBanner();
+    btn.textContent='Save Changes';btn.disabled=adminChangeCount()===0;
+    return;
   }
+
+  // (Original GitHub Contents API push path removed for the firm view.)
   btn.textContent='Save Changes';btn.disabled=adminChangeCount()===0;
 }
 
