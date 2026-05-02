@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e17">
+<title>Personal Brief — May 2, 2026</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg-panel: #0f1421;
+    --bg-code: #141b2d;
+    --text: #e2e8f0;
+    --text-heading: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-detail: #cbd5e1;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.14);
+    --overdue: #ef4444;
+    --today: #f59e0b;
+    --upcoming: #3b82f6;
+    --matter: #60a5fa;
+    --court: #34d399;
+    --quote-border: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+    min-height: 100vh;
+  }
+  nav.topnav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10,14,23,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  nav.topnav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+  }
+  nav.topnav a:hover, nav.topnav a.active {
+    color: var(--accent-hover);
+    background: rgba(96,165,250,0.08);
+  }
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 18px 80px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 28px 0 12px;
+  }
+  h1 { font-size: 28px; margin-top: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+  h2 { font-size: 22px; margin-top: 32px; }
+  h3 { font-size: 18px; margin-top: 24px; color: var(--accent); }
+  h4 { font-size: 16px; color: var(--text-detail); }
+  p { margin: 10px 0; }
+  a { color: var(--accent); text-decoration: none; word-break: break-word; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+  strong { color: var(--text-heading); font-weight: 600; }
+  em { color: var(--text-detail); }
+  ul, ol { padding-left: 24px; margin: 10px 0; }
+  li { margin: 4px 0; }
+  li.task { list-style: none; margin-left: -20px; }
+  li.task input[type=checkbox] { margin-right: 8px; transform: scale(1.05); }
+  code {
+    background: var(--bg-code);
+    color: #fbbf24;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    border: 1px solid var(--border);
+  }
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    overflow-x: auto;
+    margin: 14px 0;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+    border: 0;
+    color: var(--text);
+    font-size: 13px;
+  }
+  blockquote {
+    border-left: 3px solid var(--quote-border);
+    padding: 4px 14px;
+    margin: 14px 0;
+    color: var(--text-detail);
+    background: rgba(96,165,250,0.04);
+    border-radius: 0 6px 6px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+    white-space: normal;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--text-heading);
+    font-weight: 600;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border-strong);
+  }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
+  footer {
+    margin-top: 40px;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  footer a { color: var(--text-muted); }
+  footer a:hover { color: var(--accent-hover); }
+
+  /* mobile tweaks */
+  @media (max-width: 640px) {
+    body { font-size: 15px; }
+    main { padding: 16px 14px 80px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; }
+    h3 { font-size: 17px; }
+    table { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="https://mrbreadbaby.github.io/command-center/brief.html" class="active">Personal</a>
+  <a href="https://mrbreadbaby.github.io/command-center/firm/firm-brief-latest.html">Firm</a>
+  <a href="https://mrbreadbaby.github.io/command-center/">Dashboard</a>
+  <a href="https://mrbreadbaby.github.io/command-center/">Wiki Map</a>
+</nav>
+<main>
+<h1>Personal Brief — Saturday, May 2, 2026</h1>
+<h2>Today</h2>
+<ul>
+<li><strong>Weekend mode — no firm hearings, no scheduled class.</strong> Spain Mother&#x27;s Day observance is Sun 5/3 (observance only — not a public-services closure). Working time today is uncommitted.</li>
+<li><strong>Adamski Appeal — Notice of Default cure window has now slipped past the self-imposed close (4/29–5/1).</strong> No movement logged 4/30 or 5/1. <strong>Hard cure deadline is Wed 5/13 (11 days).</strong> Recommended Option 1 is still: ship the existing 9/18/2024 trial-court FW-003 fee-waiver order to Eva McClintock, Clerk of the Court of Appeal, with a half-page CRC 8.26(b)(1) cover letter via TrueFiling. $0, pro per. The longer this drifts the smaller the buffer when APP-003/004 prep eats next week. → <a href="computer:///Users/jeremypemberton/Documents/Cases/ProPer/Pemberton-v-AMMCG/Appeal-2026/">Adamski Appeal-2026 folder</a></li>
+<li><strong>Adamski APP-003 + APP-004 — due Thu 5/7 (5 days).</strong> 10-day jurisdictional clock from the 4/27 NOA filing per CRC 8.121. Goal remains TrueFiling-ready by Mon 5/4 for a 3-day buffer. Saturday + Sunday is the cleanest two-day block to draft these without firm-side interruptions. → <a href="computer:///Users/jeremypemberton/Documents/Cases/ProPer/Pemberton-v-AMMCG/Appeal-2026/">Adamski Appeal-2026 folder</a></li>
+</ul>
+<h2>Noonan (pointer)</h2>
+<p>No firm brief today — Mon/Thu cadence (next firm brief Mon 5/4). Carry-forward state from the 4/30 firm brief: (1) <strong>Blackwell § 1054.1 deficiency notice</strong> to DDA Sjoberg — admin@ Drafts staged, manual PDF attach before send, <strong>5/5 5:00 PM PT response deadline</strong> (3 days); (2) <strong>Mercer Abbott retention email</strong> — admin@ Drafts staged, defense psych evaluator long pole, 6/15 SVP hearing. Voice agent <strong>v3.20a shipped live overnight</strong> at commit <code>7a0f9c1</code>; Session 28 closed 04:08 UTC; Session 29 LawTime brand work also shipped. Next-session priorities: live-test v3.20a on (925) 905-8212 with three patterns. Two overnight Sam calls came in (4971113 51s 3-turn; &quot;unknown&quot; 34s) — quiet test load. Hot.md is the operational queue ahead of Monday. → <a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/hot.md">Hot Cache</a> · <a href="https://mrbreadbaby.github.io/command-center/firm/firm-brief-2026-04-30.html">4/30 firm brief</a></p>
+<h2>Personal tracks</h2>
+<ul>
+<li><strong>Adamski Appeal</strong> — NOD cure self-imposed window closed 5/1 with no movement; 5/13 hard deadline (11 days). APP-003 + APP-004 due <strong>Thu 5/7</strong> (5 days). Two-day weekend block opens today. See Today.</li>
+<li><strong>Med cycle</strong> — next monthly window May 12–14; 10 days away. No action.</li>
+<li><strong>FBI fingerprint resubmission</strong> — outstanding ~15 days carry-forward. Not blocking firm work; surface for resolution after Adamski APP-003/004 clears next week.</li>
+<li><strong>USPS CA006175800US</strong> — delivered 4/22; SKILL.md source still asks future runs to check (uploads/SKILL.md is read-only here, can&#x27;t be edited from this run). <strong>Re-flagging in completion summary</strong> — scheduled-task source needs the line removed manually. No action this run.</li>
+<li><strong>Other personal</strong> — nothing ad hoc overnight.</li>
+</ul>
+<h2>Overnight (iMessage &amp; messages)</h2>
+<ul>
+<li><strong>chat.db mirror — STILL BROKEN (3 days stale).</strong> File last modified <strong>2026-04-29 05:50 UTC</strong> — cron has not refreshed for two consecutive nights past the prior outage. Same failure mode flagged 4/30 + 5/1. <strong>iMessage scan deferred for the third cycle in a row.</strong> Family / Christine-personal / friends-side activity not visible. This is past &quot;transient&quot; and into &quot;structural&quot; — needs a one-time fix on the cron path before any personal items get missed indefinitely.</li>
+<li><strong>Yahoo IMAP mirror (firm-bound mail) — quiet overnight.</strong> Mostly inbound noise: ADP hourly time-management pings to Christine (×3); LawPay statement; Instagram stories digest; Essex / Carlyle / Hidden Lake / Fred Leeds / Six Star apartment-search responses (Christine&#x27;s ongoing search, not Jeremy); a State Bar DocuSign for the <strong>Law Corp annual-renewal late-penalty notice</strong> (Reg # 4844) sent to JWN — JWN-personal compliance, but worth flagging because if missed it has firm consequences; Lisa Wiggins @ DSS sent a Microsoft Purview &quot;protected message&quot; subject &quot;Orlando&quot; — Orlando matter-related, JWN-bound; Camille Ching DA-Alameda Dept 712 PTH offer-sheet email for Tue 5/5 (firm hearing track — see hot.md). Madison Jenn (LegalEASE Referral #293225 / IN0034209) re-pinged for status — firm follow-up, not personal.</li>
+<li><strong>No actionable personal threads</strong> through visible channels overnight.</li>
+</ul>
+<h2>Inbox</h2>
+<ul>
+<li><strong>No personal-actionable items.</strong> Personal Gmail (<code>jerwalter@gmail.com</code>) is <strong>still not connected</strong> to the Gmail MCP — only <code>admin@noonanlawoffices.com</code> is. The Yahoo mirror surfaces firm-bound mail only. Carry-forward action: connect personal Gmail once Adamski APP-003/004 ships next week.</li>
+</ul>
+<h2>Triage queue (top 6)</h2>
+<ol>
+<li><strong>Personal intake email — split firm vs. personal forwards</strong> asked 2026-05-01 by Dispatch. Billingsley landed in the 4/30 firm brief because Jeremy forwards both firm-bound and personal items to <code>intake@noonanlawoffices.com</code>. Routing problem will recur. Unblocks: intake-skill update + clean firm-vs-personal handling.</li>
+<li><strong>Personal <code>/dashboards/</code> D3 pages have the same cdnjs-blocked bug</strong> asked 2026-05-01 by Dispatch. <code>cdnjs.cloudflare.com</code> silently blocked in Cliffroom Chrome; both <code>dashboards/wiki-map.html</code> and <code>dashboards/architecture-diagram.html</code> affected. 5-line fix per file mirroring the firm-side jsdelivr+fallback. Unblocks: personal dashboards rendering at all in your Chrome.</li>
+<li><strong><code>/firm/</code> auth model when full case-background pages ship</strong> asked 2026-05-01 by Dispatch. Architecture decision needed before scoping the case-background pipeline; Cloudflare Pages / Vercel-NextAuth / private host / defer.</li>
+<li><strong>LawTime spec — surface findings + draft inline for Jeremy review (DEFERRED)</strong> asked 2026-04-29 by Dispatch. Audit + canonical proposal both surfaced 4/29; pick A (promote) / B (dictate fresh) / C (confirm parked). Unblocks: dashboard refresh execution + Track B reconciliation.</li>
+<li><strong>Migrate JWN&#x27;s noonanlaw33@yahoo.com to Google Workspace</strong> asked 2026-04-26. Yahoo IMAP mirror live since 4/28 (Phase 1). Phase 2 — <code>noonan@noonanlawoffices.com</code> shared mailbox + Yahoo forwarding — still unanswered. Unblocks: ending the &quot;ping JWN/Christine and wait&quot; loop.</li>
+<li><strong>Cowork permission <code>defaultMode</code> — flip from <code>acceptEdits</code> to <code>bypassPermissions</code>?</strong> asked 2026-04-16. Deny list robust enough now. Unblocks: stop chasing rotating MCP UUIDs in allow lists.</li>
+</ol>
+<p>Footer: <code>run the queue</code> to pop these via AskUserQuestion. (Queue currently holds 69 unanswered items.)</p>
+<h2>Red flags</h2>
+<ul>
+<li><strong>chat.db mirror broken — 3 days running.</strong> 72 hrs stale on a &quot;daily&quot; cron. Last good capture 4/29 05:50 UTC. iMessage scan deferred three cycles in a row. Structural cron-path failure; needs a one-time intervention.</li>
+<li><strong>Adamski NOD cure self-imposed window slid past 5/1.</strong> Hard deadline 5/13 (11 days). No movement 4/30 or 5/1. Combined with APP-003/004 due 5/7, you&#x27;re walking into a no-margin week without the easier item cleared.</li>
+<li><strong>Mitchell Billups bar complaint</strong> — original 4/15 deadline now <strong>17 days past</strong>. 4/17 triage answered &quot;file TODAY.&quot; No confirmation in any subsequent thread or brief; weekly memory review re-asked 4/26; still unanswered in OPEN_QUESTIONS. Malpractice-risk ethics obligation; needs closure.</li>
+<li><strong>FBI fingerprint resubmission</strong> — outstanding ~15 days, still no concrete next step.</li>
+<li><strong>Personal Gmail (<code>jerwalter@gmail.com</code>) still not connected to the Gmail MCP</strong> — carry-forward from 4/27. Means no surfacing of personal-inbox items in any daily brief.</li>
+<li><strong>Law Corp Annual Renewal late-penalty notice (Reg # 4844)</strong> — DocuSign sent to JWN 5/1 from Cal Bar Division of Regulation. JWN-personal compliance but firm-impacting if it slides. Flag for next firm sync — not Jeremy&#x27;s to sign, but worth confirming JWN saw it.</li>
+<li><strong>USPS line stale in scheduled-task SKILL.md</strong> — package delivered 4/22; SKILL still asks future runs to check. Surfaced 5/1; uploads path read-only from this run. Needs manual edit on the canonical SKILL source.</li>
+</ul>
+<h2>Live dashboards</h2>
+<ul>
+<li><a href="https://mrbreadbaby.github.io/command-center/">Practice Wiki Map</a></li>
+<li><a href="https://mrbreadbaby.github.io/command-center/audit.html">System Audit</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/wiki/hot.md">Hot Cache</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/wiki/triage/OPEN_QUESTIONS.md">Triage Queue</a></li>
+<li><a href="computer:///Users/jeremypemberton/Documents/Cases/Noonan/Admin/Noonan_Practice_Dashboard.md">Noonan Practice Dashboard</a></li>
+<li><a href="https://mrbreadbaby.github.io/command-center/firm/firm-brief-2026-04-30.html">4/30 Firm Brief</a> (most recent firm brief — next Mon 5/4)</li>
+<li><a href="computer:///Users/jeremypemberton/Documents/wiki/briefings/2026-05-01.md">5/1 Personal Brief</a></li>
+</ul>
+<h2>Notes</h2>
+<ul>
+<li><strong>Calendar pull.</strong> Firm <code>admin@noonanlawoffices.com</code> calendar — no events 5/2–5/3. Consultations calendar — no events 5/2–5/3 (Sam books Mon–Fri only). Spain holidays calendar — Mother&#x27;s Day <strong>observance</strong> Sun 5/3 (services not closed). Personal <code>jerwalter@gmail.com</code> Google Calendar <strong>still not added</strong> as a secondary source — Spanish class / family / personal commitments don&#x27;t surface here (carry-forward from 4/27 brief).</li>
+<li><strong>Saturday + Sunday is a clean two-day block.</strong> No firm hearings, no scheduled commitments visible, voice-agent v3.20a shipped overnight so no live engineering pressure. Strongest opportunity in 7+ days to push Adamski end-to-end without context switching.</li>
+</ul>
+<footer>
+  Generated 2026-05-02 08:05 CEST / 2026-05-01 23:05 PT &middot;
+  <a href="computer:///sessions/nice-sharp-meitner/mnt/Documents/wiki/briefings/2026-05-02.md">Open source .md in iCloud</a>
+  &middot; <a href="https://mrbreadbaby.github.io/command-center/">Dashboard</a>
+</footer>
+</main>
+</body>
+</html>
