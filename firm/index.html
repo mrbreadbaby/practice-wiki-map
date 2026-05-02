@@ -153,6 +153,48 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; ba
 .flag-badge.warn { background: #fff1d6; color: #8b6510; }
 .flag-badge.good { background: #d8e9d0; color: #4a6b3c; }
 .flag-badge.info { background: #e2ecfa; color: #1f5fbf; }
+.flag-badge::before {
+  content: ''; display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; margin-right: .4em; vertical-align: 1px;
+}
+.flag-badge.crit::before { background: #b8443f; }
+.flag-badge.warn::before { background: #c08a3a; }
+.flag-badge.good::before { background: #2f7a4a; }
+.flag-badge.info::before { background: #1f5fbf; }
+
+/* Critical deadline banner — full-width red strip above nav (Grok pressure-test fix) */
+.critical-bar {
+  background: linear-gradient(90deg, #b8443f 0%, #a23834 100%);
+  color: #fff;
+  margin: 0 -1.25rem;
+  padding: 0;
+  border-bottom: 2px solid #8a2e2a;
+}
+.critical-bar-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: .65em 1.25rem;
+  display: flex; align-items: center; gap: .85rem; flex-wrap: wrap;
+  font-size: .92em; line-height: 1.4;
+}
+.critical-tag {
+  background: #fff; color: #b8443f;
+  padding: .2em .65em; border-radius: 3px;
+  font-weight: 700; font-size: .78em; letter-spacing: .07em;
+  flex-shrink: 0;
+}
+.critical-msg { flex: 1 1 auto; }
+.critical-msg strong { color: #fff; }
+.critical-meta { display: block; font-size: .82em; opacity: .85; margin-top: .15em; }
+.critical-jump {
+  color: #fff; text-decoration: none; padding: .25em .7em;
+  border: 1px solid rgba(255,255,255,.5); border-radius: 4px;
+  font-size: .82em; font-weight: 600; flex-shrink: 0;
+}
+.critical-jump:hover { background: rgba(255,255,255,.15); text-decoration: none; }
+@media (max-width: 700px) {
+  .critical-bar { margin: 0 -.85rem; }
+  .critical-bar-inner { padding: .55em .85rem; }
+}
 
 /* Inline-expandable matter row (Q2) */
 .matter-row { background: #fff; border: 1px solid #e1ddd0; border-radius: 6px; margin: .35rem 0; overflow: hidden; }
