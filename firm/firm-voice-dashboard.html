@@ -157,6 +157,50 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; ba
 .flag-badge.good { background: #d8e9d0; color: #4a6b3c; }
 .flag-badge.info { background: #e2ecfa; color: #1f5fbf; }
 
+/* Inline-expandable matter row (Q2) */
+.matter-row { background: #fff; border: 1px solid #e1ddd0; border-radius: 6px; margin: .35rem 0; overflow: hidden; }
+.matter-row .mr-head {
+  display: grid;
+  grid-template-columns: 220px 1fr 130px 70px 200px 90px 28px;
+  gap: .65rem; align-items: center;
+  padding: .55em .75em; cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: background .12s ease;
+}
+.matter-row .mr-head:hover { background: #f5f4ee; }
+.matter-row .mr-name { font-size: .92em; }
+.matter-row .mr-court, .matter-row .mr-stage { font-size: .82em; color: #555; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.matter-row .mr-batches { font-family: ui-monospace,SFMono-Regular,Menlo,monospace; font-size: .9em; text-align: center; color: #1f3a5f; font-weight: 600; }
+.matter-row .mr-checklist-mini { display: flex; gap: 1px; }
+.matter-row .mr-state { text-align: right; }
+.matter-row .mr-toggle { font-size: 1.05em; color: #888; text-align: center; }
+.matter-row .mr-detail { padding: .85em 1em; background: #fafaf7; border-top: 1px solid #e8e3d2; font-size: .9em; }
+.matter-row .mr-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .35em 1.2em; }
+.matter-row .mr-detail-grid > div { color: #444; }
+.matter-row .mr-detail-grid strong { color: #1f3a5f; font-weight: 600; }
+
+table.batch-mini { width: 100%; border-collapse: collapse; font-size: .82em; }
+table.batch-mini th { text-align: left; background: #e8edf4; color: #1f3a5f; font-weight: 600; padding: .35em .55em; border: 1px solid #d4d4d4; }
+table.batch-mini td { padding: .3em .55em; border: 1px solid #e1ddd0; vertical-align: top; }
+table.batch-mini tr:nth-child(even) td { background: #fdfcf6; }
+
+/* Mini heatmap chips for matter rows */
+.hm-mini { display: inline-block; width: 11px; height: 11px; border-radius: 2px; border: 1px solid rgba(0,0,0,.06); vertical-align: middle; }
+.hm-mini.O { background: #fce0db; }
+.hm-mini.P { background: #fff4d4; }
+.hm-mini.R { background: #d8e9d0; }
+.hm-mini.NA { background: #f0f0ed; }
+.hm-mini.Q { background: #ecedf2; }
+
+.hm-row-detail { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; max-width: 360px; }
+.hm-row-detail .hm-mini { width: 100%; height: 18px; border-radius: 3px; }
+
+@media (max-width: 900px) {
+  .matter-row .mr-head { grid-template-columns: 1fr 80px 200px 28px; gap: .35rem; }
+  .matter-row .mr-court, .matter-row .mr-stage { display: none; }
+  .matter-row .mr-detail-grid { grid-template-columns: 1fr; }
+}
+
 footer { font-size: .85rem; color: #777; margin-top: 2.5rem; border-top: 1px solid #d8d8d8; padding-top: 1em; }
 
 @media (max-width: 700px) {
@@ -175,6 +219,7 @@ footer { font-size: .85rem; color: #777; margin-top: 2.5rem; border-top: 1px sol
   <a href="./firm-brief-latest.html">Brief</a>
   <a href="./firm-wiki-map.html">Wiki Map</a>
   <a href="./firm-voice-dashboard.html" class="current">Voice</a>
+  <a href="./firm-discovery-dashboard.html">Discovery</a>
   <a href="./firm-system-audit.html">System Audit</a>
   <a href="./firm-architecture-diagram.html">Architecture</a>
 </nav>
@@ -184,7 +229,7 @@ footer { font-size: .85rem; color: #777; margin-top: 2.5rem; border-top: 1px sol
     <h1 style="margin-bottom:0;">Voice — Sam (voice agent) call log</h1>
     <p class="tagline">Call activity, voicemail queue, and intake capture for <code>voice@noonanlawoffices.com</code> — the firm's after-hours and overflow line.</p>
   </div>
-  <span class="refresh-stamp">Snapshot — <strong>2026-05-02 18:17 UTC</strong> · live data 15 most recent calls (2026-04-29 → 2026-05-02)</span>
+  <span class="refresh-stamp">Snapshot — <strong>2026-05-02 18:33 UTC</strong> · live data 15 most recent calls (2026-04-29 → 2026-05-02)</span>
 </header>
 
 <section class="hero-wrap">
