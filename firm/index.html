@@ -5,90 +5,215 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Noonan Law — Internal Dashboards</title>
 <style>
-  :root { color-scheme: light dark; }
-  * { box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 1.25rem 4rem;
-    line-height: 1.55;
-    color: #1a1a1a;
-    background: #fafaf7;
-  }
-  h1 { font-size: 1.85rem; margin: 1.25rem 0 .25em; border-bottom: 2px solid #1f3a5f; padding-bottom: .3em; color: #1f3a5f; }
-  .tagline { color: #555; font-size: .98rem; margin: .5em 0 1.5rem; }
-  ul.dashboards { list-style: none; padding: 0; margin: 1.5em 0; }
-  ul.dashboards li {
-    border: 1px solid #e1ddd0;
-    background: #fff;
-    border-radius: 6px;
-    padding: .9em 1.1em;
-    margin: .65em 0;
-  }
-  ul.dashboards a {
-    font-weight: 600;
-    font-size: 1.05rem;
-    color: #1f5fbf;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: .15em;
-  }
-  ul.dashboards a:hover { text-decoration: underline; }
-  ul.dashboards .desc { font-size: .9rem; color: #555; }
-  footer { font-size: .85rem; color: #777; margin-top: 2.5rem; border-top: 1px solid #d8d8d8; padding-top: 1em; }
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+  line-height: 1.55;
+  color: #1a1a1a;
+  background: #fafaf7;
+}
+h1 { font-size: 1.85rem; margin: 1.5rem 0 .25em; color: #1f3a5f; }
+h2 { font-size: 1.25rem; margin: 2.4rem 0 .65rem; color: #2a4a78; border-bottom: 1px solid #d8d8d8; padding-bottom: .25em; }
+h3 { font-size: 1.02rem; margin: 1.6rem 0 .5rem; color: #2a4a78; }
+.tagline { color: #555; font-size: .98rem; margin: .25em 0 1.25rem; }
+a { color: #1f5fbf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #f0ede3; padding: .1em .35em; border-radius: 3px; font-size: .88em; }
 
-  .firm-nav {
-    margin: 0 -1.25rem 0;
-    padding: 8px 1.25rem;
-    background: #f0ede3;
-    border-bottom: 1px solid #d8d8d8;
-    font-size: 12.5px;
-    letter-spacing: 0.01em;
-    display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
-  }
-  .firm-nav a { color: #4a5568; text-decoration: none; padding: 3px 9px; border-radius: 4px; }
-  .firm-nav a:hover { background: rgba(31,95,191,.08); color: #1f5fbf; }
-  .firm-nav a.current { font-weight: 600; color: #1f3a5f; background: rgba(31,58,95,.06); }
+.firm-nav {
+  margin: 0 -1.25rem 0;
+  padding: 8px 1.25rem;
+  background: #f0ede3;
+  border-bottom: 1px solid #d8d8d8;
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+}
+.firm-nav a { color: #4a5568; text-decoration: none; padding: 3px 9px; border-radius: 4px; }
+.firm-nav a:hover { background: rgba(31,95,191,.08); color: #1f5fbf; }
+.firm-nav a.current { font-weight: 600; color: #1f3a5f; background: rgba(31,58,95,.06); }
 
-  @media (max-width: 600px) {
-    body { padding: 0 1rem 3rem; font-size: 15px; }
-    h1 { font-size: 1.5rem; }
-    .firm-nav { margin: 0 -1rem 0; padding: 7px 1rem; }
-  }
+.hero-wrap {
+  margin: 1.25rem -.5rem 1.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #080E18;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.hero-wrap img { width: 100%; height: auto; display: block; }
+.hero-mode-toggle {
+  display: flex; gap: .25rem; padding: .35rem .5rem .35rem;
+  background: #080E18; border-top: 1px solid #1E2A3D;
+}
+.hero-mode-toggle button {
+  flex: 1; padding: .35rem .5rem; font-size: .82em; font-family: inherit;
+  background: transparent; color: #A8B3C6; border: 1px solid #1E2A3D;
+  border-radius: 4px; cursor: pointer;
+}
+.hero-mode-toggle button.active { color: #D6A957; border-color: #D6A957; background: rgba(214,169,87,.06); }
+
+.refresh-stamp {
+  font-size: .82em; color: #777; padding: .4em .65em;
+  background: #fff; border: 1px solid #e1ddd0; border-radius: 4px;
+  display: inline-block; margin: .5rem 0 1rem;
+}
+.refresh-stamp strong { color: #1f3a5f; }
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .85rem;
+  margin: 1.5rem 0;
+}
+.kpi {
+  background: #fff;
+  border: 1px solid #e1ddd0;
+  border-radius: 6px;
+  padding: .85em 1em;
+  position: relative;
+}
+.kpi-label { font-size: .78em; color: #6a6a6a; text-transform: uppercase; letter-spacing: .04em; }
+.kpi-value { font-size: 1.85rem; font-weight: 600; color: #1f3a5f; line-height: 1.1; margin: .15em 0 .1em; }
+.kpi-sub { font-size: .82em; color: #555; }
+.kpi.alert .kpi-value { color: #b8443f; }
+.kpi.warn .kpi-value { color: #c08a3a; }
+.kpi.good .kpi-value { color: #2f7a4a; }
+.kpi.mock {
+  border-style: dashed; background: #fdfcf6; opacity: .92;
+}
+.kpi.mock::after {
+  content: "PROJECTED"; position: absolute; top: .5em; right: .65em;
+  font-size: .65em; color: #c08a3a; font-weight: 600; letter-spacing: .07em;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e1ddd0;
+  border-radius: 6px;
+  padding: 1em 1.15em;
+  margin: 1rem 0;
+}
+.card.mock {
+  border-style: dashed;
+  background: linear-gradient(180deg, #fdfcf6 0%, #fbf9ef 100%);
+}
+.card.mock h3::after, .card.mock h2::after {
+  content: " PROJECTED"; font-size: .55em; color: #c08a3a;
+  background: rgba(192,138,58,.08); padding: .15em .5em; border-radius: 10px;
+  margin-left: .65em; vertical-align: middle; letter-spacing: .07em; font-weight: 600;
+}
+
+.chart-wrap { position: relative; height: 240px; margin: .75em 0 .25em; }
+.chart-wrap.tall { height: 320px; }
+
+.grid-controls {
+  display: flex; gap: .5rem; flex-wrap: wrap; margin: .65rem 0 .65rem;
+  font-size: .9em;
+}
+.grid-controls input[type=search] {
+  flex: 1 1 250px; min-width: 200px;
+  padding: .35em .55em; border: 1px solid #d4d4d4; border-radius: 4px;
+  font-family: inherit; font-size: inherit;
+}
+.grid-controls button, .grid-controls select {
+  padding: .35em .65em; border: 1px solid #d4d4d4; border-radius: 4px;
+  background: #fff; cursor: pointer; font-family: inherit; font-size: inherit;
+}
+.grid-controls button.active { background: #1f3a5f; color: #fff; border-color: #1f3a5f; }
+
+.gridjs-table { font-size: .9em; }
+.gridjs-th { background: #e8edf4 !important; font-weight: 600 !important; color: #1f3a5f !important; }
+.gridjs-tr:hover td { background: #f5f4ee !important; }
+
+.heatmap { display: grid; gap: 1px; margin: 1rem 0 .25rem; background: #e8e3d2; padding: 1px; border-radius: 4px; }
+.heatmap-row { display: grid; gap: 1px; }
+.heatmap-cell {
+  background: #fff; padding: .35em .25em; text-align: center; font-size: .78em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  position: relative;
+}
+.heatmap-cell.label { background: #f0ede3; font-weight: 600; text-align: left; padding-left: .65em; font-family: inherit; font-size: .82em; color: #1f3a5f; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.heatmap-cell.O { background: #fce0db; color: #b8443f; font-weight: 700; } /* Outstanding */
+.heatmap-cell.P { background: #fff4d4; color: #8b6510; font-weight: 700; } /* Partial */
+.heatmap-cell.R { background: #d8e9d0; color: #4a6b3c; font-weight: 700; } /* Received */
+.heatmap-cell.NA { background: #f0f0ed; color: #888; }
+.heatmap-cell.Q { background: #ecedf2; color: #6a7589; }
+.heatmap-cell.H { background: #fff; color: #444; }
+
+.legend { display: flex; gap: .85em; flex-wrap: wrap; font-size: .82em; margin: .25em 0 1em; }
+.legend span { display: inline-flex; align-items: center; gap: .35em; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; border: 1px solid rgba(0,0,0,.1); }
+
+.flag-badge { display: inline-block; padding: .15em .55em; border-radius: 10px; font-size: .75em; letter-spacing: .03em; font-weight: 600; }
+.flag-badge.crit { background: #fce0db; color: #b8443f; }
+.flag-badge.warn { background: #fff1d6; color: #8b6510; }
+.flag-badge.good { background: #d8e9d0; color: #4a6b3c; }
+.flag-badge.info { background: #e2ecfa; color: #1f5fbf; }
+
+footer { font-size: .85rem; color: #777; margin-top: 2.5rem; border-top: 1px solid #d8d8d8; padding-top: 1em; }
+
+@media (max-width: 700px) {
+  body { padding: 0 .85rem 3rem; font-size: 15px; }
+  h1 { font-size: 1.5rem; }
+  .firm-nav { margin: 0 -.85rem 0; padding: 7px .85rem; }
+  .hero-wrap { margin: 1rem -.4rem 1rem; }
+  .kpi-value { font-size: 1.55rem; }
+  .chart-wrap, .chart-wrap.tall { height: 220px; }
+}
+
+ul.dashboards { list-style: none; padding: 0; margin: 1.5em 0; }
+ul.dashboards li { border: 1px solid #e1ddd0; background: #fff; border-radius: 6px; padding: .9em 1.1em; margin: .65em 0; }
+ul.dashboards a.title { font-weight: 600; font-size: 1.05rem; color: #1f5fbf; text-decoration: none; display: inline-block; margin-bottom: .15em; }
+ul.dashboards a.title:hover { text-decoration: underline; }
+ul.dashboards .desc { font-size: .9rem; color: #555; }
+ul.dashboards li.new { border-color: #d6a957; background: linear-gradient(180deg, #fff 0%, #fdfaf0 100%); }
+ul.dashboards li.new::after { content: "NEW"; color: #c08a3a; font-size: .65em; font-weight: 700; letter-spacing: .07em; float: right; padding: .15em .5em; background: rgba(192,138,58,.08); border-radius: 10px; }
 </style>
 </head>
 <body>
-  <nav class="firm-nav">
-    <a class="current" href="./">Index</a>
-    <a href="./firm-brief-latest.html">Brief</a>
-    <a href="./firm-wiki-map.html">Wiki Map</a>
-    <a href="./firm-system-audit.html">System Audit</a>
-    <a href="./firm-architecture-diagram.html">Architecture</a>
-  </nav>
+<nav class="firm-nav">
+  <a href="./" class="current">Index</a>
+  <a href="./firm-brief-latest.html">Brief</a>
+  <a href="./firm-wiki-map.html">Wiki Map</a>
+  <a href="./firm-voice-dashboard.html">Voice</a>
+  <a href="./firm-system-audit.html">System Audit</a>
+  <a href="./firm-architecture-diagram.html">Architecture</a>
+</nav>
 
-  <h1>Noonan Law — Internal Dashboards</h1>
-  <p class="tagline">A single page per view of the firm's case state, calendar, internal systems, and knowledge base. Read-only summaries; the underlying detail lives in the wiki on disk.</p>
+<h1>Noonan Law — Internal Dashboards</h1>
+<p class="tagline">A single page per view of the firm's case state, calendar, internal systems, and inbound channels. Read-only summaries; underlying detail lives in the wiki on disk.</p>
 
-  <ul class="dashboards">
-    <li>
-      <a href="firm-brief-latest.html">Firm Brief — Latest</a>
-      <div class="desc">Mon/Thu firm-wide briefing: deadlines, hearings, motions in flight, case-by-case status, red flags, and triage queue. Always the most recent — dated archives at <code>firm-brief-YYYY-MM-DD.html</code>.</div>
-    </li>
-    <li>
-      <a href="firm-wiki-map.html">Wiki Map</a>
-      <div class="desc">Network view of the firm's knowledge base — matters, contacts, courts, authorities, and issues.</div>
-    </li>
-    <li>
-      <a href="firm-system-audit.html">System Audit</a>
-      <div class="desc">Where things live, what runs and when, how data flows, and current operational status.</div>
-    </li>
-    <li>
-      <a href="firm-architecture-diagram.html">System Architecture</a>
-      <div class="desc">Interactive diagram of data sources, processing layer, outputs, and tools across the firm's automation stack.</div>
-    </li>
-  </ul>
+<ul class="dashboards">
+  <li>
+    <a class="title" href="firm-brief-latest.html">Firm Brief — Latest</a>
+    <div class="desc">Mon/Thu firm-wide briefing: deadlines, hearings, motions in flight, case-by-case status, red flags, and triage queue. Always the most recent — dated archives at <code>firm-brief-YYYY-MM-DD.html</code>.</div>
+  </li>
+  <li>
+    <a class="title" href="firm-wiki-map.html">Wiki Map</a>
+    <div class="desc">Network view of the firm's knowledge base — matters, contacts, courts, authorities, and issues.</div>
+  </li>
+  <li class="new">
+    <a class="title" href="firm-voice-dashboard.html">Voice Dashboard</a>
+    <div class="desc">Sam (voice agent) call log — call activity, voicemail queue, intake captures, tool-fire metrics. Pulls from <code>voice@noonanlawoffices.com</code>. Includes projected steady-state capacity model.</div>
+  </li>
+  <li class="soon">
+    <a class="title" style="color:#888; pointer-events:none; cursor:default;">Discovery Dashboard <span style="font-size:.7em; color:#c08a3a; font-weight:600; letter-spacing:.05em; margin-left:.5em;">IN PROGRESS</span></a>
+    <div class="desc">Cross-matter discovery intake — JWN approval queue, producer batches, § 1054.1 checklist coverage. Currently being built; tracker available at <code>guides/Discovery_Lifecycle_Tracker.xlsx</code> in the meantime.</div>
+  </li>
+  <li>
+    <a class="title" href="firm-system-audit.html">System Audit</a>
+    <div class="desc">Where things live, what runs and when, how data flows, and current operational status.</div>
+  </li>
+  <li>
+    <a class="title" href="firm-architecture-diagram.html">System Architecture</a>
+    <div class="desc">Interactive diagram of data sources, processing layer, outputs, and tools across the firm's automation stack.</div>
+  </li>
+</ul>
 
-  <footer>Last updated: 2026-05-01</footer>
+<footer>Last updated: 2026-05-02</footer>
 </body>
 </html>
