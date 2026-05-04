@@ -55,94 +55,6 @@
     table { font-size: .85em; }
     .firm-nav { margin: 0 -.85rem 1rem; padding: 7px .85rem; }
   }
-
-  /* Week-at-a-glance grid (added 2026-05-04 — replaces buried deadlines/hearings as top-of-fold) */
-  .week-grid-wrap { margin: 1.25rem 0 1.75rem; }
-  .week-grid-head {
-    display: flex; align-items: baseline; justify-content: space-between;
-    gap: .85rem; flex-wrap: wrap; margin-bottom: .55rem;
-  }
-  .week-grid-head h2 {
-    font-size: 1.05rem; font-weight: 600; color: #1f3a5f;
-    border: none; padding: 0; margin: 0; line-height: 1.2;
-  }
-  .week-grid-head .wg-meta { font-size: .82rem; color: #6a6a6a; }
-  .week-grid-head .wg-legend { display: flex; gap: .65rem; font-size: .78rem; color: #555; }
-  .week-grid-head .wg-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: 1px; margin-right: .3em; }
-  .wg-legend i.h { background: #1f5fbf; }
-  .wg-legend i.d { background: #c08a3a; }
-  .wg-legend i.crit { background: #b8443f; }
-  .wg-legend i.review { background: #6f7e95; }
-  .week-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    gap: 4px; background: #e1ddd0; padding: 1px; border-radius: 6px;
-    overflow: hidden;
-  }
-  .wg-day {
-    background: #fff; padding: .55em .55em .65em; min-height: 130px;
-    display: flex; flex-direction: column; gap: .35em;
-    border-radius: 4px;
-    position: relative;
-  }
-  .wg-day.today { background: #f0f5fb; box-shadow: inset 0 0 0 2px #1f5fbf; }
-  .wg-day.past { background: #f7f5ee; opacity: .55; }
-  .wg-day.empty { background: #fafaf7; }
-  .wg-day-head { font-size: .78rem; font-weight: 600; color: #1f3a5f; display: flex; justify-content: space-between; align-items: baseline; }
-  .wg-day-head .dow { letter-spacing: .03em; }
-  .wg-day-head .date { color: #888; font-weight: 400; font-size: .92em; }
-  .wg-day.today .wg-day-head .dow::after {
-    content: "TODAY"; margin-left: .4em; font-size: .68em; padding: .1em .4em;
-    background: #1f5fbf; color: #fff; border-radius: 8px; letter-spacing: .05em; font-weight: 700;
-  }
-  .wg-item {
-    font-size: .78rem; line-height: 1.35; padding: .25em .4em .3em;
-    border-left: 3px solid #ccc; border-radius: 3px;
-    background: #fbfaf5;
-  }
-  .wg-item.h { border-left-color: #1f5fbf; }
-  .wg-item.d { border-left-color: #c08a3a; }
-  .wg-item.crit { border-left-color: #b8443f; background: #fdf3f2; }
-  .wg-item-tag {
-    display: inline-block; font-size: .7em; font-weight: 700; letter-spacing: .04em;
-    padding: 0 .35em; border-radius: 2px; margin-right: .3em; vertical-align: 1px;
-  }
-  .wg-item.h .wg-item-tag { background: #e2ecfa; color: #1f5fbf; }
-  .wg-item.d .wg-item-tag { background: #fbecd1; color: #8b6510; }
-  .wg-item.crit .wg-item-tag { background: #fce0db; color: #b8443f; }
-  .wg-empty-marker { font-size: .72rem; color: #b6b1a1; font-style: italic; margin-top: .25em; }
-  .week-grid-foot {
-    font-size: .78rem; color: #6a6a6a; margin-top: .55rem;
-    display: flex; gap: .85rem; flex-wrap: wrap; align-items: baseline;
-  }
-  .week-grid-foot strong { color: #1f3a5f; font-weight: 600; }
-  @media (max-width: 900px) {
-    .week-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
-    .wg-day { min-height: 100px; padding: .4em .35em; }
-    .wg-item { font-size: .72rem; padding: .2em .3em; }
-    .wg-day-head { font-size: .72rem; }
-  }
-  @media (max-width: 640px) {
-    .week-grid { grid-template-columns: 1fr; }
-    .wg-day { min-height: auto; }
-    .wg-day.empty { display: none; }
-    .week-grid-head .wg-legend { display: none; }
-  }
-
-  /* Week-nav additions (added 2026-05-04 v2) */
-  .wg-head-left { display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; }
-  .wg-head-left h2 { margin: 0; }
-  .wg-range { color: #6a6a6a; font-weight: 500; font-size: .92em; }
-  .wg-nav, .wg-today {
-    font-family: inherit; font-size: .95rem; line-height: 1;
-    background: #fff; border: 1px solid #d8d8d8; color: #1f3a5f;
-    padding: .25em .55em; border-radius: 4px; cursor: pointer;
-    transition: background .12s ease, border-color .12s ease;
-  }
-  .wg-nav { font-size: 1.1rem; padding: .15em .5em; }
-  .wg-nav:hover, .wg-today:hover { background: #f0f5fb; border-color: #1f5fbf; color: #1f5fbf; }
-  .wg-nav:disabled { color: #c0c0b8; cursor: not-allowed; background: #fafaf7; }
-  .wg-nav:disabled:hover { border-color: #d8d8d8; color: #c0c0b8; background: #fafaf7; }
-  .wg-today { font-size: .8rem; font-weight: 600; letter-spacing: .03em; padding: .25em .65em; }
 </style>
 </head>
 <body>
@@ -150,153 +62,21 @@
   <a href="./">Index</a>
   <a class="current" href="./firm-brief-latest.html">Brief</a>
   <a href="./firm-wiki-map.html">Wiki Map</a>
-  <a href="./firm-voice-dashboard.html">Voice</a>
-  <a href="./firm-discovery-dashboard.html">Discovery</a>
   <a href="./firm-system-audit.html">System Audit</a>
   <a href="./firm-architecture-diagram.html">Architecture</a>
 </nav>
-<section class="week-grid-wrap" id="week-at-a-glance">
-  <div class="week-grid-head">
-    <div class="wg-head-left">
-      <button class="wg-nav" id="wg-prev" type="button" aria-label="Previous week">‹</button>
-      <h2 id="wg-heading">This week at a glance</h2>
-      <button class="wg-nav" id="wg-next" type="button" aria-label="Next week">›</button>
-      <button class="wg-today" id="wg-today" type="button" hidden>Today</button>
-    </div>
-    <div class="wg-legend">
-      <span><i class="h"></i>Hearing</span>
-      <span><i class="d"></i>Deadline</span>
-      <span><i class="crit"></i>Critical</span>
-    </div>
-  </div>
-  <div class="week-grid" id="wg-body"></div>
-  <div class="week-grid-foot" id="wg-foot"></div>
-</section>
-<script>
-(function() {
-  const TODAY_ISO = "2026-05-04";
-  const weeks = [
-    {
-      anchor: "2026-04-27",
-      label: "Mon 4/27 → Sun 5/3",
-      days: [
-        { dow: "Mon", date: "4/27", items: [
-          { type: "h", tag: "8:30a", text: "Mitchell IS — <strong>DENIED</strong> · Stanislaus Dept 9" },
-          { type: "h", tag: "9a", text: "Wells PX — continued (per portal) · Alameda Dept 705" }
-        ]},
-        { dow: "Tue", date: "4/28", items: [
-          { type: "d", tag: "SENT", text: "Blackwell §1054.1 deficiency notice → DDA Sjoberg" }
-        ]},
-        { dow: "Wed", date: "4/29", items: [
-          { type: "h", tag: "8:30a", text: "Wolfe PX — continued by stip (new PX 6/10) · Santa Clara Dept 34" }
-        ]},
-        { dow: "Thu", date: "4/30", items: [
-          { type: "crit", tag: "?", text: "Valenzuela VOP — outcome unknown · Stanislaus Dept 9" },
-          { type: "d", tag: "2pm", text: "DSS Orlando withdrawal deadline" }
-        ]},
-        { dow: "Fri", date: "5/1", items: [] },
-        { dow: "Sat", date: "5/2", items: [] },
-        { dow: "Sun", date: "5/3", items: [
-          { type: "d", tag: "INT", text: "Mejiamejia writ + stay v0.1 shipped" }
-        ]}
-      ],
-      foot: "Past week. Highlights: Mitchell DENIED, Wolfe continued, Wells continued. <strong>Valenzuela 4/30 outcome</strong> still unconfirmed."
-    },
-    {
-      anchor: "2026-05-04",
-      label: "Mon 5/4 → Sun 5/10",
-      days: [
-        { dow: "Mon", date: "5/4", items: [] },
-        { dow: "Tue", date: "5/5", items: [
-          { type: "h", tag: "PTH", text: "Olson · Alameda Dublin-ECHOJ" },
-          { type: "h", tag: "MTD", text: "Hahn · Alameda Dublin-ECHOJ" },
-          { type: "h", tag: "PTH", text: "Serrano · Alameda Dublin-ECHOJ" },
-          { type: "crit", tag: "5pm", text: "Blackwell · Sjoberg §1054.1 response" }
-        ]},
-        { dow: "Wed", date: "5/6", items: [] },
-        { dow: "Thu", date: "5/7", items: [
-          { type: "h", tag: "8:30a", text: "Caldwell Romero · Stanislaus Dept 2" },
-          { type: "d", tag: "DUE", text: "Adamski APP-003 + APP-004" }
-        ]},
-        { dow: "Fri", date: "5/8", items: [] },
-        { dow: "Sat", date: "5/9", items: [] },
-        { dow: "Sun", date: "5/10", items: [] }
-      ],
-      foot: "<strong>3 hearings</strong> + <strong>2 deadlines</strong> this week · Calendar gaps (admin@): <strong>5/5 Alameda triple</strong> not yet calendared"
-    },
-    {
-      anchor: "2026-05-11",
-      label: "Mon 5/11 → Sun 5/17",
-      days: [
-        { dow: "Mon", date: "5/11", items: [
-          { type: "h", tag: "DISP", text: "Castanedamorillo · Alameda" },
-          { type: "h", tag: "DISP", text: "Craig (Jarmell) · Alameda" },
-          { type: "h", tag: "DISP", text: "Fuentes · Alameda" },
-          { type: "h", tag: "PTH", text: "Iyengar · Alameda Dept 702" },
-          { type: "h", tag: "10a", text: "Dillard VTC review · Stanislaus Dept 4" },
-          { type: "d", tag: "BACKSTOP", text: "Wells §859b 60-day (likely waived)" }
-        ]},
-        { dow: "Tue", date: "5/12", items: [] },
-        { dow: "Wed", date: "5/13", items: [] },
-        { dow: "Thu", date: "5/14", items: [] },
-        { dow: "Fri", date: "5/15", items: [] },
-        { dow: "Sat", date: "5/16", items: [] },
-        { dow: "Sun", date: "5/17", items: [] }
-      ],
-      foot: "<strong>Heavy Mon 5/11</strong>: 5 hearings + 1 deadline · None of the 3 Alameda dispositions have full intake on the wiki yet"
-    }
-  ];
-
-  let idx = weeks.findIndex(w => w.anchor === TODAY_ISO);
-  if (idx < 0) idx = 1;
-  const TODAY_IDX = idx;
-
-  function isToday(week, day) {
-    return week.anchor === TODAY_ISO && day.date === "5/4";
-  }
-  function isPast(weekIdx) { return weekIdx < TODAY_IDX; }
-
-  function render() {
-    const w = weeks[idx];
-    document.getElementById("wg-heading").innerHTML =
-      "This week at a glance <span class=\"wg-range\">— " + w.label + "</span>";
-    const body = document.getElementById("wg-body");
-    body.innerHTML = w.days.map(d => {
-      const today = isToday(w, d);
-      const empty = d.items.length === 0;
-      const past = isPast(idx);
-      const cls = ["wg-day"];
-      if (today) cls.push("today");
-      if (empty) cls.push("empty");
-      if (past) cls.push("past");
-      const itemsHtml = d.items.map(it =>
-        `<div class="wg-item ${it.type}"><span class="wg-item-tag">${it.tag}</span>${it.text}</div>`
-      ).join("");
-      const emptyMarker = empty && !today && !past
-        ? '<div class="wg-empty-marker">no calendar items</div>'
-        : (empty && past ? '<div class="wg-empty-marker">—</div>' : "");
-      return `<div class="${cls.join(' ')}">
-        <div class="wg-day-head"><span class="dow">${d.dow}</span><span class="date">${d.date}</span></div>
-        ${itemsHtml}
-        ${emptyMarker}
-      </div>`;
-    }).join("");
-    document.getElementById("wg-foot").innerHTML = w.foot;
-    document.getElementById("wg-prev").disabled = idx === 0;
-    document.getElementById("wg-next").disabled = idx === weeks.length - 1;
-    document.getElementById("wg-today").hidden = (idx === TODAY_IDX);
-  }
-  document.getElementById("wg-prev").addEventListener("click", () => { if (idx > 0) { idx--; render(); }});
-  document.getElementById("wg-next").addEventListener("click", () => { if (idx < weeks.length - 1) { idx++; render(); }});
-  document.getElementById("wg-today").addEventListener("click", () => { idx = TODAY_IDX; render(); });
-  render();
-})();
-</script>
 <h1>Noonan Law — Firm Brief</h1>
 <p><strong>2026-05-04</strong></p>
-<h2>Executive summary</h2>
-<p>Quiet weekend on the firm-side; two material updates land this brief. <strong>(1) Mejiamejia writ + stay v0.1 SHIPPED 5/3</strong> to <code>Active/Mejiamejia, Yurandi - CR-22-003198/01-Pleadings-and-Motions/2026-05-03-Writ-Stay-Continuance/</code> — Verified Petition for Writ of Prohibition (15 pp), Application for Stay (7 pp, Cal. Rules of Court rule 8.116), 102-pp Bates-stamped Appendix (MEJIAMEJIA-00001 to -00102), Westlaw research summary, status report. <strong>Continuance dropped per Jeremy 5/3</strong> (&quot;we don&#x27;t need the continuance, what we need is a winning writ/stay&quot;); jury trial remains 5/26/26 Dept 011, T-22 days. Christine cover memo held as stub pending Jeremy&#x27;s global plan. <strong>(2) Wells PX outcome from the 4/27 hearing — single biggest information gap of the prior cycle — partially RESOLVED via portal sync</strong>: 4/27 Motion to Continue is the last past event; <strong>next hearing 5/27/26 PTH at Dublin-ECHOJ</strong>, suggesting continuance was granted. § 859b 60-day deadline (5/11) likely overtaken by waiver embedded in granted continuance — needs minute-order verification. Caldwell 5/7 Romero confirmed via Stanislaus portal; Dillard 5/11 VTC confirmed; the three Tuesday 5/5 Alameda hearings (Olson PTH, Hahn MTD, Serrano PTH) surfaced via the 4/30 portfolio crawl remain on calendar. Mercer 6/15 SVP, Mitchell 6/15 trial (Pacheco lead), Blackwell 5/18 Hobbs all unchanged. Discovery hero product reached first end-to-end production milestone over the weekend, bringing <strong>four matters with active 4/29–5/1 Karpel discovery into the firm wiki</strong> (Bivens, Francesconi, Garner CR-2026-0001082, Garner CR-2026-0002887) — all four still flagged <code>attorney_of_record: [needs-confirmation]</code>, awaiting JWN representation-status confirmation.</p>
-<p><strong>🚨 Two open status flags worth attention.</strong> Blackwell <strong>5/18 vs. 6/9 hearing-date discrepancy</strong> carries forward unverified from the 4/30 brief — drives all § 1054.5 timing. Wolfe matter page still shows Dept 33 while emails confirm Dept 34 (Hon. Sevely); update queued.</p>
+<h2>Deadlines this week</h2>
+<table><thead><tr><th>Date</th><th>Case</th><th>Item</th><th>Owner</th></tr></thead><tbody><tr><td><strong>Tue 5/5 5:00 p.m. PT</strong></td><td>Blackwell (25-CR-007675)</td><td>DDA Sjoberg&#x27;s deadline to respond to PC § 1054.1 deficiency notice (sent 4/28). § 1054.5 motion runway preserved if non-compliance</td><td>DDA Sjoberg → us to follow up</td></tr><tr><td><strong>Tue 5/5</strong></td><td><strong>Olson (26-CR-003040)</strong></td><td><strong>PTH — Alameda Dublin-ECHOJ (NEW from 4/30 portfolio crawl)</strong></td><td><strong>JWN</strong></td></tr><tr><td><strong>Tue 5/5</strong></td><td><strong>Hahn (24-CR-013246)</strong></td><td><strong>MTD — brandishing firearm; Alameda Dublin-ECHOJ (NEW)</strong></td><td><strong>JWN</strong></td></tr><tr><td><strong>Tue 5/5</strong></td><td><strong>Serrano (25-CR-013271)</strong></td><td><strong>PTH — Alameda Dublin-ECHOJ (NEW)</strong></td><td><strong>JWN</strong></td></tr><tr><td><strong>Thu 5/7 8:30 a.m.</strong></td><td>Caldwell (CR-23-010065)</td><td><strong>Hearing — Romero motion (reset from vacated 4/14)</strong>, Stanislaus Dept 2 — confirmed 4/30 via portal</td><td>JWN</td></tr></tbody></table>
+<h2>Hearings this week</h2>
+<ul>
+<li><strong>Tue 5/5 — Olson (26-CR-003040)</strong> — Alameda PTH, Dublin-ECHOJ. Surfaced via 4/30 portfolio crawl; intake/discovery/strategy placeholders only on the new wiki page.</li>
+<li><strong>Tue 5/5 — Hahn (24-CR-013246)</strong> — Alameda MTD (brandishing firearm), Dublin-ECHOJ. Same posture.</li>
+<li><strong>Tue 5/5 — Serrano (25-CR-013271)</strong> — Alameda PTH, Dublin-ECHOJ. Same posture.</li>
+<li><strong>Thu 5/7 8:30 a.m. — Caldwell, Justin (CR-23-010065)</strong> — Stanislaus Dept 2, Law &amp; Motion (Romero motion). Reset from 4/14 vacatur. Third-strike filing on docket; bail $150K surety posted. Confirmed via Stanislaus portal 4/30. JWN to argue.</li>
+</ul>
+<p><em>(Mon 5/4, Wed 5/6, Fri 5/8 still empty on admin@ Calendar. The three Tuesday 5/5 Alameda events still need calendaring.)</em></p>
 <h2>Filings / Motions in flight</h2>
 <p><strong>Mejiamejia — Writ of Prohibition + Stay Application + Bates&#x27;d Appendix (CR-22-003198) — JWN-REVIEW PACKAGE; not filed.</strong> v0.1 shipped 5/3; trial 5/26/26 Dept 011. JWN signs Petition + Stay; Yurandi signs Verification; Christine pulls Information for Exhibit 1 + extracts standalone Billups + Esposito decls (Exhibits 4–5) + re-Shepardize + final word count. Two open Qs: (a) add Cardenas (2025) 18 Cal.5th 797 to MPA § V.D to pre-empt AG&#x27;s &quot;trial court&#x27;s discretion&quot; counter; (b) AG vs. ACDAO service — confirm AG still lead since 1/16/26 ruling.</p>
 <p><strong>Blackwell — § 1054.1 deficiency notice to DDA Sjoberg (25-CR-007675).</strong> Sent 4/28 16:06 PT from <code>admin@noonanlawoffices.com</code> (cc Quinn, alcoda). Response deadline <strong>5/5/26 5:00 p.m. PT</strong>. § 1054.5 motion is the contingency if Sjoberg defaults; 9 court days of runway to the 5/18 Hobbs hearing.</p>
@@ -404,7 +184,7 @@
 </ul>
 <footer style="margin-top:2.5rem;padding-top:1em;border-top:1px solid #d8d8d8;color:#777;font-size:.85rem;">
   Generated 2026-05-04 06:05 UTC &middot;
-  <a href="computer:///sessions/laughing-magical-heisenberg/mnt/Documents/Cases/Noonan/Admin/wiki/briefings/firm-2026-05-04.md">Open source .md in iCloud</a>
+  <a href="computer:///sessions/awesome-vibrant-ride/mnt/Documents/Cases/Noonan/Admin/wiki/briefings/firm-2026-05-04.md">Open source .md in iCloud</a>
 </footer>
 </body>
 </html>
