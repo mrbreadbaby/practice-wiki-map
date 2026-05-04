@@ -270,16 +270,16 @@
       if (empty) cls.push("empty");
       if (past) cls.push("past");
       const itemsHtml = d.items.map(it =>
-        \`<div class="wg-item \${it.type}"><span class="wg-item-tag">\${it.tag}</span>\${it.text}</div>\`
+        `<div class="wg-item ${it.type}"><span class="wg-item-tag">${it.tag}</span>${it.text}</div>`
       ).join("");
       const emptyMarker = empty && !today && !past
         ? '<div class="wg-empty-marker">no calendar items</div>'
         : (empty && past ? '<div class="wg-empty-marker">—</div>' : "");
-      return \`<div class="\${cls.join(' ')}">
-        <div class="wg-day-head"><span class="dow">\${d.dow}</span><span class="date">\${d.date}</span></div>
-        \${itemsHtml}
-        \${emptyMarker}
-      </div>\`;
+      return `<div class="${cls.join(' ')}">
+        <div class="wg-day-head"><span class="dow">${d.dow}</span><span class="date">${d.date}</span></div>
+        ${itemsHtml}
+        ${emptyMarker}
+      </div>`;
     }).join("");
     document.getElementById("wg-foot").innerHTML = w.foot;
     document.getElementById("wg-prev").disabled = idx === 0;
