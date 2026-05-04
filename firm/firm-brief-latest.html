@@ -55,6 +55,78 @@
     table { font-size: .85em; }
     .firm-nav { margin: 0 -.85rem 1rem; padding: 7px .85rem; }
   }
+
+  /* Week-at-a-glance grid (added 2026-05-04 — replaces buried deadlines/hearings as top-of-fold) */
+  .week-grid-wrap { margin: 1.25rem 0 1.75rem; }
+  .week-grid-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: .85rem; flex-wrap: wrap; margin-bottom: .55rem;
+  }
+  .week-grid-head h2 {
+    font-size: 1.05rem; font-weight: 600; color: #1f3a5f;
+    border: none; padding: 0; margin: 0; line-height: 1.2;
+  }
+  .week-grid-head .wg-meta { font-size: .82rem; color: #6a6a6a; }
+  .week-grid-head .wg-legend { display: flex; gap: .65rem; font-size: .78rem; color: #555; }
+  .week-grid-head .wg-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: 1px; margin-right: .3em; }
+  .wg-legend i.h { background: #1f5fbf; }
+  .wg-legend i.d { background: #c08a3a; }
+  .wg-legend i.crit { background: #b8443f; }
+  .wg-legend i.review { background: #6f7e95; }
+  .week-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px; background: #e1ddd0; padding: 1px; border-radius: 6px;
+    overflow: hidden;
+  }
+  .wg-day {
+    background: #fff; padding: .55em .55em .65em; min-height: 130px;
+    display: flex; flex-direction: column; gap: .35em;
+    border-radius: 4px;
+    position: relative;
+  }
+  .wg-day.today { background: #f0f5fb; box-shadow: inset 0 0 0 2px #1f5fbf; }
+  .wg-day.past { background: #f7f5ee; opacity: .55; }
+  .wg-day.empty { background: #fafaf7; }
+  .wg-day-head { font-size: .78rem; font-weight: 600; color: #1f3a5f; display: flex; justify-content: space-between; align-items: baseline; }
+  .wg-day-head .dow { letter-spacing: .03em; }
+  .wg-day-head .date { color: #888; font-weight: 400; font-size: .92em; }
+  .wg-day.today .wg-day-head .dow::after {
+    content: "TODAY"; margin-left: .4em; font-size: .68em; padding: .1em .4em;
+    background: #1f5fbf; color: #fff; border-radius: 8px; letter-spacing: .05em; font-weight: 700;
+  }
+  .wg-item {
+    font-size: .78rem; line-height: 1.35; padding: .25em .4em .3em;
+    border-left: 3px solid #ccc; border-radius: 3px;
+    background: #fbfaf5;
+  }
+  .wg-item.h { border-left-color: #1f5fbf; }
+  .wg-item.d { border-left-color: #c08a3a; }
+  .wg-item.crit { border-left-color: #b8443f; background: #fdf3f2; }
+  .wg-item-tag {
+    display: inline-block; font-size: .7em; font-weight: 700; letter-spacing: .04em;
+    padding: 0 .35em; border-radius: 2px; margin-right: .3em; vertical-align: 1px;
+  }
+  .wg-item.h .wg-item-tag { background: #e2ecfa; color: #1f5fbf; }
+  .wg-item.d .wg-item-tag { background: #fbecd1; color: #8b6510; }
+  .wg-item.crit .wg-item-tag { background: #fce0db; color: #b8443f; }
+  .wg-empty-marker { font-size: .72rem; color: #b6b1a1; font-style: italic; margin-top: .25em; }
+  .week-grid-foot {
+    font-size: .78rem; color: #6a6a6a; margin-top: .55rem;
+    display: flex; gap: .85rem; flex-wrap: wrap; align-items: baseline;
+  }
+  .week-grid-foot strong { color: #1f3a5f; font-weight: 600; }
+  @media (max-width: 900px) {
+    .week-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+    .wg-day { min-height: 100px; padding: .4em .35em; }
+    .wg-item { font-size: .72rem; padding: .2em .3em; }
+    .wg-day-head { font-size: .72rem; }
+  }
+  @media (max-width: 640px) {
+    .week-grid { grid-template-columns: 1fr; }
+    .wg-day { min-height: auto; }
+    .wg-day.empty { display: none; }
+    .week-grid-head .wg-legend { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -67,6 +139,62 @@
   <a href="./firm-system-audit.html">System Audit</a>
   <a href="./firm-architecture-diagram.html">Architecture</a>
 </nav>
+<section class="week-grid-wrap" id="week-at-a-glance">
+  <div class="week-grid-head">
+    <h2>This week at a glance — Mon 5/4 → Sun 5/10</h2>
+    <div class="wg-meta">Today: <strong>Mon 5/4</strong> · Next week (<strong>5/11+</strong>) packed: see Hearings + Deadlines below</div>
+    <div class="wg-legend">
+      <span><i class="h"></i>Hearing</span>
+      <span><i class="d"></i>Deadline</span>
+      <span><i class="crit"></i>Critical</span>
+    </div>
+  </div>
+  <div class="week-grid">
+
+    <div class="wg-day today empty">
+      <div class="wg-day-head"><span class="dow">Mon</span><span class="date">5/4</span></div>
+      <div class="wg-empty-marker">no calendar items</div>
+    </div>
+
+    <div class="wg-day">
+      <div class="wg-day-head"><span class="dow">Tue</span><span class="date">5/5</span></div>
+      <div class="wg-item h"><span class="wg-item-tag">PTH</span>Olson · Alameda Dublin-ECHOJ</div>
+      <div class="wg-item h"><span class="wg-item-tag">MTD</span>Hahn · Alameda Dublin-ECHOJ</div>
+      <div class="wg-item h"><span class="wg-item-tag">PTH</span>Serrano · Alameda Dublin-ECHOJ</div>
+      <div class="wg-item crit"><span class="wg-item-tag">5pm</span>Blackwell · Sjoberg §1054.1 response</div>
+    </div>
+
+    <div class="wg-day empty">
+      <div class="wg-day-head"><span class="dow">Wed</span><span class="date">5/6</span></div>
+      <div class="wg-empty-marker">no calendar items</div>
+    </div>
+
+    <div class="wg-day">
+      <div class="wg-day-head"><span class="dow">Thu</span><span class="date">5/7</span></div>
+      <div class="wg-item h"><span class="wg-item-tag">8:30a</span>Caldwell Romero · Stanislaus Dept 2</div>
+      <div class="wg-item d"><span class="wg-item-tag">DUE</span>Adamski APP-003 + APP-004</div>
+    </div>
+
+    <div class="wg-day empty">
+      <div class="wg-day-head"><span class="dow">Fri</span><span class="date">5/8</span></div>
+      <div class="wg-empty-marker">no calendar items</div>
+    </div>
+
+    <div class="wg-day empty">
+      <div class="wg-day-head"><span class="dow">Sat</span><span class="date">5/9</span></div>
+    </div>
+
+    <div class="wg-day empty">
+      <div class="wg-day-head"><span class="dow">Sun</span><span class="date">5/10</span></div>
+    </div>
+
+  </div>
+  <div class="week-grid-foot">
+    <span><strong>3 hearings</strong> + <strong>2 deadlines</strong> this week</span>
+    <span>Calendar gaps (admin@): <strong>5/5 Alameda triple</strong> not yet calendared</span>
+    <span>Next week 5/11: Castanedamorillo · Craig · Fuentes dispositions · Iyengar PTH · Dillard VTC · Wells §859b backstop · Blackwell Hobbs (5/18 vs 6/9 disputed)</span>
+  </div>
+</section>
 <h1>Noonan Law — Firm Brief</h1>
 <p><strong>2026-05-04</strong></p>
 <h2>Executive summary</h2>
